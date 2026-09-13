@@ -30,14 +30,14 @@ const builders = {
   },
   b2: {
     id: "b2",
-    name: "Priya Sharma",
-    company: "Sharma Infra Pvt Ltd",
-    location: "Bangalore, Karnataka",
-    rating: "4.8",
-    projects: "98",
-    experience: "12 Yrs",
+    name: "Arjun Reddy",
+    company: "BuildPro Solutions",
+    location: "Hyderabad, TS",
+    rating: "4.9",
+    projects: "120",
+    experience: "18 Yrs",
     verified: true,
-    image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
     specialization: "Commercial & IT Parks"
   },
   b3: {
