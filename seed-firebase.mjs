@@ -87,6 +87,54 @@ const builders = {
     verified: true,
     image: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=800&q=80",
     specialization: "Smart Homes & Automation"
+  },
+  b7: {
+    id: "b7",
+    name: "David Fernandez",
+    company: "Urban Heights",
+    location: "Goa",
+    rating: "4.5",
+    projects: "25",
+    experience: "7 Yrs",
+    verified: true,
+    image: "https://images.unsplash.com/photo-1508873699372-7aeab60b44ab?auto=format&fit=crop&q=80&w=800",
+    specialization: "Coastal Architecture"
+  },
+  b8: {
+    id: "b8",
+    name: "Amit Desai",
+    company: "Desai Infrastructures",
+    location: "Pune, Maharashtra",
+    rating: "4.8",
+    projects: "200",
+    experience: "22 Yrs",
+    verified: true,
+    image: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&q=80&w=800",
+    specialization: "Township Development"
+  },
+  b9: {
+    id: "b9",
+    name: "Neha Gupta",
+    company: "GreenSpace Developers",
+    location: "Delhi, NCR",
+    rating: "4.7",
+    projects: "55",
+    experience: "9 Yrs",
+    verified: true,
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+    specialization: "Green Building Standard"
+  },
+  b10: {
+    id: "b10",
+    name: "Karthik Rajan",
+    company: "Rajan Civil Works",
+    location: "Kochi, Kerala",
+    rating: "4.9",
+    projects: "75",
+    experience: "11 Yrs",
+    verified: true,
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
+    specialization: "Kerala Style Villas"
   }
 };
 

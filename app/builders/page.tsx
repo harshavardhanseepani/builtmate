@@ -15,7 +15,13 @@ const MOCK_BUILDERS = [
   { id: '1', name: 'Ramesh Singh', company: 'Apex Construction', location: 'Mumbai, MH', projects: 45, experience: '12 Yrs', rating: 4.8, verified: true, image: 'https://images.unsplash.com/photo-1541888086925-920eb1f1dc17?auto=format&fit=crop&q=80&w=800' },
   { id: '2', name: 'Arjun Reddy', company: 'BuildPro Solutions', location: 'Hyderabad, TS', projects: 120, experience: '18 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800' },
   { id: '3', name: 'Priya Sharma', company: 'Sharma Architects', location: 'Bangalore, KA', projects: 32, experience: '8 Yrs', rating: 4.7, verified: true, image: 'https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=800' },
-  { id: '4', name: 'Vijay Kumar', company: 'VK Designs', location: 'Chennai, TN', projects: 85, experience: '15 Yrs', rating: 4.6, verified: true, image: 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=800' }
+  { id: '4', name: 'Vijay Kumar', company: 'VK Designs', location: 'Chennai, TN', projects: 85, experience: '15 Yrs', rating: 4.6, verified: true, image: 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=800' },
+  { id: '5', name: 'Sneha Patel', company: 'Patel Builders', location: 'Ahmedabad, GJ', projects: 60, experience: '10 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=800' },
+  { id: '6', name: 'David Fernandez', company: 'Urban Heights', location: 'Goa, GA', projects: 25, experience: '7 Yrs', rating: 4.5, verified: true, image: 'https://images.unsplash.com/photo-1508873699372-7aeab60b44ab?auto=format&fit=crop&q=80&w=800' },
+  { id: '7', name: 'Amit Desai', company: 'Desai Infrastructures', location: 'Pune, MH', projects: 200, experience: '22 Yrs', rating: 4.8, verified: true, image: 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&q=80&w=800' },
+  { id: '8', name: 'Neha Gupta', company: 'GreenSpace Developers', location: 'Delhi, DL', projects: 55, experience: '9 Yrs', rating: 4.7, verified: true, image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800' },
+  { id: '9', name: 'Rahul Verma', company: 'Verma Constructors', location: 'Lucknow, UP', projects: 40, experience: '14 Yrs', rating: 4.6, verified: false, image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=800' },
+  { id: '10', name: 'Karthik Rajan', company: 'Rajan Civil Works', location: 'Kochi, KL', projects: 75, experience: '11 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' }
 ];
 
   useEffect(() => {
