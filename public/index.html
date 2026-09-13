@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcaAI - Generate Your Future Home</title>
+    <meta name="description" content="AI 3D home design generation, builder matching, and real estate platform.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Boxicons for icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <i class='bx bx-cube-alt logo-icon'></i>
+                Arca<span>AI</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="ai-design.html">AI Design</a></li>
+                <li><a href="builders.html">Find Builders</a></li>
+                <li><a href="rentals.html">Rentals & PGs</a></li>
+                <li><a href="plots.html">Plots</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-secondary">Log In</button>
+                <a href="ai-design.html" class="btn btn-primary">Try AI Free</a>
+            </div>
+            <div class="mobile-menu-toggle">
+                <i class='bx bx-menu'></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="glow-sphere top-left"></div>
+        <div class="glow-sphere bottom-right"></div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <div class="badge-wrapper">
+                    <span class="badge"><i class='bx bx-sparkles'></i> Powered by Latest Vision AI</span>
+                </div>
+                <h1 class="hero-title">
+                    Visualize Your Dream Home in <span>Seconds</span>.
+                </h1>
+                <p class="hero-subtitle">
+                    Enter your land size and requirements. Our AI instantly generates stunning 3D architectural designs,
+                    and connects you with top-rated local builders to make it real.
+                </p>
+                <div class="hero-cta-group">
+                    <div class="ai-input-wrapper">
+                        <i class='bx bx-microphone ai-mic'></i>
+                        <input type="text" id="ai-prompt" placeholder="e.g., 3BHK on 2 acres with modern facade..."
+                            autocomplete="off">
+                        <button class="btn btn-primary btn-generate" id="generate-btn">
+                            Generate <i class='bx bxs-magic-wand'></i>
+                        </button>
+                    </div>
+                    <p class="hint">Or try our AR mobile app to see designs on your actual land.</p>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="glass-card main-preview">
+                    <div class="preview-header">
+                        <div class="window-controls">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <p>AI Generator Render</p>
+                    </div>
+                    <div class="preview-image-container" id="preview-image-container">
+                        <!-- We will use a placeholder that looks amazing -->
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                            alt="Modern House Render" class="render-image">
+                        <div class="scanning-line" id="scanning-line"></div>
+                        <div class="ai-processing-overlay" id="ai-overlay">
+                            <div class="spinner"></div>
+                            <p>Generating 3D Models...</p>
+                        </div>
+                    </div>
+                    <div class="preview-footer">
+                        <div class="property-specs">
+                            <span><i class='bx bx-area'></i> 2 Acres</span>
+                            <span><i class='bx bx-bed'></i> 3 BHK</span>
+                            <span><i class='bx bx-compass'></i> East Facing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Elements for micro-interactions -->
+                <div class="floating-card cost-estimate reveal-right delay-1">
+                    <div class="icon-box"><i class='bx bx-coin-stack'></i></div>
+                    <div>
+                        <h4>Est. Cost</h4>
+                        <p>₹65L - ₹80L</p>
+                    </div>
+                </div>
+
+                <div class="floating-card matched-builder reveal-left delay-2">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                        alt="Builder" class="avatar">
+                    <div>
+                        <h4>Sharma Constructions</h4>
+                        <p><i class='bx bxs-star'></i> 4.9 (120 reviews)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Grid -->
+    <section class="features" id="features">
+        <div class="container section-header text-center">
+            <h2 class="section-title">The Complete Real Estate <span>Hub</span></h2>
+            <p class="section-description">From imagining the design to moving in, ArcaAI provides every tool you need.
+            </p>
+        </div>
+
+        <div class="container features-grid">
+            <div class="feature-card glass-panel reveal-up">
+                <div class="feature-icon"><i class='bx bx-buildings'></i></div>
+                <h3>AI 3D Generation</h3>
+                <p>Describe your needs via text or voice. Get instant 3D layout visualisations and exterior renders
+                    powered by Hugging Face models.</p>
+            </div>
+            <div class="feature-card glass-panel reveal-up delay-1">
+                <div class="feature-icon"><i class='bx bx-hard-hat'></i></div>
+                <h3>Builder Matching</h3>
+                <p>Find trusted local contractors. Read community reviews, see their past AI-assisted works, and chat
+                    directly via the app.</p>
+            </div>
+            <div class="feature-card glass-panel reveal-up delay-2">
+                <div class="feature-icon"><i class='bx bx-location-plus'></i></div>
+                <h3>AR Plot Previews</h3>
+                <p>Stand on your empty plot, point your phone, and see your generated 3D home mapped directly onto the
+                    terrain using AR.</p>
+            </div>
+            <div class="feature-card glass-panel reveal-up delay-3">
+                <div class="feature-icon"><i class='bx bx-group'></i></div>
+                <h3>Segmented Rentals</h3>
+                <p>Verified, Aadhaar-linked listings for PGs, rooms, and hostels, segmented by gender for safety in
+                    Indian urban markets.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted Builders Section (Mockup) -->
+    <section class="builders-section" id="builders">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Verified Builders in <span>Andhra Pradesh</span></h2>
+                <a href="builders.html" class="view-all">View All <i class='bx bx-right-arrow-alt'></i></a>
+            </div>
+
+            <div class="builder-list">
+                <div class="builder-card reveal-left">
+                    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="Worksite" class="builder-cover">
+                    <div class="builder-info">
+                        <div class="builder-avatar-wrapper">
+                            <h3 class="builder-name">AP Elite Developers <i
+                                    class='bx bxs-badge-check verified-badge'></i></h3>
+                        </div>
+                        <div class="builder-stats">
+                            <span><i class='bx bxs-star'></i> 4.8 (204)</span>
+                            <span><i class='bx bx-map'></i> Vizag</span>
+                            <span><i class='bx bx-home-alt'></i> 45+ Projects</span>
+                        </div>
+                        <div class="builder-tags">
+                            <span class="tag">Premium</span>
+                            <span class="tag">Vastu Compliant</span>
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mt-15">Contact Builder</button>
+                    </div>
+                </div>
+
+                <div class="builder-card reveal-left delay-1">
+                    <img src="https://images.unsplash.com/photo-1541888086225-ee8254bcdc95?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="Worksite" class="builder-cover">
+                    <div class="builder-info">
+                        <div class="builder-avatar-wrapper">
+                            <h3 class="builder-name">Modern Spaces Inc. <i
+                                    class='bx bxs-badge-check verified-badge'></i></h3>
+                        </div>
+                        <div class="builder-stats">
+                            <span><i class='bx bxs-star'></i> 4.6 (128)</span>
+                            <span><i class='bx bx-map'></i> Vijayawada</span>
+                            <span><i class='bx bx-home-alt'></i> 80+ Projects</span>
+                        </div>
+                        <div class="builder-tags">
+                            <span class="tag">Eco-Friendly</span>
+                            <span class="tag">Fast Delivery</span>
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mt-15">Contact Builder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call To Action -->
+    <section class="cta-section text-center">
+        <div class="container glow-container reveal-up">
+            <h2>Ready to Build the Future?</h2>
+            <p>Join thousands of users generating high-quality designs and finding trusted verified builders across
+                India.</p>
+            <div class="cta-buttons mt-30">
+                <a href="ai-design.html" class="btn btn-primary btn-large">Start Designing Free</a>
+                <a href="builders.html" class="btn btn-secondary btn-large">List Your Business</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <i class='bx bx-cube-alt logo-icon'></i>
+                    Arca<span>AI</span>
+                </a>
+                <p>The definitive prop-tech platform fusing Artificial Intelligence with safe, transparent real estate
+                    and construction.</p>
+                <div class="social-links">
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                    <a href="#"><i class='bx bxl-instagram'></i></a>
+                    <a href="#"><i class='bx bxl-linkedin'></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="ai-design.html">AI Design Tool</a></li>
+                    <li><a href="builders.html">Find Builders</a></li>
+                    <li><a href="plots.html">Plots for Sale</a></li>
+                    <li><a href="rentals.html">PGs & Hostels</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy (IT Act)</a></li>
+                    <li><a href="#">RERA Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container text-center footer-bottom">
+            <p>&copy; 2026 ArcaAI Technologies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

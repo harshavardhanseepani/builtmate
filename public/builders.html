@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Verified Builders — ArcaAI</title>
+    <meta name="description" content="Connect with top-rated, verified builders and contractors in Andhra Pradesh.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="rentals.css">
+    <link rel="stylesheet" href="builders.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo"><i class='bx bx-cube-alt logo-icon'></i>Arca<span>AI</span></a>
+            <ul class="nav-links">
+                <li><a href="ai-design.html">AI Design</a></li>
+                <li><a href="builders.html" class="active-link">Find Builders</a></li>
+                <li><a href="rentals.html">Rentals & PGs</a></li>
+                <li><a href="plots.html">Plots</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-secondary">Log In</button>
+                <button class="btn btn-primary">Try AI Free</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="glow-sphere top-left"></div>
+        <div class="container page-header-inner">
+            <h1 class="page-title">Trusted <span>Builders</span> Near You</h1>
+            <p class="page-subtitle">Community-reviewed, verified construction professionals. Read ratings, view
+                projects, and connect directly.</p>
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="search-input" placeholder="Search by name or location...">
+                </div>
+                <div class="filter-group filter-select">
+                    <select id="sort-filter">
+                        <option value="rating">Sort by Rating</option>
+                        <option value="reviews">Sort by Reviews</option>
+                        <option value="projects">Sort by Projects</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="apply-filters">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="listings-section">
+        <div class="container">
+            <div class="listings-header">
+                <p id="results-count" class="results-count">Loading builders...</p>
+            </div>
+            <div class="builders-grid" id="builders-grid"></div>
+        </div>
+    </section>
+
+    <!-- Builder Contact Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" id="modal-close"><i class='bx bx-x'></i></button>
+            <div class="modal-icon"><i class='bx bx-hard-hat'></i></div>
+            <h3 id="modal-name"></h3>
+            <p class="modal-sub" id="modal-location"></p>
+            <div class="modal-detail">
+                <div class="detail-row"><span>Rating</span><strong id="modal-rating"></strong></div>
+                <div class="detail-row"><span>Reviews</span><strong id="modal-reviews"></strong></div>
+                <div class="detail-row"><span>Projects</span><strong id="modal-projects"></strong></div>
+            </div>
+            <div id="modal-tags" class="builder-tags" style="justify-content:center; margin-bottom:1.5rem;"></div>
+            <button class="btn btn-primary w-100">Start Chat</button>
+            <button class="btn btn-secondary w-100" style="margin-top:0.75rem">Request Quote</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 ArcaAI Technologies. <a href="index.html">Back to Home</a></p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/builders.js"></script>
+</body>
+
+</html>

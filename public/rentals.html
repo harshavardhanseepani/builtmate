@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentals, PGs & Hostels — ArcaAI</title>
+    <meta name="description"
+        content="Find verified PGs, hostels, and rooms for boys and girls. Gender-segmented listings with owner details and ratings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="rentals.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <i class='bx bx-cube-alt logo-icon'></i>
+                Arca<span>AI</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="ai-design.html">AI Design</a></li>
+                <li><a href="builders.html">Find Builders</a></li>
+                <li><a href="rentals.html" class="active-link">Rentals & PGs</a></li>
+                <li><a href="plots.html">Plots</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-secondary">Log In</button>
+                <button class="btn btn-primary">Try AI Free</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="glow-sphere top-left"></div>
+        <div class="container page-header-inner">
+            <h1 class="page-title">Find Your Perfect <span>Stay</span></h1>
+            <p class="page-subtitle">Verified PGs, hostels, and rooms. Filter by gender, location, and budget.</p>
+
+            <!-- Search & Filter Controls -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="search-input" placeholder="Search by location or name..." />
+                </div>
+                <div class="filter-group filter-select">
+                    <select id="type-filter">
+                        <option value="All">All Types</option>
+                        <option value="PG">PG</option>
+                        <option value="Hostel">Hostel</option>
+                        <option value="Room">Room/Flat</option>
+                    </select>
+                </div>
+                <div class="filter-group filter-select">
+                    <select id="gender-filter">
+                        <option value="All">All Genders</option>
+                        <option value="Girls">Girls Only</option>
+                        <option value="Boys">Boys Only</option>
+                        <option value="Any">Unisex</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="apply-filters">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listings Grid -->
+    <section class="listings-section">
+        <div class="container">
+            <div class="listings-header">
+                <p id="results-count" class="results-count">Loading listings...</p>
+            </div>
+            <div class="listings-grid" id="listings-grid">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" id="modal-close"><i class='bx bx-x'></i></button>
+            <div class="modal-icon"><i class='bx bx-phone-call'></i></div>
+            <h3 id="modal-title">Contact Owner</h3>
+            <p class="modal-sub" id="modal-location"></p>
+            <div class="modal-detail">
+                <div class="detail-row">
+                    <span>Owner</span>
+                    <strong id="modal-owner"></strong>
+                </div>
+                <div class="detail-row">
+                    <span>Phone</span>
+                    <strong id="modal-phone"></strong>
+                </div>
+            </div>
+            <p class="modal-note"><i class='bx bxs-shield-check'></i> This owner's identity is Aadhaar-verified by
+                ArcaAI.</p>
+            <button class="btn btn-primary w-100">Request Video Tour</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 ArcaAI Technologies. <a href="index.html">Back to Home</a></p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/rentals.js"></script>
+</body>
+
+</html>
