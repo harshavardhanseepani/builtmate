@@ -213,11 +213,31 @@ const materials = {
     id: "m8",
     name: "White Marble Flooring",
     category: "Flooring",
-    price: "₹180/sqft",
+    price: "₹1,180/sqft",
     stock: "In Stock",
     supplier: "Rajputana Marbles",
     location: "Udaipur",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
+  },
+  m9: {
+    id: "m9",
+    name: "Teak Wood Planks",
+    category: "Wood",
+    price: "₹3,500/sqft",
+    stock: "In Stock",
+    supplier: "Kerala Timbers",
+    location: "Trivandrum",
+    image: "https://images.unsplash.com/photo-1542171120-d396de23c14f?w=800&q=80"
+  },
+  m10: {
+    id: "m10",
+    name: "UPVC Windows",
+    category: "Fittings",
+    price: "₹4,500/window",
+    stock: "Low Stock",
+    supplier: "Fenesta Direct",
+    location: "Pune",
+    image: "https://images.unsplash.com/photo-1509315811345-672d83ef2fbc?w=800&q=80"
   }
 };
 
