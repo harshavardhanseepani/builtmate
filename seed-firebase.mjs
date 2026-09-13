@@ -18,14 +18,14 @@ const db = getDatabase(app);
 const builders = {
   b1: {
     id: "b1",
-    name: "Rajesh Kumar",
-    company: "Kumar Constructions",
+    name: "Ramesh Singh",
+    company: "Apex Constructions",
     location: "Mumbai, Maharashtra",
     rating: "4.9",
     projects: "142",
     experience: "18 Yrs",
     verified: true,
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800",
     specialization: "Luxury Villas & High-Rise"
   },
   b2: {
@@ -54,14 +54,14 @@ const builders = {
   },
   b4: {
     id: "b4",
-    name: "Vikram Singh",
-    company: "Singh Heritage Homes",
-    location: "Delhi, NCR",
+    name: "Vijay Kumar",
+    company: "VK Suppliers",
+    location: "Chennai, TN",
     rating: "4.9",
     projects: "203",
     experience: "22 Yrs",
     verified: true,
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
     specialization: "Heritage & Modern Fusion"
   },
   b5: {
