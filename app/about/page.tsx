@@ -43,7 +43,7 @@ export default function AboutPage() {
                 { title: 'Poor project tracking', icon: 'bx-line-chart' }
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0">
+                  <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-red-500/10 items-center justify-center shrink-0">
                     <i className={`bx ${item.icon} text-2xl text-red-400`}></i>
                   </div>
                   <span className="text-lg font-bold text-slate-300">{item.title}</span>
@@ -89,7 +89,7 @@ export default function AboutPage() {
             ].map((step, i) => (
               <div key={i} className="glass-card p-6 rounded-3xl text-center relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
                 <div className="text-5xl font-black text-white/5 absolute -top-2 -right-2 group-hover:text-blue-500/10 transition-colors">{step.num}</div>
-                <div className="w-16 h-16 bg-blue-500/10 rounded-2xl mx-auto flex items-center justify-center mb-4 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                <div className="hidden sm:flex w-16 h-16 bg-blue-500/10 rounded-2xl mx-auto items-center justify-center mb-4 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
                   <i className={`bx ${step.icon} text-3xl`}></i>
                 </div>
                 <h3 className="text-sm font-bold text-white relative z-10">{step.title}</h3>

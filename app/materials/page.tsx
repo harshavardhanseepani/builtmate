@@ -133,7 +133,7 @@ export default function MaterialsMarketplace() {
             <p className="text-slate-500 max-w-lg font-medium">Source industrial-grade raw materials directly from verified local distributors at wholesale rates.</p>
           </div>
           <div className="glass-card flex items-center px-8 py-2 w-full md:w-[450px] border-white/5 shadow-2xl">
-            <i className="bx bx-search text-rose-500 mr-4 text-2xl"></i>
+            <i className="hidden md:inline-block bx bx-search text-rose-500 mr-4 text-2xl"></i>
             <input
               type="text"
               placeholder="Filter materials (Cement, Steel...)"
@@ -169,12 +169,12 @@ export default function MaterialsMarketplace() {
 
                   {/* Card Body */}
                   <div className="p-6 flex flex-col flex-1 relative">
-                    <div className="absolute -right-5 -top-5 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <div className="absolute -right-5 -top-5 opacity-5 group-hover:opacity-10 transition-opacity hidden md:block">
                       <i className={`bx ${mat.category === 'Steel' ? 'bx-cube-alt' : 'bx-layer'} text-8xl`}></i>
                     </div>
 
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all border border-white/5 flex-shrink-0">
+                      <div className="hidden sm:flex w-10 h-10 rounded-xl bg-white/5 items-center justify-center text-xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all border border-white/5 flex-shrink-0">
                         <i className={`bx ${
                           mat.category === 'Steel' ? 'bx-radar' :
                           mat.category === 'Cement' ? 'bx-square-rounded' :

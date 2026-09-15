@@ -50,7 +50,7 @@ export default function BuildersMarketplace() {
             </p>
           </div>
           <div className="glass-card flex items-center px-6 py-2 w-full md:w-[400px]">
-            <i className="bx bx-search text-slate-500 mr-4 text-xl"></i>
+            <i className="hidden md:inline-block bx bx-search text-slate-500 mr-4 text-xl"></i>
             <input 
               type="text" 
               placeholder="Search by location or company..." 
@@ -71,12 +71,12 @@ export default function BuildersMarketplace() {
                   <img src={builder.image} alt={builder.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60" />
                   <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1.5">
-                    <i className="bx bxs-star text-yellow-500"></i>
+                    <i className="hidden sm:inline-block bx bxs-star text-yellow-500"></i>
                     <span className="text-xs font-black">{builder.rating}</span>
                   </div>
                   {builder.verified && (
                     <div className="absolute top-4 left-4 bg-violet-500 text-white p-1.5 rounded-lg shadow-lg">
-                       <i className="bx bxs-badge-check text-xl"></i>
+                       <i className="hidden sm:inline-block bx bxs-badge-check text-xl"></i>
                     </div>
                   )}
                 </div>
@@ -85,7 +85,7 @@ export default function BuildersMarketplace() {
                   <div className="mb-6">
                     <h3 className="text-xl font-bold mb-1 tracking-tight group-hover:text-violet-400 transition-colors">{builder.company}</h3>
                     <p className="text-xs text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                      <i className="bx bx-map text-sm"></i> {builder.location}
+                      <i className="hidden sm:inline-block bx bx-map text-sm"></i> {builder.location}
                     </p>
                   </div>
 

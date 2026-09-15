@@ -51,7 +51,7 @@ export default function ProjectsClient() {
                     <div className="flex-1 w-full">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full">ACTIVE</span>
-                        <span className="text-slate-400 text-sm font-medium"><i className="bx bx-map"></i> {project.location}</span>
+                        <span className="text-slate-400 text-sm font-medium"><i className="hidden sm:inline-block bx bx-map"></i> {project.location}</span>
                       </div>
                       <h2 className="text-2xl font-bold text-white mb-6">{project.name}</h2>
                       
@@ -95,7 +95,7 @@ export default function ProjectsClient() {
                           Track Progress
                         </button>
                         <Link href="/design" className="px-6 py-3 border border-indigo-500/30 text-indigo-400 text-sm font-bold rounded-xl hover:bg-indigo-500/10 transition-colors flex items-center gap-2">
-                          <i className="bx bx-cube-alt text-lg"></i> Open 3D Design
+                          <i className="hidden sm:inline-block bx bx-cube-alt text-lg"></i> Open 3D Design
                         </Link>
                       </div>
                     </div>
@@ -108,7 +108,7 @@ export default function ProjectsClient() {
             <div className="lg:col-span-1">
               <div className="glass-card p-6 md:p-8 rounded-3xl sticky top-28">
                 <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                  <i className="bx bx-list-check text-blue-500 text-2xl"></i> Construction Milestones
+                  <i className="hidden sm:inline-block bx bx-list-check text-blue-500 text-2xl"></i> Construction Milestones
                 </h3>
                 
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[11px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
