@@ -141,13 +141,13 @@ const builders = {
 const materials = {
   m1: {
     id: "m1",
-    name: "Ultra-Grade TMT Steel",
+    name: "Tata Tiscon 550SD TMT",
     category: "Steel",
-    price: "₹72,500/MT",
+    price: "?72,500/MT",
     stock: "In Stock",
     supplier: "Tata Steel Direct",
     location: "Jamshedpur",
-    image: "https://images.unsplash.com/photo-1565085360602-39a30c2c748a?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1518557984649-7b161c230cfa?w=800&q=80"
   },
   m2: {
     id: "m2",
@@ -171,13 +171,13 @@ const materials = {
   },
   m4: {
     id: "m4",
-    name: "Exterior Weather Shield Paint",
+    name: "Asian Paints Royale",
     category: "Paint",
-    price: "₹4,200/20L",
+    price: "?4,200/20L",
     stock: "In Stock",
     supplier: "Asian Paints Pro",
     location: "Mumbai",
-    image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80"
   },
   m5: {
     id: "m5",
@@ -223,11 +223,11 @@ const materials = {
     id: "m9",
     name: "Teak Wood Planks",
     category: "Wood",
-    price: "₹3,500/sqft",
+    price: "?3,500/sqft",
     stock: "In Stock",
     supplier: "Kerala Timbers",
     location: "Trivandrum",
-    image: "https://images.unsplash.com/photo-1542171120-d396de23c14f?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1550508122-d7ff4d4e2874?w=800&q=80"
   },
   m10: {
     id: "m10",
