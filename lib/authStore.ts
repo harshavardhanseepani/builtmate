@@ -23,7 +23,7 @@ export async function createUser(email: string, password: string, name: string):
   const existing = getUserByEmail(email);
   if (existing) return null; // already exists
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await bcrypt.hash(password, 10);
   const uid = generateUid();
   const user: UserRecord = {
     uid,
