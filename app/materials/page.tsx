@@ -27,6 +27,11 @@ const MOCK_MATERIALS = [
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     try {
+      if (!db) {
+        setMaterials(MOCK_MATERIALS);
+        setLoading(false);
+        return;
+      }
       const materialsRef = ref(db, 'materials');
       const unsubscribe = onValue(materialsRef, (snapshot) => {
         const data = snapshot.val();

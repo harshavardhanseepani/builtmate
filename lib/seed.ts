@@ -6,6 +6,7 @@ import { ref, set, push } from 'firebase/database';
 
 export const seedDatabase = async () => {
   try {
+    if (!db) return;
     // 1. Seed Builders (5 robust profiles)
     const buildersRef = ref(db, 'builders');
     const buildersData = {

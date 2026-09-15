@@ -24,6 +24,10 @@ export default function DashboardContent() {
   const projectIdParam = searchParams.get('project');
 
   const loadUserProjects = (uid: string) => {
+    if (!db) {
+      setLoading(false);
+      return () => {};
+    }
     const projectsRef = ref(db, 'projects');
     return onValue(projectsRef, (snapshot) => {
       const data = snapshot.val();
@@ -43,6 +47,10 @@ export default function DashboardContent() {
   };
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     let unsubscribeProjects: (() => void) | undefined;
     const unsubscribeAuth = onAuthStateChanged(auth, (u) => {
       if (u) {
@@ -59,7 +67,7 @@ export default function DashboardContent() {
   }, [projectIdParam]);
 
   useEffect(() => {
-    if (activeProject) {
+    if (activeProject && db) {
       const msgsRef = ref(db, `messages/${activeProject.id}`);
       const unsubscribe = onValue(msgsRef, (snapshot) => {
         const data = snapshot.val();
@@ -79,7 +87,7 @@ export default function DashboardContent() {
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !activeProject || !user) return;
+    if (!newMessage.trim() || !activeProject || !user || !db) return;
 
     const msgRef = push(ref(db, `messages/${activeProject.id}`));
     await set(msgRef, {

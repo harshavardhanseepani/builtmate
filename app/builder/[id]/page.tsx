@@ -15,6 +15,7 @@ export default function BuilderProfile() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsubscribe();
   }, []);
@@ -30,6 +31,11 @@ const MOCK_BUILDERS = [
     if (id) {
       let timeout: NodeJS.Timeout;
       try {
+        if (!db) {
+          setBuilder(MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]);
+          setLoading(false);
+          return;
+        }
         const builderRef = ref(db, `builders/${id}`);
         onValue(builderRef, (snapshot) => {
           const data = snapshot.val();
@@ -61,6 +67,11 @@ const MOCK_BUILDERS = [
   const startProject = async () => {
     if (!user) {
       router.push('/login');
+      return;
+    }
+
+    if (!db) {
+      router.push('/projects');
       return;
     }
 

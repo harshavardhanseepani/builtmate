@@ -27,6 +27,11 @@ const MOCK_BUILDERS = [
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     try {
+      if (!db) {
+        setBuilders(MOCK_BUILDERS);
+        setLoading(false);
+        return;
+      }
       const buildersRef = ref(db, 'builders');
       const unsubscribe = onValue(buildersRef, (snapshot) => {
         const data = snapshot.val();
