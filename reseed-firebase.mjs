@@ -154,7 +154,7 @@ const materials = {
     stock: "In Stock",
     supplier: "UltraTech Cement",
     location: "Rajasthan",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80",
     contact: { phone: "+91 90002 22002", email: "orders@ultratech-raj.in", address: "Industrial Area Phase II, Jodhpur, Rajasthan - 342003", hours: "Mon–Sat 8am–5pm" }
   },
   m3: {
