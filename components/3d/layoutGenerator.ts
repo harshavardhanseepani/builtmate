@@ -25,8 +25,17 @@ export type HouseSpec = {
 };
 
 export function generateHouseLayout(specs: any): HouseSpec {
-  const plotW = parseInt(specs.plotWidth) || 30;
-  const plotL = parseInt(specs.plotLength) || 40;
+  let plotW = 30;
+  let plotL = 40;
+  if (specs.plotSize) {
+    const parts = specs.plotSize.split('x');
+    plotW = parseInt(parts[0]) || 30;
+    plotL = parseInt(parts[1]) || 40;
+  } else {
+    plotW = parseInt(specs.plotWidth) || 30;
+    plotL = parseInt(specs.plotLength) || 40;
+  }
+  
   const floors = parseInt(specs.floors) || 1;
   const numBeds = parseInt(specs.bedrooms) || 1;
   const numBaths = parseInt(specs.bathrooms) || 1;

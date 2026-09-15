@@ -29,8 +29,7 @@ const Toggle = ({ label, value, onChange }: { label: string; value: string; onCh
 
 export default function DesignStudioContent() {
   const [specs, setSpecs] = useState({
-    plotWidth: '30',
-    plotLength: '40',
+    plotSize: '30x40',
     floors: '2',
     bedrooms: '3',
     bathrooms: '3',
@@ -106,9 +105,13 @@ export default function DesignStudioContent() {
                   <span className={labelClass}>Floors</span>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <input type="text" inputMode="numeric" className={`${inputClass} px-2 text-center`} value={specs.plotWidth} onChange={e => updateSpec('plotWidth', e.target.value)} />
-                  <span className="text-slate-500 font-bold text-xs">×</span>
-                  <input type="text" inputMode="numeric" className={`${inputClass} px-2 text-center`} value={specs.plotLength} onChange={e => updateSpec('plotLength', e.target.value)} />
+                  <select className={selectClass} value={specs.plotSize} onChange={e => updateSpec('plotSize', e.target.value)}>
+                    <option value="20x30">20x30 (600 sqft)</option>
+                    <option value="30x40">30x40 (1200 sqft)</option>
+                    <option value="30x50">30x50 (1500 sqft)</option>
+                    <option value="40x60">40x60 (2400 sqft)</option>
+                    <option value="50x80">50x80 (4000 sqft)</option>
+                  </select>
                   <div className="w-4"></div>
                   <select className={selectClass} value={specs.floors} onChange={e => updateSpec('floors', e.target.value)}>
                     {['1','2','3','4'].map(o => <option key={o}>{o}</option>)}
