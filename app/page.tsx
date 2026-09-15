@@ -6,141 +6,211 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 
 export default function Home() {
-  const [prompt, setPrompt] = useState('');
   const router = useRouter();
 
-  const handleAIDesignRedirect = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (prompt.trim()) {
-      router.push(`/design?prompt=${encodeURIComponent(prompt)}`);
-    } else {
-      router.push('/design');
-    }
+  const handleStartDesigning = () => {
+    router.push('/design');
   };
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-slate-950">
-      {/* Background Glows */}
-      <div className="glow-sphere top-[-200px] left-[-200px] w-[600px] h-[600px] bg-violet-600/30" />
-      <div className="glow-sphere bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-blue-600/20" />
-      <div className="glow-sphere top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/10" />
+    <main className="min-h-screen relative overflow-hidden bg-[#020817] font-sans">
+      
+      {/* Background Image / Overlay - Using a placeholder architectural image with dark gradient */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2560&auto=format&fit=crop')`,
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#020817] via-[#020817]/90 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020817] via-transparent to-transparent"></div>
+      </div>
 
-      {/* Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-40 pb-32 px-6">
-        <div className="max-w-7xl mx-auto text-center space-y-12">
-          <div className="space-y-6 animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full backdrop-blur-md mb-4 transform hover:scale-105 transition-all">
-              <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Next-Gen Construction Ecosystem</span>
+      {/* Hero Content */}
+      <section className="relative z-10 pt-48 pb-32 px-8 min-h-screen flex items-center">
+        <div className="max-w-[1800px] mx-auto w-full flex flex-col md:flex-row justify-between items-center gap-12">
+          
+          {/* Left Column - Text and Features */}
+          <div className="max-w-2xl text-left space-y-10">
+            
+            <div className="space-y-4">
+              <h3 className="text-sm md:text-base font-bold tracking-[0.2em] uppercase text-slate-400">
+                Turn your ideas into reality
+              </h3>
+              <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[1.1] text-white">
+                Build Smarter.<br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">
+                  Live Better.
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-slate-300 max-w-xl font-medium leading-relaxed">
+                AI-powered home design, trusted builders, quality materials and complete project management — all in one platform.
+              </p>
             </div>
-            <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none italic">
-              Build<span className="text-gradient">Mate</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light">
-              Democratizing architecture through <span className="text-white font-bold">Generative AI</span>. Design, match, and build your legacy with a single prompt.
-            </p>
-          </div>
 
-          <div className="max-w-3xl mx-auto">
-            <form onSubmit={handleAIDesignRedirect} className="glass-card p-2 flex flex-col md:flex-row gap-3 border-white/10 shadow-[0_0_50px_rgba(139,92,246,0.15)] group focus-within:border-violet-500/50 transition-all duration-500">
-              <input 
-                type="text" 
-                placeholder="Describe your dream home (e.g. Modern glass villa in Goa...)" 
-                className="flex-1 bg-transparent border-none outline-none text-white px-8 py-5 text-lg font-medium placeholder:text-slate-600"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
-              <button type="submit" className="btn-primary group !py-5">
-                Generate Design
-                <i className="bx bx-right-arrow-alt ml-2 group-hover:translate-x-2 transition-transform"></i>
+            {/* Grid of 4 small features */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6 pt-4">
+              {/* Feature 1 */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                  <i className="bx bx-home-alt-2 text-2xl text-blue-400"></i>
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-base">AI Design</h4>
+                  <p className="text-slate-400 text-xs font-semibold mt-1">2D Plans & 3D Models</p>
+                </div>
+              </div>
+              {/* Feature 2 */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                  <i className="bx bx-user-check text-2xl text-indigo-400"></i>
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-base">Verified Builders</h4>
+                  <p className="text-slate-400 text-xs font-semibold mt-1">Trusted Professionals</p>
+                </div>
+              </div>
+              {/* Feature 3 */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+                  <i className="bx bx-box text-2xl text-purple-400"></i>
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-base">Quality Materials</h4>
+                  <p className="text-slate-400 text-xs font-semibold mt-1">Best Brands, Best Deals</p>
+                </div>
+              </div>
+              {/* Feature 4 */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                  <i className="bx bx-clipboard text-2xl text-emerald-400"></i>
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-base">Project Management</h4>
+                  <p className="text-slate-400 text-xs font-semibold mt-1">Track. Plan. Build.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-6 pt-4">
+              <button onClick={handleStartDesigning} className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-lg shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all flex items-center gap-2">
+                Start Designing <i className="bx bx-right-arrow-alt text-2xl"></i>
               </button>
-            </form>
-            <div className="flex justify-center gap-8 mt-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 px-4">
-               <span className="flex items-center gap-2"><i className="bx bx-check-double text-violet-500"></i> AI ARCHITECT</span>
-               <span className="flex items-center gap-2"><i className="bx bx-check-double text-violet-500"></i> VERIFIED BUILDERS</span>
-               <span className="flex items-center gap-2"><i className="bx bx-check-double text-violet-500"></i> SMART BUDGETING</span>
+              <button className="px-8 py-4 rounded-full border border-slate-600 hover:bg-white/5 hover:border-white/20 text-white font-bold text-lg transition-all flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white text-slate-900 flex items-center justify-center">
+                  <i className="bx bx-play text-xl ml-1"></i>
+                </div>
+                Watch Demo
+              </button>
+            </div>
+
+          </div>
+
+          {/* Right Column - Decorative UI Elements representing the 3D model */}
+          <div className="hidden lg:block relative w-[600px] h-[600px]">
+            {/* The actual house image is in the background, but we can overlay the UI boxes from the mockup */}
+            <div className="absolute top-[20%] left-0 glass-card bg-slate-900/60 p-4 border border-blue-500/30 rounded-2xl flex items-center gap-4 animate-float">
+               <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                 <i className="bx bx-home-alt-2 text-xl text-blue-400"></i>
+               </div>
+               <div>
+                 <h4 className="text-white font-bold text-sm">AI Design</h4>
+                 <p className="text-slate-300 text-xs mt-0.5">2D Plans &rarr;</p>
+               </div>
+            </div>
+
+            <div className="absolute top-[50%] -left-10 glass-card bg-slate-900/60 p-4 border border-indigo-500/30 rounded-2xl flex items-center gap-4 animate-float" style={{ animationDelay: '1s' }}>
+               <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                 <i className="bx bx-cube-alt text-xl text-indigo-400"></i>
+               </div>
+               <div>
+                 <h4 className="text-white font-bold text-sm">3D Visualization</h4>
+                 <p className="text-slate-300 text-xs mt-0.5">Real-Time &rarr;</p>
+               </div>
+            </div>
+
+            <div className="absolute top-[30%] right-0 glass-card bg-slate-900/60 p-4 border border-emerald-500/30 rounded-2xl flex items-center gap-4 animate-float" style={{ animationDelay: '2s' }}>
+               <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                 <i className="bx bx-hard-hat text-xl text-emerald-400"></i>
+               </div>
+               <div>
+                 <h4 className="text-white font-bold text-sm">Build</h4>
+                 <p className="text-slate-300 text-xs mt-0.5">With Experts &rarr;</p>
+               </div>
+            </div>
+            
+            {/* Hand-written text SVGs / Styling */}
+            <div className="absolute top-[10%] right-10 text-xl font-medium text-white/90 italic -rotate-6">
+              From Concept<br/>to Completion
+            </div>
+            <div className="absolute bottom-[20%] right-0 text-xl font-medium text-white/90 italic rotate-3">
+              A Smarter<br/>Way to Build
             </div>
           </div>
+          
         </div>
       </section>
 
-      {/* Feature Grid */}
-      <section className="py-32 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
-          {[
-            { 
-              title: 'AI Design Engine', 
-              desc: 'State-of-the-art LLMs trained on millions of architectural patterns to generate bespoke floor plans and concepts.', 
-              icon: 'bx-atom',
-              gradient: 'from-violet-500 to-indigo-500',
-              link: '/design'
-            },
-            { 
-              title: 'Builder Sync', 
-              desc: 'Instant matching with builders specialized in your generated style. Real-time construction project monitoring.', 
-              icon: 'bx-infinite',
-              gradient: 'from-blue-500 to-emerald-500',
-              link: '/builders'
-            },
-            { 
-              title: 'Supply Chain HUD', 
-              desc: 'Direct access to raw materials at wholesale rates with real-time inventory tracking for cost efficiency.', 
-              icon: 'bx-shield-quarter',
-              gradient: 'from-pink-500 to-rose-500',
-              link: '/materials'
-            }
-          ].map((f, i) => (
-            <Link href={f.link} prefetch={false} key={i} className="glass-card p-10 group hover:-translate-y-3 duration-500 card-glow h-full flex flex-col">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${f.gradient} flex items-center justify-center mb-10 shadow-lg shadow-white/5`}>
-                <i className={`bx ${f.icon} text-3xl text-white`}></i>
+      {/* Bottom Stats Bar */}
+      <div className="absolute bottom-0 w-full z-20 px-8 pb-8">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="bg-[#0a1229]/80 backdrop-blur-2xl border border-white/5 rounded-2xl py-6 px-10 flex flex-wrap md:flex-nowrap justify-between items-center gap-8 shadow-2xl">
+            
+            <div className="flex items-center gap-4">
+              <i className="bx bx-home-heart text-3xl text-blue-400"></i>
+              <div>
+                <h4 className="text-white font-black text-xl">10K+</h4>
+                <p className="text-slate-400 text-xs font-semibold">Homes Designed</p>
               </div>
-              <h3 className="text-2xl font-black mb-4 uppercase tracking-tighter">{f.title}</h3>
-              <p className="text-slate-500 leading-relaxed font-medium mb-10 border-l-2 border-white/5 pl-6">{f.desc}</p>
-              <div className="mt-auto flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-violet-400 group-hover:gap-4 transition-all">
-                 Explore Feature <i className="bx bx-right-arrow-alt text-lg"></i>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-40 px-6 relative">
-         <div className="glow-sphere top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-violet-600/5" />
-         <div className="max-w-5xl mx-auto glass-card p-16 md:p-24 text-center space-y-12 overflow-hidden border-violet-500/20">
-            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-tight italic">
-               Ready to architect <br /><span className="text-gradient">your future</span>?
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto font-medium lead-relaxed">
-               Join the first construction platform that combines artificial intelligence with real-world execution.
-            </p>
-            <div className="flex flex-col md:flex-row justify-center gap-6">
-               <Link href="/signup" prefetch={false} className="btn-primary">Sign Up Now</Link>
-               <Link href="/design" prefetch={false} className="btn-secondary">Try AI Design</Link>
             </div>
-         </div>
-      </section>
+            
+            <div className="w-px h-10 bg-white/10 hidden md:block"></div>
 
-      {/* Footer */}
-      <footer className="py-20 px-6 border-t border-white/5 relative bg-slate-950/40 backdrop-blur-3xl">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-          <div className="space-y-4 text-center md:text-left">
-            <Link href="/" prefetch={false} className="text-3xl font-black italic flex items-center gap-2 justify-center md:justify-start">
-               <i className="bx bx-cube-alt text-violet-500"></i>
-               <span>Build<span className="text-gradient">Mate</span></span>
-            </Link>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">&copy; 2026 BuildMate AI. All rights reserved.</p>
-          </div>
-          <div className="flex gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-            <Link href="#" className="hover:text-white transition-colors">Twitter</Link>
-            <Link href="#" className="hover:text-white transition-colors">GitHub</Link>
-            <Link href="#" className="hover:text-white transition-colors">Docs</Link>
+            <div className="flex items-center gap-4">
+              <i className="bx bx-group text-3xl text-indigo-400"></i>
+              <div>
+                <h4 className="text-white font-black text-xl">2K+</h4>
+                <p className="text-slate-400 text-xs font-semibold">Verified Builders</p>
+              </div>
+            </div>
+
+            <div className="w-px h-10 bg-white/10 hidden md:block"></div>
+
+            <div className="flex items-center gap-4">
+              <i className="bx bx-cube-alt text-3xl text-purple-400"></i>
+              <div>
+                <h4 className="text-white font-black text-xl">500+</h4>
+                <p className="text-slate-400 text-xs font-semibold">Material Suppliers</p>
+              </div>
+            </div>
+
+            <div className="w-px h-10 bg-white/10 hidden md:block"></div>
+
+            <div className="flex items-center gap-4">
+              <i className="bx bx-star text-3xl text-yellow-400"></i>
+              <div>
+                <h4 className="text-white font-black text-xl">98%</h4>
+                <p className="text-slate-400 text-xs font-semibold">User Satisfaction</p>
+              </div>
+            </div>
+
+            <div className="w-px h-10 bg-white/10 hidden md:block"></div>
+
+            <div className="flex items-center gap-4 ml-auto">
+              <i className="bx bx-leaf text-3xl text-emerald-400"></i>
+              <div>
+                <h4 className="text-white font-semibold text-sm">Sustainable Homes</h4>
+                <p className="text-slate-400 text-xs font-semibold">Brighter Tomorrows</p>
+              </div>
+            </div>
+
           </div>
         </div>
-      </footer>
+      </div>
+      
     </main>
   );
 }
