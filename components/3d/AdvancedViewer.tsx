@@ -1,7 +1,7 @@
 'use client';
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Box, Cone, CameraControls, BakeShadows, Html, Environment } from '@react-three/drei';
+import { ContactShadows, Box, Cone, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
 import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet } from './DetailedFurniture';
@@ -9,74 +9,100 @@ import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudyS
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
 
-const MemoizedRoomInterior = React.memo(({ room, w, l, styleColors }: { room: Room, w: number, l: number, styleColors: any }) => {
+export type QualityMode = 'AUTO' | 'HIGH' | 'MEDIUM' | 'LOW';
+
+const MemoizedRoomInterior = React.memo(({ 
+  room, 
+  w, 
+  l, 
+  styleColors, 
+  isLightActive, 
+  showFurniture 
+}: { 
+  room: Room; 
+  w: number; 
+  l: number; 
+  styleColors: any; 
+  isLightActive: boolean; 
+  showFurniture: boolean; 
+}) => {
   const c = styleColors;
   return (
     <group>
-      <pointLight position={[w/2, 1.2, l/2]} intensity={0.5} distance={4} color="#ffeedd" />
-      {room.type === 'Living Room' && (
-        <group position={[w/2, 0, l/2]}>
-          <group position={[0, 0, 0]}><Sofa color={c} /></group>
-          <group position={[0, 0, -l/2 + 0.3]}><TVUnit color={c} /></group>
-        </group>
+      {/* Render point light ONLY for the active room to drastically improve mobile FPS */}
+      {isLightActive && (
+        <pointLight position={[w / 2, 1.2, l / 2]} intensity={0.6} distance={5} color="#ffeedd" />
       )}
-      {room.type.includes('Bedroom') && (
-        <group position={[w/2, 0, l/2]}>
-          <group position={[0, 0, -l/2 + 1.1]}><Bed color={c} /></group>
-          <group position={[-w/2 + 0.7, 0, 0]} rotation={[0, Math.PI/2, 0]}><Wardrobe color={c} /></group>
-        </group>
+      
+      {showFurniture && (
+        <>
+          {room.type === 'Living Room' && (
+            <group position={[w / 2, 0, l / 2]}>
+              <group position={[0, 0, 0]}><Sofa color={c} /></group>
+              <group position={[0, 0, -l / 2 + 0.3]}><TVUnit color={c} /></group>
+            </group>
+          )}
+          {room.type.includes('Bedroom') && (
+            <group position={[w / 2, 0, l / 2]}>
+              <group position={[0, 0, -l / 2 + 1.1]}><Bed color={c} /></group>
+              <group position={[-w / 2 + 0.7, 0, 0]} rotation={[0, Math.PI / 2, 0]}><Wardrobe color={c} /></group>
+            </group>
+          )}
+          {room.type === 'Kitchen' && <group position={[w / 2, 0, 0.4]}><KitchenSet color={c} /></group>}
+          {room.type === 'Dining' && <group position={[w / 2, 0, l / 2]}><DiningSet color={c} /></group>}
+          {room.type === 'Bathroom' && <group position={[w / 2, 0, l / 2]}><BathroomSet color={c} /></group>}
+          {room.type === 'Study Room' && <group position={[w / 2, 0, l / 2]}><StudySet color={c} /></group>}
+          {room.type === 'Pooja Room' && <group position={[w / 2, 0, 0.5]}><PoojaSet color={c} /></group>}
+        </>
       )}
-      {room.type === 'Kitchen' && <group position={[w/2, 0, 0.4]}><KitchenSet color={c} /></group>}
-      {room.type === 'Dining' && <group position={[w/2, 0, l/2]}><DiningSet color={c} /></group>}
-      {room.type === 'Bathroom' && <group position={[w/2, 0, l/2]}><BathroomSet color={c} /></group>}
-      {room.type === 'Study Room' && <group position={[w/2, 0, l/2]}><StudySet color={c} /></group>}
-      {room.type === 'Pooja Room' && <group position={[w/2, 0, 0.5]}><PoojaSet color={c} /></group>}
     </group>
   );
 });
 
 MemoizedRoomInterior.displayName = 'MemoizedRoomInterior';
 
-const WallWithWindow = React.memo(({ w, h, thickness, color, isFront }: { w: number, h: number, thickness: number, color: any, isFront: boolean }) => {
+const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShadows }: { w: number; h: number; thickness: number; color: any; isFront: boolean; enableShadows: boolean }) => {
   const ww = Math.min(w * 0.4, 1.5);
   const wh = h * 0.5;
   if (w < 1.0) {
     return (
-      <Box args={[w, h, thickness]} castShadow receiveShadow>
+      <Box args={[w, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
     );
   }
   return (
     <group>
-      <Box position={[-w/2 + (w-ww)/4, 0, 0]} args={[(w-ww)/2, h, thickness]} castShadow receiveShadow>
+      <Box position={[-w / 2 + (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
-      <Box position={[w/2 - (w-ww)/4, 0, 0]} args={[(w-ww)/2, h, thickness]} castShadow receiveShadow>
+      <Box position={[w / 2 - (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
-      <Box position={[0, -h/2 + (h-wh)/4, 0]} args={[ww, (h-wh)/2, thickness]} castShadow receiveShadow>
+      <Box position={[0, -h / 2 + (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
-      <Box position={[0, h/2 - (h-wh)/4, 0]} args={[ww, (h-wh)/2, thickness]} castShadow receiveShadow>
+      <Box position={[0, h / 2 - (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
-      
-      {/* HD Glass Window */}
-      <Box position={[0, 0, 0]} args={[ww, wh, thickness*0.2]}>
+
+      {/* Glass Window */}
+      <Box position={[0, 0, 0]} args={[ww, wh, thickness * 0.2]}>
         <meshStandardMaterial color="#a3e6ff" transparent opacity={0.6} metalness={0.1} roughness={0.1} />
       </Box>
       {/* Window Frame */}
-      <Box position={[0, 0, 0]} args={[ww, wh, thickness*0.4]}><meshStandardMaterial color={color.frame} roughness={0.2} metalness={0.8}/></Box>
+      <Box position={[0, 0, 0]} args={[ww, wh, thickness * 0.4]}>
+        <meshStandardMaterial color={color.frame} roughness={0.2} metalness={0.8} />
+      </Box>
     </group>
   );
 });
 
 WallWithWindow.displayName = 'WallWithWindow';
 
-const FloorGroup = ({ spec, level, children, isExploded }: { spec: HouseSpec, level: number, children: React.ReactNode, isExploded: boolean }) => {
+const FloorGroup = ({ spec, level, children, isExploded }: { spec: HouseSpec; level: number; children: React.ReactNode; isExploded: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
-  
+
   useFrame(() => {
     if (groupRef.current) {
       const targetY = isExploded ? level * 2.5 : 0;
@@ -87,7 +113,23 @@ const FloorGroup = ({ spec, level, children, isExploded }: { spec: HouseSpec, le
   return <group ref={groupRef}>{children}</group>;
 };
 
-const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoomId, explodedView, onRoomClick }: { spec: HouseSpec, viewMode: string, activeFloor: number | 'ALL', activeRoomId: string | null, explodedView: boolean, onRoomClick: (id: string) => void }) => {
+const ArchitecturalModel = React.memo(({ 
+  spec, 
+  viewMode, 
+  activeFloor, 
+  activeRoomId, 
+  explodedView, 
+  onRoomClick,
+  effectiveQuality
+}: { 
+  spec: HouseSpec; 
+  viewMode: string; 
+  activeFloor: number | 'ALL'; 
+  activeRoomId: string | null; 
+  explodedView: boolean; 
+  onRoomClick: (id: string) => void;
+  effectiveQuality: string;
+}) => {
   const getStyleColors = (style: string) => {
     switch (style) {
       case 'Luxury': return { wall: '#fdfbf7', roof: '#0f172a', window: '#e0f2fe', frame: '#d4af37', floor: '#1e293b', wood: '#451a03', fabric: '#fef3c7', metal: '#d4af37', text: '#ffffff' };
@@ -100,8 +142,8 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
 
   const extColors = getStyleColors(spec.style);
   const intColors = getStyleColors(spec.interiorStyle);
-  
   const isCutaway = viewMode === 'CUTAWAY' || viewMode === 'INTERIOR' || explodedView;
+  const enableShadows = effectiveQuality !== 'LOW';
 
   const renderFloor = (level: number) => {
     if (activeFloor !== 'ALL' && level !== activeFloor) return null;
@@ -121,6 +163,22 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
           const isBalcony = room.type === 'Balcony';
           const isTerrace = room.type === 'Terrace';
           const showFrontWall = !isCutaway;
+          const isSelectedRoom = activeRoomId === room.id;
+
+          // Performance optimization: Furniture pruning
+          const showFurniture = isCutaway && (activeFloor === 'ALL' || activeFloor === level);
+
+          // Performance optimization: Limit Html labels on mobile/low quality modes
+          let showLabel = false;
+          if (isCutaway) {
+            if (effectiveQuality === 'LOW') {
+              showLabel = isSelectedRoom;
+            } else if (effectiveQuality === 'MEDIUM') {
+              showLabel = isSelectedRoom || activeFloor === level || activeFloor === 'ALL';
+            } else {
+              showLabel = true;
+            }
+          }
 
           return (
             <group 
@@ -135,80 +193,89 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
             >
               
               {/* Floor Slab */}
-              <Box position={[rw/2, 0.05, rl/2]} args={[rw, 0.1, rl]} receiveShadow>
-                <meshStandardMaterial color={isBalcony || isTerrace ? '#94a3b8' : (activeRoomId === room.id ? '#6366f1' : extColors.floor)} />
+              <Box position={[rw/2, 0.05, rl/2]} args={[rw, 0.1, rl]} receiveShadow={enableShadows}>
+                <meshStandardMaterial color={isBalcony || isTerrace ? '#94a3b8' : (isSelectedRoom ? '#6366f1' : extColors.floor)} />
               </Box>
 
               {/* Walls or Railings */}
               {(!isBalcony && !isTerrace) ? (
                 <>
                   <group position={[rw/2, FLOOR_HEIGHT/2, 0.05]}>
-                    <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} />
+                    <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
                   <group position={[0.05, FLOOR_HEIGHT/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} />
+                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
                   <group position={[rw - 0.05, FLOOR_HEIGHT/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} />
+                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
                   {showFrontWall && (
                     <group position={[rw/2, FLOOR_HEIGHT/2, rl - 0.05]}>
-                      <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={true} />
+                      <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={true} enableShadows={enableShadows} />
                     </group>
                   )}
                   
-                  <MemoizedRoomInterior room={room} w={rw} l={rl} styleColors={intColors} />
+                  <MemoizedRoomInterior 
+                    room={room} 
+                    w={rw} 
+                    l={rl} 
+                    styleColors={intColors} 
+                    isLightActive={isSelectedRoom || (viewMode === 'INTERIOR' && isSelectedRoom)}
+                    showFurniture={showFurniture}
+                  />
                 </>
               ) : (
                 <>
                   {/* Glass Railings for Balcony/Terrace */}
                   <group position={[rw/2, 0.5, rl - 0.05]}>
-                    <Box args={[rw, 1.0, 0.05]} castShadow>
+                    <Box args={[rw, 1.0, 0.05]} castShadow={enableShadows}>
                        <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rw, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   <group position={[0.05, 0.5, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <Box args={[rl, 1.0, 0.05]} castShadow>
+                    <Box args={[rl, 1.0, 0.05]} castShadow={enableShadows}>
                        <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rl, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   <group position={[rw - 0.05, 0.5, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <Box args={[rl, 1.0, 0.05]} castShadow>
+                    <Box args={[rl, 1.0, 0.05]} castShadow={enableShadows}>
                        <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rl, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   
-                  {/* Few Plants on Balcony/Terrace */}
+                  {/* Plants on Balcony/Terrace */}
                   <group position={[0.4, 0, 0.4]}>
-                    <Box args={[0.3, 0.4, 0.3]} position={[0, 0.2, 0]} castShadow><meshStandardMaterial color="#1e293b"/></Box>
-                    <Cone args={[0.3, 0.8, 8]} position={[0, 0.8, 0]} castShadow><meshStandardMaterial color="#15803d"/></Cone>
+                    <Box args={[0.3, 0.4, 0.3]} position={[0, 0.2, 0]} castShadow={enableShadows}><meshStandardMaterial color="#1e293b"/></Box>
+                    <Cone args={[0.3, 0.8, 8]} position={[0, 0.8, 0]} castShadow={enableShadows}><meshStandardMaterial color="#15803d"/></Cone>
                   </group>
                 </>
               )}
 
-              {/* Room Label */}
-              {isCutaway && (
-                    <Html 
-                      position={[rw/2, 0.5, rl/2]} 
-                      center 
-                      zIndexRange={[100, 0]}
-                    >
-                      <div className="bg-[#0f1525]/90 border border-white/20 text-slate-200 px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap backdrop-blur-md shadow-2xl flex items-center gap-2 cursor-pointer hover:bg-white hover:text-black transition-colors"
-                           onClick={(e) => { e.stopPropagation(); onRoomClick(room.id); }}>
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_5px_#3b82f6] animate-pulse"></div>
-                        {room.name}
-                      </div>
-                    </Html>
-                  )}
+              {/* Room Label (Pruned on low quality) */}
+              {showLabel && (
+                <Html 
+                  position={[rw/2, 0.5, rl/2]} 
+                  center 
+                  zIndexRange={[100, 0]}
+                >
+                  <div 
+                    className={`bg-[#0f1525]/90 border ${isSelectedRoom ? 'border-indigo-400 text-white font-black scale-105' : 'border-white/20 text-slate-200 font-bold'} px-3 py-1.5 rounded-full text-[10px] whitespace-nowrap backdrop-blur-md shadow-2xl flex items-center gap-2 cursor-pointer hover:bg-white hover:text-black transition-all`}
+                    onClick={(e) => { e.stopPropagation(); onRoomClick(room.id); }}
+                  >
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_5px_#3b82f6] animate-pulse"></div>
+                    {room.name}
+                  </div>
+                </Html>
+              )}
             </group>
           );
         })}
 
         {/* Floor Label for Exploded View */}
-        {(explodedView || isCutaway) && activeFloor === 'ALL' && (
+        {(explodedView || isCutaway) && activeFloor === 'ALL' && effectiveQuality !== 'LOW' && (
            <Html 
              position={[- (spec.plotW * UNIT)/2 - 0.2, level * FLOOR_HEIGHT + FLOOR_HEIGHT/2, 0]} 
              center
@@ -240,11 +307,11 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
         <FloorGroup spec={spec} level={spec.floors} isExploded={explodedView}>
            <group position={[0, roofY - (spec.floors * FLOOR_HEIGHT), (spec.hasParking ? -3 : 2) * UNIT]}>
              {spec.style === 'Traditional' ? (
-               <Cone args={[Math.max(drawW, drawL) * 0.7, 1.5, 4]} rotation={[0, Math.PI / 4, 0]} castShadow>
+               <Cone args={[Math.max(drawW, drawL) * 0.7, 1.5, 4]} rotation={[0, Math.PI / 4, 0]} castShadow={enableShadows}>
                  <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
                </Cone>
              ) : (
-               <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow>
+               <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow={enableShadows}>
                  <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
                </Box>
              )}
@@ -255,9 +322,9 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
       {/* Parking */}
       {spec.hasParking && (
         <group position={[0, 0.02, (spec.plotL * UNIT) / 2 - 1]}>
-           <Box args={[2.5, 0.04, 3]} receiveShadow><meshStandardMaterial color="#1e293b" /></Box>
-           <Box args={[1.2, 0.4, 2.0]} position={[0, 0.24, 0]} castShadow><meshStandardMaterial color="#ef4444" /></Box>
-           <Box args={[0.8, 0.3, 1.0]} position={[0, 0.6, -0.2]} castShadow><meshStandardMaterial color="#000000" /></Box>
+           <Box args={[2.5, 0.04, 3]} receiveShadow={enableShadows}><meshStandardMaterial color="#1e293b" /></Box>
+           <Box args={[1.2, 0.4, 2.0]} position={[0, 0.24, 0]} castShadow={enableShadows}><meshStandardMaterial color="#ef4444" /></Box>
+           <Box args={[0.8, 0.3, 1.0]} position={[0, 0.6, -0.2]} castShadow={enableShadows}><meshStandardMaterial color="#000000" /></Box>
         </group>
       )}
     </group>
@@ -266,9 +333,44 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
 
 ArchitecturalModel.displayName = 'ArchitecturalModel';
 
-export default function AdvancedViewer({ specs, viewMode, activeFloor, activeRoomId, resetCameraSignal, explodedView, onRoomClick }: { specs: any, viewMode: string, activeFloor: number | 'ALL', activeRoomId: string | null, resetCameraSignal: number, explodedView: boolean, onRoomClick: (id: string) => void }) {
+export default function AdvancedViewer({ 
+  specs, 
+  viewMode, 
+  activeFloor, 
+  activeRoomId, 
+  resetCameraSignal, 
+  explodedView, 
+  onRoomClick 
+}: { 
+  specs: any; 
+  viewMode: string; 
+  activeFloor: number | 'ALL'; 
+  activeRoomId: string | null; 
+  resetCameraSignal: number; 
+  explodedView: boolean; 
+  onRoomClick: (id: string) => void;
+}) {
   const houseSpec = useMemo(() => generateHouseLayout(specs), [specs]);
   const cameraControlsRef = useRef<CameraControls>(null);
+
+  // Quality & Device Adaptation
+  const [qualityMode, setQualityMode] = useState<QualityMode>('AUTO');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768 || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+      setIsMobile(mobile);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const effectiveQuality = useMemo(() => {
+    if (qualityMode !== 'AUTO') return qualityMode;
+    return isMobile ? 'MEDIUM' : 'HIGH';
+  }, [qualityMode, isMobile]);
 
   const pw = houseSpec.plotW * UNIT;
   const pl = houseSpec.plotL * UNIT;
@@ -286,7 +388,6 @@ export default function AdvancedViewer({ specs, viewMode, activeFloor, activeRoo
        if (room) {
           const cx = room.x * UNIT - pw/2 + (room.w * UNIT)/2;
           const cz = room.y * UNIT - pl/2 + (room.l * UNIT)/2;
-          // Account for exploded Y offset if active
           const cy = room.level * FLOOR_HEIGHT + (explodedView ? room.level * 2.5 : 0) + 1.0;
           
           ctrl.setLookAt(cx, cy, cz + (room.l * UNIT)*0.4, cx, cy, cz, true);
@@ -294,34 +395,79 @@ export default function AdvancedViewer({ specs, viewMode, activeFloor, activeRoo
     }
   }, [viewMode, activeRoomId, pw, pl, houseSpec.rooms, resetCameraSignal, explodedView]);
 
+  // Dynamic DPR and shadow parameters based on performance preset
+  const dprRange: [number, number] = effectiveQuality === 'HIGH' ? [1, 1.5] : (effectiveQuality === 'MEDIUM' ? [1, 1.25] : [1, 1]);
+  const shadowMapSize: [number, number] = effectiveQuality === 'HIGH' ? [1024, 1024] : [512, 512];
+  const shadowRes = effectiveQuality === 'HIGH' ? 512 : (effectiveQuality === 'MEDIUM' ? 256 : 128);
+
   return (
-    <div className="w-full h-full relative bg-slate-900 rounded-3xl overflow-hidden flex flex-col">
-      <Canvas shadows camera={{ position: [pw * 1.5, 4, pl * 1.5], fov: 50 }} dpr={[1, 2]}>
+    <div className="w-full h-full relative bg-slate-900 rounded-3xl overflow-hidden flex flex-col touch-none select-none">
+      
+      {/* Sleek Performance Preset Selector Overlay (Top Left) */}
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-slate-950/80 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 shadow-xl">
+        <span className="text-blue-400 flex items-center gap-1 mr-1">
+          <i className="bx bx-bolt-circle text-xs"></i> Mode:
+        </span>
+        {(['AUTO', 'HIGH', 'MEDIUM', 'LOW'] as QualityMode[]).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setQualityMode(mode)}
+            className={`px-2 py-0.5 rounded-md uppercase font-black tracking-wider transition-all ${
+              qualityMode === mode
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            {mode === 'MEDIUM' ? 'MED' : mode}
+          </button>
+        ))}
+      </div>
+
+      <Canvas 
+        shadows={effectiveQuality !== 'LOW'} 
+        camera={{ position: [pw * 1.5, 4, pl * 1.5], fov: 50 }} 
+        dpr={dprRange}
+      >
         <color attach="background" args={['#050810']} />
         <Environment preset="city" />
-        <ambientLight intensity={0.4} />
-        <directionalLight 
-          position={[20, 30, 20]} 
-          intensity={2.5} 
-          castShadow 
-          shadow-mapSize={[2048, 2048]} 
-          shadow-camera-near={0.5} 
-          shadow-camera-far={50} 
-          shadow-camera-left={-10} 
-          shadow-camera-right={10} 
-          shadow-camera-top={10} 
-          shadow-camera-bottom={-10} 
-          shadow-bias={-0.0001} 
-        />
-        <directionalLight position={[-10, 10, -10]} intensity={1.5} color="#4f46e5" />
+        <ambientLight intensity={effectiveQuality === 'LOW' ? 0.7 : 0.4} />
         
-        <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        {effectiveQuality !== 'LOW' && (
+          <directionalLight 
+            position={[20, 30, 20]} 
+            intensity={2.2} 
+            castShadow 
+            shadow-mapSize={shadowMapSize} 
+            shadow-camera-near={0.5} 
+            shadow-camera-far={50} 
+            shadow-camera-left={-10} 
+            shadow-camera-right={10} 
+            shadow-camera-top={10} 
+            shadow-camera-bottom={-10} 
+            shadow-bias={-0.0001} 
+          />
+        )}
+        
+        <directionalLight position={[-10, 10, -10]} intensity={1.2} color="#4f46e5" />
+        
+        <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={effectiveQuality !== 'LOW'}>
           <planeGeometry args={[pw * 3.0, pl * 3.0]} />
           <meshStandardMaterial color={houseSpec.hasGarden ? '#0f291e' : '#1e293b'} roughness={0.8} />
         </mesh>
 
-        <ArchitecturalModel spec={houseSpec} viewMode={viewMode} activeFloor={activeFloor} activeRoomId={activeRoomId} explodedView={explodedView} onRoomClick={onRoomClick} />
-        <ContactShadows resolution={512} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
+        <ArchitecturalModel 
+          spec={houseSpec} 
+          viewMode={viewMode} 
+          activeFloor={activeFloor} 
+          activeRoomId={activeRoomId} 
+          explodedView={explodedView} 
+          onRoomClick={onRoomClick} 
+          effectiveQuality={effectiveQuality}
+        />
+        
+        {effectiveQuality !== 'LOW' && (
+          <ContactShadows resolution={shadowRes} scale={20} blur={2} opacity={0.4} far={10} color="#000000" />
+        )}
         
         <CameraControls 
           ref={cameraControlsRef} 
@@ -348,7 +494,7 @@ export default function AdvancedViewer({ specs, viewMode, activeFloor, activeRoo
                    <p>Area: {Math.round(room.w * room.l)} sq.ft</p>
                  </div>
                </>
-             )
+             );
           })()}
         </div>
       )}

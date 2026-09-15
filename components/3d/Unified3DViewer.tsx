@@ -160,8 +160,8 @@ const HouseModel = ({ spec, cutawayMode, activeFloor }: { spec: HouseSpec, cutaw
               </Box>
             )}
 
-            {/* Furniture (Only show in Cutaway/Interior mode) */}
-            {(cutawayMode || activeFloor !== 'ALL') && !isBalcony && (
+            {/* Furniture (Only show in Cutaway/Interior mode for active floor) */}
+            {(cutawayMode || activeFloor !== 'ALL') && !isBalcony && (activeFloor === 'ALL' || room.level === activeFloor) && (
               <Furniture roomType={room.type} w={rw} l={rl} style={spec.interiorStyle} />
             )}
           </>
@@ -219,7 +219,7 @@ export default function Unified3DViewer({ specs, activeTab }: { specs: any, acti
   }, [isCutaway]);
 
   return (
-    <div className="w-full h-full relative bg-slate-900 rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+    <div className="w-full h-full relative bg-slate-900 rounded-3xl overflow-hidden border border-white/5 flex flex-col touch-none select-none">
       {/* 3D Viewport Controls */}
       <div className="absolute top-4 left-4 z-10 flex gap-2">
          {isCutaway && (
@@ -232,10 +232,10 @@ export default function Unified3DViewer({ specs, activeTab }: { specs: any, acti
          )}
       </div>
 
-      <Canvas camera={{ position: [pw * 1.5, 3, pl * 1.5], fov: 45 }}>
+      <Canvas dpr={[1, 1.25]} camera={{ position: [pw * 1.5, 3, pl * 1.5], fov: 45 }}>
         <Sky sunPosition={[100, 20, 100]} />
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 20, 10]} intensity={1.5} castShadow />
+        <directionalLight position={[10, 20, 10]} intensity={1.5} castShadow shadow-mapSize={[512, 512]} />
         
         {/* Plot Ground */}
         <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -245,7 +245,7 @@ export default function Unified3DViewer({ specs, activeTab }: { specs: any, acti
 
         <HouseModel spec={houseSpec} cutawayMode={isCutaway} activeFloor={activeFloor} />
 
-        <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
+        <ContactShadows resolution={256} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
         <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2 - 0.05} target={[0, 1, 0]} />
       </Canvas>
 
