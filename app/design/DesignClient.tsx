@@ -106,9 +106,9 @@ export default function DesignStudioContent() {
                   <span className={labelClass}>Floors</span>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <input type="number" className={inputClass} value={specs.plotWidth} onChange={e => updateSpec('plotWidth', e.target.value)} />
+                  <input type="text" inputMode="numeric" className={`${inputClass} px-2 text-center`} value={specs.plotWidth} onChange={e => updateSpec('plotWidth', e.target.value)} />
                   <span className="text-slate-500 font-bold text-xs">×</span>
-                  <input type="number" className={inputClass} value={specs.plotLength} onChange={e => updateSpec('plotLength', e.target.value)} />
+                  <input type="text" inputMode="numeric" className={`${inputClass} px-2 text-center`} value={specs.plotLength} onChange={e => updateSpec('plotLength', e.target.value)} />
                   <div className="w-4"></div>
                   <select className={selectClass} value={specs.floors} onChange={e => updateSpec('floors', e.target.value)}>
                     {['1','2','3','4'].map(o => <option key={o}>{o}</option>)}
