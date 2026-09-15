@@ -232,17 +232,35 @@ export default function Home() {
             </div>
 
             {/* Video Player */}
-            <div className="aspect-video w-full bg-black relative">
+            <div className="aspect-video w-full bg-black relative overflow-hidden">
               <iframe 
                 width="100%" 
                 height="100%" 
-                src="https://www.youtube.com/embed/D9R-jmn2jAE?autoplay=1&mute=1" 
-                title="BuildMate AI Architectural Demo" 
+                src="https://www.youtube.com/embed/RwZYExYnZHU?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=RwZYExYnZHU" 
+                title="BuildMate Architectural Demo" 
                 frameBorder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                 allowFullScreen
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 w-full h-full opacity-60 scale-105 pointer-events-none"
               ></iframe>
+
+              {/* BuildMate Branding Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none p-8 z-10 bg-gradient-to-t from-black/80 via-transparent to-black/30">
+                <div className="flex items-center gap-4 mb-6">
+                  <i className="bx bx-cube-alt text-blue-500 text-6xl md:text-8xl drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
+                  <div className="flex flex-col text-left">
+                    <span className="text-4xl md:text-7xl font-extrabold tracking-tight text-white leading-none drop-shadow-2xl">
+                      Build<span className="text-blue-500">Mate</span>
+                    </span>
+                    <span className="text-sm md:text-xl text-blue-200 font-bold tracking-[0.3em] uppercase mt-2 drop-shadow-lg">
+                      Design. Build. Manage.
+                    </span>
+                  </div>
+                </div>
+                <div className="px-6 py-3 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white text-sm md:text-base font-bold animate-pulse">
+                  The Future of Home Construction is Here
+                </div>
+              </div>
             </div>
             
           </div>
