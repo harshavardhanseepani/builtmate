@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
-});
-
 export async function POST(req: Request) {
   try {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      console.warn('GROQ_API_KEY environment variable is not set.');
+      return NextResponse.json(
+        { error: 'GROQ_API_KEY is missing from environment variables' },
+        { status: 500 }
+      );
+    }
+
+    const groq = new Groq({ apiKey });
+
     const { prompt, plotSize, floors, bhk, style, bedrooms, bathrooms, balcony, parking, garden, rooftop, openKitchen, pooja, studyRoom, servantRoom, facing, budget, extraDetails } = await req.json();
 
     if (!prompt && !extraDetails) {
