@@ -43,36 +43,28 @@ const WallWithWindow = React.memo(({ w, h, thickness, color, isFront }: { w: num
   if (w < 1.0) {
     return (
       <Box args={[w, h, thickness]} castShadow receiveShadow>
-        <meshPhysicalMaterial color={color.wall} transmission={0.95} opacity={1} roughness={0.05} metalness={0.1} ior={1.3} thickness={0.1} clearcoat={1} />
+        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
     );
   }
   return (
     <group>
       <Box position={[-w/2 + (w-ww)/4, 0, 0]} args={[(w-ww)/2, h, thickness]} castShadow receiveShadow>
-        <meshPhysicalMaterial color={color.wall} transmission={0.95} opacity={1} roughness={0.05} metalness={0.1} ior={1.3} thickness={0.1} clearcoat={1} />
+        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
       <Box position={[w/2 - (w-ww)/4, 0, 0]} args={[(w-ww)/2, h, thickness]} castShadow receiveShadow>
-        <meshPhysicalMaterial color={color.wall} transmission={0.95} opacity={1} roughness={0.05} metalness={0.1} ior={1.3} thickness={0.1} clearcoat={1} />
+        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
       <Box position={[0, -h/2 + (h-wh)/4, 0]} args={[ww, (h-wh)/2, thickness]} castShadow receiveShadow>
-        <meshPhysicalMaterial color={color.wall} transmission={0.95} opacity={1} roughness={0.05} metalness={0.1} ior={1.3} thickness={0.1} clearcoat={1} />
+        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
       <Box position={[0, h/2 - (h-wh)/4, 0]} args={[ww, (h-wh)/2, thickness]} castShadow receiveShadow>
-        <meshPhysicalMaterial color={color.wall} transmission={0.95} opacity={1} roughness={0.05} metalness={0.1} ior={1.3} thickness={0.1} clearcoat={1} />
+        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
       </Box>
       
       {/* HD Glass Window */}
       <Box position={[0, 0, 0]} args={[ww, wh, thickness*0.2]}>
-        <meshPhysicalMaterial 
-          color="#a3e6ff" 
-          transmission={0.9} 
-          opacity={1} 
-          metalness={0.1} 
-          roughness={0.1} 
-          ior={1.5} 
-          thickness={0.5} 
-        />
+        <meshStandardMaterial color="#a3e6ff" transparent opacity={0.6} metalness={0.1} roughness={0.1} />
       </Box>
       {/* Window Frame */}
       <Box position={[0, 0, 0]} args={[ww, wh, thickness*0.4]}><meshStandardMaterial color={color.frame} roughness={0.2} metalness={0.8}/></Box>
@@ -172,19 +164,19 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
                   {/* Glass Railings for Balcony/Terrace */}
                   <group position={[rw/2, 0.5, rl - 0.05]}>
                     <Box args={[rw, 1.0, 0.05]} castShadow>
-                       <meshPhysicalMaterial color="#ffffff" transmission={0.9} opacity={1} roughness={0.1} ior={1.5} thickness={0.5} />
+                       <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rw, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   <group position={[0.05, 0.5, rl/2]} rotation={[0, Math.PI/2, 0]}>
                     <Box args={[rl, 1.0, 0.05]} castShadow>
-                       <meshPhysicalMaterial color="#ffffff" transmission={0.9} opacity={1} roughness={0.1} ior={1.5} thickness={0.5} />
+                       <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rl, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   <group position={[rw - 0.05, 0.5, rl/2]} rotation={[0, Math.PI/2, 0]}>
                     <Box args={[rl, 1.0, 0.05]} castShadow>
-                       <meshPhysicalMaterial color="#ffffff" transmission={0.9} opacity={1} roughness={0.1} ior={1.5} thickness={0.5} />
+                       <meshStandardMaterial color="#a3e6ff" transparent opacity={0.4} roughness={0.1} />
                     </Box>
                     <Box position={[0, 0.5, 0]} args={[rl, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
@@ -249,11 +241,11 @@ const ArchitecturalModel = React.memo(({ spec, viewMode, activeFloor, activeRoom
            <group position={[0, roofY - (spec.floors * FLOOR_HEIGHT), (spec.hasParking ? -3 : 2) * UNIT]}>
              {spec.style === 'Traditional' ? (
                <Cone args={[Math.max(drawW, drawL) * 0.7, 1.5, 4]} rotation={[0, Math.PI / 4, 0]} castShadow>
-                 <meshPhysicalMaterial color={extColors.roof} transmission={0.5} opacity={1} roughness={0.2} ior={1.3} thickness={0.1} />
+                 <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
                </Cone>
              ) : (
                <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow>
-                 <meshPhysicalMaterial color={extColors.roof} transmission={0.5} opacity={1} roughness={0.2} ior={1.3} thickness={0.1} />
+                 <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
                </Box>
              )}
            </group>
