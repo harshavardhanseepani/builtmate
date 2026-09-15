@@ -2,65 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { db, auth } from '@/lib/firebase';
-import { ref, onValue, push, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/context/AuthContext';
 
 export default function BuilderProfile() {
   const { id } = useParams();
   const router = useRouter();
   const [builder, setBuilder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    if (!auth) return;
-    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
-    return () => unsubscribe();
-  }, []);
-
-const MOCK_BUILDERS = [
-  { id: '1', name: 'Ramesh Singh', company: 'Apex Construction', location: 'Mumbai, MH', projects: 45, experience: '12 Yrs', rating: 4.8, verified: true, image: 'https://images.unsplash.com/photo-1541888086925-920eb1f1dc17?auto=format&fit=crop&q=80&w=800', description: 'Building the future of Mumbai with modern and sustainable construction.', portfolio: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=800'], specialization: 'Luxury Villas' },
-  { id: '2', name: 'Arjun Reddy', company: 'BuildPro Solutions', location: 'Hyderabad, TS', projects: 120, experience: '18 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800', description: 'Excellence in commercial and residential execution.', portfolio: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800'], specialization: 'Modern Homes' },
-  { id: '3', name: 'Priya Sharma', company: 'Sharma Architects', location: 'Bangalore, KA', projects: 32, experience: '8 Yrs', rating: 4.7, verified: true, image: 'https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=800', description: 'Combining nature with contemporary architecture.', portfolio: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800'], specialization: 'Eco Houses' },
-  { id: '4', name: 'Vijay Kumar', company: 'VK Designs', location: 'Chennai, TN', projects: 85, experience: '15 Yrs', rating: 4.6, verified: true, image: 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=800', description: 'Traditional South Indian aesthetics meet modern engineering.', portfolio: ['https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&q=80&w=800'], specialization: 'Traditional Homes' }
-];
+  const MOCK_BUILDERS = [
+    { id: '1', name: 'Ramesh Singh', company: 'Apex Construction', location: 'Mumbai, MH', projects: 45, experience: '12 Yrs', rating: 4.8, verified: true, image: 'https://images.unsplash.com/photo-1541888086925-920eb1f1dc17?auto=format&fit=crop&q=80&w=800', description: 'Building the future of Mumbai with modern and sustainable construction.', portfolio: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=800'], specialization: 'Luxury Villas' },
+    { id: '2', name: 'Arjun Reddy', company: 'BuildPro Solutions', location: 'Hyderabad, TS', projects: 120, experience: '18 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800', description: 'Excellence in commercial and residential execution.', portfolio: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800'], specialization: 'Modern Homes' },
+    { id: '3', name: 'Priya Sharma', company: 'Sharma Architects', location: 'Bangalore, KA', projects: 32, experience: '8 Yrs', rating: 4.7, verified: true, image: 'https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=800', description: 'Combining nature with contemporary architecture.', portfolio: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800'], specialization: 'Eco Houses' },
+    { id: '4', name: 'Vijay Kumar', company: 'VK Designs', location: 'Chennai, TN', projects: 85, experience: '15 Yrs', rating: 4.6, verified: true, image: 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=800', description: 'Traditional South Indian aesthetics meet modern engineering.', portfolio: ['https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&q=80&w=800'], specialization: 'Traditional Homes' }
+  ];
 
   useEffect(() => {
     if (id) {
-      let timeout: NodeJS.Timeout;
-      try {
-        if (!db) {
-          setBuilder(MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]);
-          setLoading(false);
-          return;
-        }
-        const builderRef = ref(db, `builders/${id}`);
-        onValue(builderRef, (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            setBuilder(data);
-          } else {
-            setBuilder(MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]);
-          }
-          setLoading(false);
-        }, (err) => {
-          setBuilder(MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]);
-          setLoading(false);
-        });
-
-        timeout = setTimeout(() => {
-           setBuilder((prev: any) => prev ? prev : (MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]));
-           setLoading(false);
-        }, 1000);
-      } catch(e) {
-        setBuilder(MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0]);
-        setLoading(false);
-      }
-      return () => {
-         if (timeout) clearTimeout(timeout);
-      }
+      const found = MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0];
+      setBuilder(found);
+      setLoading(false);
     }
   }, [id]);
 
@@ -69,28 +32,7 @@ const MOCK_BUILDERS = [
       router.push('/login');
       return;
     }
-
-    if (!db) {
-      router.push('/projects');
-      return;
-    }
-
-    const projectsRef = push(ref(db, 'projects'));
-    const newProject = {
-      id: projectsRef.key,
-      userId: user.uid,
-      builderId: builder.id,
-      builderName: builder.company,
-      status: 'pending',
-      progress: 0,
-      stage: 'Foundation',
-      budget: '₹30L - ₹50L', // Default or from previous AI design context
-      plotSize: '1200 sqft',
-      createdAt: new Date().toISOString()
-    };
-
-    await set(projectsRef, newProject);
-    router.push(`/dashboard?project=${projectsRef.key}`);
+    router.push('/projects');
   };
 
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Loading Profile...</div>;

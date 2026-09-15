@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ref, onValue } from 'firebase/database';
-import { db } from '@/lib/firebase';
 import Navbar from '@/components/Navbar';
 
 export default function MaterialsMarketplace() {
@@ -11,56 +9,22 @@ export default function MaterialsMarketplace() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMat, setSelectedMat] = useState<any>(null);
 
-const MOCK_MATERIALS = [
-  { id: '1', name: 'Tata Tiscon 550SD TMT', category: 'Steel', price: '₹72,500 / MT', supplier: 'Tata Steel Direct', location: 'Jamshedpur', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1518557984649-7b161c230cfa?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43210', email: 'sales@tatasteel.com', address: 'Jamshedpur, Jharkhand', hours: 'Mon-Sat: 8 AM - 7 PM' } },
-  { id: '2', name: 'OPC 53 Grade Cement', category: 'Cement', price: '₹380 / bag', supplier: 'UltraTech Cement', location: 'Rajasthan', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43211', email: 'info@ultratech.in', address: 'Rajasthan', hours: 'Mon-Sat: 9 AM - 6 PM' } },
-  { id: '3', name: 'Asian Paints Royale', category: 'Paint', price: '₹4,200 / 20L', supplier: 'Asian Paints Pro', location: 'Mumbai', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43212', email: 'hello@asianpaints.com', address: 'Mumbai, MH', hours: 'Mon-Sun: 10 AM - 8 PM' } },
-  { id: '4', name: 'Kajaria Vitrified Tiles', category: 'Flooring', price: '₹65 / sq.ft', supplier: 'Elegance Ceramics', location: 'Salt Lake', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43213', email: 'orders@eleganceceramics.in', address: 'Sector 5, Salt Lake, Kolkata', hours: 'Tue-Sun: 10 AM - 7 PM' } },
-  { id: '5', name: 'Premium River Sand', category: 'Aggregate', price: '₹11,200 / MT', supplier: 'Coastal Minerals', location: 'Kochi', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1597484661643-2f5fef640dd1?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43214', email: 'sales@coastalminerals.in', address: 'Marine Drive, Kochi', hours: 'Mon-Sat: 7 AM - 6 PM' } },
-  { id: '6', name: 'Fly Ash Bricks', category: 'Masonry', price: '₹18.5 / piece', supplier: 'EcoBrick Distributors', location: 'Delhi', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43215', email: 'hello@ecobrick.com', address: 'Okhla Phase 1, Delhi', hours: 'Mon-Sat: 9 AM - 6 PM' } },
-  { id: '7', name: 'AAC Blocks (600x200)', category: 'Masonry', price: '₹3,800 / CBM', supplier: 'Magicrete', location: 'Surat', stock: 'Low Stock', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43216', email: 'support@magicrete.in', address: 'GIDC, Surat', hours: 'Mon-Fri: 10 AM - 6 PM' } },
-  { id: '8', name: 'White Marble Flooring', category: 'Flooring', price: '₹1,180 / sqft', supplier: 'Rajputana Marbles', location: 'Udaipur', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43217', email: 'info@rajputanamarbles.com', address: 'Sukher, Udaipur', hours: 'Mon-Sun: 9 AM - 8 PM' } },
-  { id: '9', name: 'Teak Wood Planks', category: 'Wood', price: '₹3,500 / sqft', supplier: 'Kerala Timbers', location: 'Trivandrum', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43218', email: 'sales@keralatimbers.com', address: 'Chalai Market, Trivandrum', hours: 'Mon-Sat: 8 AM - 6 PM' } },
-  { id: '10', name: 'UPVC Windows', category: 'Fittings', price: '₹4,500 / window', supplier: 'Fenesta Direct', location: 'Pune', stock: 'Low Stock', image: 'https://images.unsplash.com/photo-1509315811345-672d83ef2fbc?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43219', email: 'orders@fenesta.in', address: 'Hinjewadi, Pune', hours: 'Mon-Sat: 10 AM - 7 PM' } }
-];
+  const MOCK_MATERIALS = [
+    { id: '1', name: 'Tata Tiscon 550SD TMT', category: 'Steel', price: '₹72,500 / MT', supplier: 'Tata Steel Direct', location: 'Jamshedpur', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1518557984649-7b161c230cfa?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43210', email: 'sales@tatasteel.com', address: 'Jamshedpur, Jharkhand', hours: 'Mon-Sat: 8 AM - 7 PM' } },
+    { id: '2', name: 'OPC 53 Grade Cement', category: 'Cement', price: '₹380 / bag', supplier: 'UltraTech Cement', location: 'Rajasthan', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1504307651254-35680f356fdd?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43211', email: 'info@ultratech.in', address: 'Rajasthan', hours: 'Mon-Sat: 9 AM - 6 PM' } },
+    { id: '3', name: 'Asian Paints Royale', category: 'Paint', price: '₹4,200 / 20L', supplier: 'Asian Paints Pro', location: 'Mumbai', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43212', email: 'hello@asianpaints.com', address: 'Mumbai, MH', hours: 'Mon-Sun: 10 AM - 8 PM' } },
+    { id: '4', name: 'Kajaria Vitrified Tiles', category: 'Flooring', price: '₹65 / sq.ft', supplier: 'Elegance Ceramics', location: 'Salt Lake', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43213', email: 'orders@eleganceceramics.in', address: 'Sector 5, Salt Lake, Kolkata', hours: 'Tue-Sun: 10 AM - 7 PM' } },
+    { id: '5', name: 'Premium River Sand', category: 'Aggregate', price: '₹11,200 / MT', supplier: 'Coastal Minerals', location: 'Kochi', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1597484661643-2f5fef640dd1?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43214', email: 'sales@coastalminerals.in', address: 'Marine Drive, Kochi', hours: 'Mon-Sat: 7 AM - 6 PM' } },
+    { id: '6', name: 'Fly Ash Bricks', category: 'Masonry', price: '₹18.5 / piece', supplier: 'EcoBrick Distributors', location: 'Delhi', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43215', email: 'hello@ecobrick.com', address: 'Okhla Phase 1, Delhi', hours: 'Mon-Sat: 9 AM - 6 PM' } },
+    { id: '7', name: 'AAC Blocks (600x200)', category: 'Masonry', price: '₹3,800 / CBM', supplier: 'Magicrete', location: 'Surat', stock: 'Low Stock', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43216', email: 'support@magicrete.in', address: 'GIDC, Surat', hours: 'Mon-Fri: 10 AM - 6 PM' } },
+    { id: '8', name: 'White Marble Flooring', category: 'Flooring', price: '₹1,180 / sqft', supplier: 'Rajputana Marbles', location: 'Udaipur', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43217', email: 'info@rajputanamarbles.com', address: 'Sukher, Udaipur', hours: 'Mon-Sun: 9 AM - 8 PM' } },
+    { id: '9', name: 'Teak Wood Planks', category: 'Wood', price: '₹3,500 / sqft', supplier: 'Kerala Timbers', location: 'Trivandrum', stock: 'In Stock', image: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43218', email: 'sales@keralatimbers.com', address: 'Chalai Market, Trivandrum', hours: 'Mon-Sat: 8 AM - 6 PM' } },
+    { id: '10', name: 'UPVC Windows', category: 'Fittings', price: '₹4,500 / window', supplier: 'Fenesta Direct', location: 'Pune', stock: 'Low Stock', image: 'https://images.unsplash.com/photo-1509315811345-672d83ef2fbc?auto=format&fit=crop&q=80&w=800', contact: { phone: '+91 98765 43219', email: 'orders@fenesta.in', address: 'Hinjewadi, Pune', hours: 'Mon-Sat: 10 AM - 7 PM' } }
+  ];
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    try {
-      if (!db) {
-        setMaterials(MOCK_MATERIALS);
-        setLoading(false);
-        return;
-      }
-      const materialsRef = ref(db, 'materials');
-      const unsubscribe = onValue(materialsRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          setMaterials(Object.values(data));
-        } else {
-          setMaterials(MOCK_MATERIALS);
-        }
-        setLoading(false);
-      }, (error) => {
-        console.warn("Firebase fetch failed, using mock data.", error);
-        setMaterials(MOCK_MATERIALS);
-        setLoading(false);
-      });
-
-      // Fallback if firebase hangs due to dummy keys
-      timeout = setTimeout(() => {
-         setMaterials(prev => prev.length === 0 ? MOCK_MATERIALS : prev);
-         setLoading(false);
-      }, 1000);
-
-      return () => {
-         unsubscribe();
-         clearTimeout(timeout);
-      };
-    } catch (e) {
-      setMaterials(MOCK_MATERIALS);
-      setLoading(false);
-    }
+    setMaterials(MOCK_MATERIALS);
+    setLoading(false);
   }, []);
 
   const filteredMaterials = materials.filter(m =>

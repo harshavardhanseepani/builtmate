@@ -1,102 +1,40 @@
-'use client';
-
 import { useState, useEffect, useRef } from 'react';
-import { auth, db } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { ref, onValue, push, set, serverTimestamp, query, orderByChild } from 'firebase/database';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import { useAuth } from '@/context/AuthContext';
 
 import { Suspense } from 'react';
 
 export default function DashboardContent() {
-  const [user, setUser] = useState<any>(null);
+  const { user, logout } = useAuth();
   const [projects, setProjects] = useState<any[]>([]);
   const [activeProject, setActiveProject] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdParam = searchParams.get('project');
 
-  const loadUserProjects = (uid: string) => {
-    if (!db) {
-      setLoading(false);
-      return () => {};
-    }
-    const projectsRef = ref(db, 'projects');
-    return onValue(projectsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const userProjects = Object.values(data).filter((p: any) => p.userId === uid || p.userId === 'demo-user');
-        setProjects(userProjects);
-        
-        if (projectIdParam) {
-          const selected = userProjects.find((p: any) => p.id === projectIdParam);
-          if (selected) setActiveProject(selected);
-        } else if (userProjects.length > 0 && !activeProject) {
-          setActiveProject(userProjects[0]);
-        }
-      }
-      setLoading(false);
-    });
-  };
-
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
+    if (!user) {
+      router.push('/login');
     }
-    let unsubscribeProjects: (() => void) | undefined;
-    const unsubscribeAuth = onAuthStateChanged(auth, (u) => {
-      if (u) {
-        setUser(u);
-        unsubscribeProjects = loadUserProjects(u.uid);
-      } else {
-        router.push('/login');
-      }
-    });
-    return () => {
-      unsubscribeAuth();
-      if (unsubscribeProjects) unsubscribeProjects();
-    };
-  }, [projectIdParam]);
-
-  useEffect(() => {
-    if (activeProject && db) {
-      const msgsRef = ref(db, `messages/${activeProject.id}`);
-      const unsubscribe = onValue(msgsRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          setMessages(Object.values(data).sort((a: any, b: any) => a.timestamp - b.timestamp));
-        } else {
-          setMessages([]);
-        }
-      });
-      return () => unsubscribe();
-    }
-  }, [activeProject]);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [user, router]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !activeProject || !user || !db) return;
-
-    const msgRef = push(ref(db, `messages/${activeProject.id}`));
-    await set(msgRef, {
-      id: msgRef.key,
+    if (!newMessage.trim() || !activeProject || !user) return;
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
       text: newMessage,
       senderId: user.uid,
-      senderName: user.displayName || 'User',
-      timestamp: serverTimestamp()
-    });
+      senderName: user.name || 'User',
+      timestamp: Date.now()
+    }]);
     setNewMessage('');
   };
 
@@ -119,11 +57,11 @@ export default function DashboardContent() {
              <div className="flex items-center gap-4 mb-10">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 p-0.5 shadow-lg shadow-violet-500/20">
                    <div className="w-full h-full rounded-2xl bg-slate-950 flex items-center justify-center text-2xl font-black text-white">
-                      {user?.displayName?.charAt(0) || 'U'}
+                      {user?.name?.charAt(0) || 'U'}
                    </div>
                 </div>
                 <div>
-                   <h3 className="font-black text-lg tracking-tight">{user?.displayName || 'Builder Pro'}</h3>
+                   <h3 className="font-black text-lg tracking-tight">{user?.name || 'Builder Pro'}</h3>
                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Active Client</p>
                 </div>
              </div>
