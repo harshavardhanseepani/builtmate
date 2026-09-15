@@ -7,6 +7,10 @@ import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const router = useRouter();
+  const [plotSize, setPlotSize] = useState('30x40');
+  const [direction, setDirection] = useState('North');
+  const [style, setStyle] = useState('Modern');
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   const handleStartDesigning = () => {
     router.push('/design');
@@ -99,7 +103,7 @@ export default function Home() {
               <button onClick={handleStartDesigning} className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-lg shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all flex items-center gap-2">
                 Start Designing <i className="bx bx-right-arrow-alt text-2xl"></i>
               </button>
-              <button className="px-8 py-4 rounded-full border border-slate-600 hover:bg-white/5 hover:border-white/20 text-white font-bold text-lg transition-all flex items-center gap-3">
+              <button onClick={() => setShowVideoModal(true)} className="px-8 py-4 rounded-full border border-slate-600 hover:bg-white/5 hover:border-white/20 text-white font-bold text-lg transition-all flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-white text-slate-900 flex items-center justify-center">
                   <i className="bx bx-play text-xl ml-1"></i>
                 </div>
@@ -210,6 +214,40 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {showVideoModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 md:p-8 animate-in fade-in zoom-in duration-200">
+          <div className="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl relative">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-4 border-b border-white/10 bg-slate-800/50">
+              <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                <i className="bx bx-cube-alt text-blue-400 text-xl"></i>
+                BuildMate Demo
+              </h3>
+              <button onClick={() => setShowVideoModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+                <i className="bx bx-x text-xl"></i>
+              </button>
+            </div>
+
+            {/* Video Player */}
+            <div className="aspect-video w-full bg-black relative">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src="https://www.youtube.com/embed/n4nB6mGjCjw?autoplay=1&mute=1" 
+                title="BuildMate Architectural Demo" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+            
+          </div>
+        </div>
+      )}
       
     </main>
   );
