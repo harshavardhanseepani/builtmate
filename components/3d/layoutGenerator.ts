@@ -45,9 +45,15 @@ export function generateHouseLayout(specs: any): HouseSpec {
   const rooms: Room[] = [];
 
   // LEVEL 0 (Ground Floor)
-  const frontL = houseL * 0.4;
-  const midL = houseL * 0.3;
-  const backL = houseL * 0.3;
+  const seed = specs.seed || 0.1;
+  const mirror = seed > 0.5;
+  const frontRatio = 0.35 + (seed * 0.1); // 0.35 to 0.45
+  const midRatio = 0.25 + ((1-seed) * 0.1); // 0.25 to 0.35
+  const backRatio = 1.0 - frontRatio - midRatio;
+
+  const frontL = houseL * frontRatio;
+  const midL = houseL * midRatio;
+  const backL = houseL * backRatio;
 
   rooms.push({ id: 'floor0_living', name: 'Living Room', type: 'Living Room', x: startX, y: startY, w: houseW, l: frontL, level: 0 });
   
@@ -108,6 +114,13 @@ export function generateHouseLayout(specs: any): HouseSpec {
   // Level 3
   if (floors > 3) {
      rooms.push({ id: 'floor3_terrace', name: 'Terrace', type: 'Terrace', x: startX, y: startY, w: houseW, l: houseL, level: 3 });
+  }
+
+  // Mirror flip based on seed for variety
+  if (mirror) {
+    rooms.forEach(r => {
+      r.x = startX + houseW - (r.x - startX) - r.w;
+    });
   }
 
   return {

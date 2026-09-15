@@ -47,6 +47,7 @@ export default function DesignStudioContent() {
     staircase: 'Internal',
     exteriorStyle: 'Modern',
     interiorStyle: 'Luxury',
+    seed: 0,
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -68,6 +69,9 @@ export default function DesignStudioContent() {
     setIsGenerating(true);
     setGenerationError(null);
     setHasGenerated(false);
+    
+    // Give multiple models by varying the seed
+    updateSpec('seed', Math.random());
     
     setTimeout(() => {
       setIsGenerating(false);
