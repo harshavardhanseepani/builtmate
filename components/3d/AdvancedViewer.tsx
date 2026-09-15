@@ -61,29 +61,30 @@ const MemoizedRoomInterior = React.memo(({
 
 MemoizedRoomInterior.displayName = 'MemoizedRoomInterior';
 
+// Fixed: Solid house walls must NOT be transparent to prevent extreme GPU alpha-sorting overdraw
 const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShadows }: { w: number; h: number; thickness: number; color: any; isFront: boolean; enableShadows: boolean }) => {
   const ww = Math.min(w * 0.4, 1.5);
   const wh = h * 0.5;
   if (w < 1.0) {
     return (
       <Box args={[w, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
     );
   }
   return (
     <group>
       <Box position={[-w / 2 + (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
       <Box position={[w / 2 - (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
       <Box position={[0, -h / 2 + (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
       <Box position={[0, h / 2 - (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} transparent opacity={0.3} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
 
       {/* Glass Window */}
@@ -106,7 +107,12 @@ const FloorGroup = ({ spec, level, children, isExploded }: { spec: HouseSpec; le
   useFrame(() => {
     if (groupRef.current) {
       const targetY = isExploded ? level * 2.5 : 0;
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.1);
+      const currentY = groupRef.current.position.y;
+      if (Math.abs(currentY - targetY) > 0.005) {
+        groupRef.current.position.y = THREE.MathUtils.lerp(currentY, targetY, 0.1);
+      } else {
+        groupRef.current.position.y = targetY;
+      }
     }
   });
 
@@ -143,7 +149,7 @@ const ArchitecturalModel = React.memo(({
   const extColors = getStyleColors(spec.style);
   const intColors = getStyleColors(spec.interiorStyle);
   const isCutaway = viewMode === 'CUTAWAY' || viewMode === 'INTERIOR' || explodedView;
-  const enableShadows = effectiveQuality !== 'LOW';
+  const enableShadows = effectiveQuality === 'HIGH';
 
   const renderFloor = (level: number) => {
     if (activeFloor !== 'ALL' && level !== activeFloor) return null;
@@ -275,7 +281,7 @@ const ArchitecturalModel = React.memo(({
         })}
 
         {/* Floor Label for Exploded View */}
-        {(explodedView || isCutaway) && activeFloor === 'ALL' && effectiveQuality !== 'LOW' && (
+        {(explodedView || isCutaway) && activeFloor === 'ALL' && effectiveQuality === 'HIGH' && (
            <Html 
              position={[- (spec.plotW * UNIT)/2 - 0.2, level * FLOOR_HEIGHT + FLOOR_HEIGHT/2, 0]} 
              center
@@ -302,17 +308,17 @@ const ArchitecturalModel = React.memo(({
     <group>
       {Array.from({ length: spec.floors }).map((_, i) => renderFloor(i))}
 
-      {/* Roof */}
+      {/* Roof - Solid roof material without transparent overdraw */}
       {(!isCutaway || (activeFloor !== 'ALL' && activeFloor < spec.floors - 1) || explodedView) && activeFloor === 'ALL' && (
         <FloorGroup spec={spec} level={spec.floors} isExploded={explodedView}>
            <group position={[0, roofY - (spec.floors * FLOOR_HEIGHT), (spec.hasParking ? -3 : 2) * UNIT]}>
              {spec.style === 'Traditional' ? (
                <Cone args={[Math.max(drawW, drawL) * 0.7, 1.5, 4]} rotation={[0, Math.PI / 4, 0]} castShadow={enableShadows}>
-                 <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
+                 <meshStandardMaterial color={extColors.roof} roughness={0.3} />
                </Cone>
              ) : (
                <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow={enableShadows}>
-                 <meshStandardMaterial color={extColors.roof} transparent opacity={0.4} roughness={0.2} />
+                 <meshStandardMaterial color={extColors.roof} roughness={0.3} />
                </Box>
              )}
            </group>
@@ -359,7 +365,7 @@ export default function AdvancedViewer({
 
   useEffect(() => {
     const checkMobile = () => {
-      const mobile = window.innerWidth < 768 || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+      const mobile = window.innerWidth < 768 || (typeof navigator !== 'undefined' && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window));
       setIsMobile(mobile);
     };
     checkMobile();
@@ -367,9 +373,10 @@ export default function AdvancedViewer({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Default mobile devices to LOW quality preset for 60fps performance
   const effectiveQuality = useMemo(() => {
     if (qualityMode !== 'AUTO') return qualityMode;
-    return isMobile ? 'MEDIUM' : 'HIGH';
+    return isMobile ? 'LOW' : 'HIGH';
   }, [qualityMode, isMobile]);
 
   const pw = houseSpec.plotW * UNIT;
@@ -396,9 +403,7 @@ export default function AdvancedViewer({
   }, [viewMode, activeRoomId, pw, pl, houseSpec.rooms, resetCameraSignal, explodedView]);
 
   // Dynamic DPR and shadow parameters based on performance preset
-  const dprRange: [number, number] = effectiveQuality === 'HIGH' ? [1, 1.5] : (effectiveQuality === 'MEDIUM' ? [1, 1.25] : [1, 1]);
-  const shadowMapSize: [number, number] = effectiveQuality === 'HIGH' ? [1024, 1024] : [512, 512];
-  const shadowRes = effectiveQuality === 'HIGH' ? 512 : (effectiveQuality === 'MEDIUM' ? 256 : 128);
+  const dprRange: [number, number] = effectiveQuality === 'HIGH' ? [1, 1.5] : [1, 1];
 
   return (
     <div className="w-full h-full relative bg-slate-900 rounded-3xl overflow-hidden flex flex-col touch-none select-none">
@@ -424,20 +429,23 @@ export default function AdvancedViewer({
       </div>
 
       <Canvas 
-        shadows={effectiveQuality !== 'LOW'} 
+        shadows={effectiveQuality === 'HIGH'} 
         camera={{ position: [pw * 1.5, 4, pl * 1.5], fov: 50 }} 
         dpr={dprRange}
       >
         <color attach="background" args={['#050810']} />
-        <Environment preset="city" />
-        <ambientLight intensity={effectiveQuality === 'LOW' ? 0.7 : 0.4} />
         
-        {effectiveQuality !== 'LOW' && (
+        {/* Environment HDR loaded ONLY in HIGH quality mode to avoid mobile network/texture stalls */}
+        {effectiveQuality === 'HIGH' && <Environment preset="city" />}
+        
+        <ambientLight intensity={effectiveQuality === 'HIGH' ? 0.4 : 0.8} />
+        
+        {effectiveQuality === 'HIGH' ? (
           <directionalLight 
             position={[20, 30, 20]} 
             intensity={2.2} 
             castShadow 
-            shadow-mapSize={shadowMapSize} 
+            shadow-mapSize={[1024, 1024]} 
             shadow-camera-near={0.5} 
             shadow-camera-far={50} 
             shadow-camera-left={-10} 
@@ -446,11 +454,13 @@ export default function AdvancedViewer({
             shadow-camera-bottom={-10} 
             shadow-bias={-0.0001} 
           />
+        ) : (
+          <directionalLight position={[15, 25, 15]} intensity={1.8} color="#ffffff" />
         )}
         
-        <directionalLight position={[-10, 10, -10]} intensity={1.2} color="#4f46e5" />
+        <directionalLight position={[-10, 10, -10]} intensity={1.0} color="#4f46e5" />
         
-        <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={effectiveQuality !== 'LOW'}>
+        <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={effectiveQuality === 'HIGH'}>
           <planeGeometry args={[pw * 3.0, pl * 3.0]} />
           <meshStandardMaterial color={houseSpec.hasGarden ? '#0f291e' : '#1e293b'} roughness={0.8} />
         </mesh>
@@ -465,8 +475,8 @@ export default function AdvancedViewer({
           effectiveQuality={effectiveQuality}
         />
         
-        {effectiveQuality !== 'LOW' && (
-          <ContactShadows resolution={shadowRes} scale={20} blur={2} opacity={0.4} far={10} color="#000000" />
+        {effectiveQuality === 'HIGH' && (
+          <ContactShadows resolution={512} scale={20} blur={2} opacity={0.4} far={10} color="#000000" />
         )}
         
         <CameraControls 
