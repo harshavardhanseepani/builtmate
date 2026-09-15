@@ -67,7 +67,6 @@ export default function DesignStudioContent() {
   const handleGenerate = () => {
     setIsGenerating(true);
     setGenerationError(null);
-    setHasGenerated(false);
     
     // Give multiple models by varying the seed
     updateSpec('seed', Math.random());
@@ -175,8 +174,8 @@ export default function DesignStudioContent() {
           </div>
 
           {/* Main Viewport */}
-          <div className="lg:col-span-9 flex flex-col gap-4">
-            {isGenerating ? (
+          <div className="lg:col-span-9 flex flex-col gap-4 relative">
+            {isGenerating && !hasGenerated ? (
               <div className="glass-card h-[700px] flex flex-col items-center justify-center text-center p-20 animate-pulse border-indigo-500/20">
                 <i className="bx bx-buildings text-6xl text-indigo-500 animate-spin-slow mb-6"></i>
                 <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter">Building 3D Structure...</h3>
@@ -208,6 +207,14 @@ export default function DesignStudioContent() {
 
                 {/* Viewport */}
                 <div className="h-[650px] w-full relative rounded-3xl overflow-hidden border border-white/5 shadow-2xl bg-black">
+                  {/* Re-generation overlay */}
+                  {isGenerating && (
+                    <div className="absolute inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl animate-fade-in">
+                      <i className="bx bx-loader-alt animate-spin text-5xl text-blue-500 mb-4"></i>
+                      <p className="text-white font-bold tracking-widest uppercase text-sm animate-pulse">Redesigning...</p>
+                    </div>
+                  )}
+
                   {(viewMode === 'EXTERIOR' || viewMode === 'INTERIOR' || viewMode === 'CUTAWAY') && (
                      <>
                        {/* Floating UI over 3D Canvas - Left Tools */}
