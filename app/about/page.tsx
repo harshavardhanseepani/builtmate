@@ -81,15 +81,18 @@ export default function AboutPage() {
           <h2 className="text-3xl font-black text-white mb-12 text-center">How BuildMate Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {[
-              { num: '01', title: 'Enter Requirements' },
-              { num: '02', title: 'AI Generates Design' },
-              { num: '03', title: 'Connect With Builders' },
-              { num: '04', title: 'Source Materials' },
-              { num: '05', title: 'Manage Construction' }
+              { num: '01', title: 'Enter Requirements', icon: 'bx-notepad' },
+              { num: '02', title: 'AI Generates Design', icon: 'bx-bot' },
+              { num: '03', title: 'Connect With Builders', icon: 'bx-hard-hat' },
+              { num: '04', title: 'Source Materials', icon: 'bx-box' },
+              { num: '05', title: 'Manage Construction', icon: 'bx-line-chart' }
             ].map((step, i) => (
               <div key={i} className="glass-card p-6 rounded-3xl text-center relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
-                <div className="text-5xl font-black text-white/5 mb-4 group-hover:text-blue-500/10 transition-colors">{step.num}</div>
-                <h3 className="text-sm font-bold text-white">{step.title}</h3>
+                <div className="text-5xl font-black text-white/5 absolute -top-2 -right-2 group-hover:text-blue-500/10 transition-colors">{step.num}</div>
+                <div className="w-16 h-16 bg-blue-500/10 rounded-2xl mx-auto flex items-center justify-center mb-4 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                  <i className={`bx ${step.icon} text-3xl`}></i>
+                </div>
+                <h3 className="text-sm font-bold text-white relative z-10">{step.title}</h3>
               </div>
             ))}
           </div>
