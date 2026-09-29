@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { ContactShadows, Box, Cone, Cylinder, Ring, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
-import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, RealTree, DrivewayCar, ExteriorSconceLight, PottedPlant, PorchSteps } from './DetailedFurniture';
+import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, DrivewayCar, ExteriorSconceLight, PottedPlant, PorchSteps } from './DetailedFurniture';
 
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
@@ -441,13 +441,8 @@ const ArchitecturalModel = React.memo(({
         </FloorGroup>
       )}
 
-      {/* Outdoor Landscape Trees & Entrance Plants */}
+      {/* Entrance Plants */}
       <group>
-        <RealTree position={[-pw / 2 - 0.8, 0, -pl / 2 + 1]} />
-        <RealTree position={[pw / 2 + 0.8, 0, -pl / 2 + 1]} />
-        <RealTree position={[-pw / 2 - 0.8, 0, pl / 2 - 1]} />
-        <RealTree position={[pw / 2 + 0.8, 0, pl / 2 - 1]} />
-        
         {/* Potted Ceramic Planters at Main Entrance */}
         <PottedPlant position={[-0.9, 0.05, pl / 2 + 0.2]} />
         <PottedPlant position={[0.9, 0.05, pl / 2 + 0.2]} />
@@ -530,9 +525,9 @@ export default function AdvancedViewer({
        if (room) {
           const cx = room.x * UNIT - pw/2 + (room.w * UNIT)/2;
           const cz = room.y * UNIT - pl/2 + (room.l * UNIT)/2;
-          const cy = room.level * FLOOR_HEIGHT + (explodedView ? room.level * 2.5 : 0) + 1.0;
+          const cy = room.level * FLOOR_HEIGHT + (explodedView ? room.level * 2.5 : 0) + 0.65;
           
-          ctrl.setLookAt(cx, cy, cz + (room.l * UNIT)*0.4, cx, cy, cz, true);
+          ctrl.setLookAt(cx, cy, cz + (room.l * UNIT) * 0.35, cx, cy - 0.1, cz - 0.2, true);
        }
     }
   }, [viewMode, activeRoomId, pw, pl, houseSpec.rooms, resetCameraSignal, explodedView]);
@@ -624,16 +619,16 @@ export default function AdvancedViewer({
         />
       </Canvas>
       
-      {/* HTML Room Info Panel (Bottom Left overlay) */}
+      {/* HTML Room Info Panel (Top Right overlay) */}
       {activeRoomId && viewMode === 'INTERIOR' && (
-        <div className="absolute bottom-6 left-6 bg-slate-950/90 border border-indigo-500/50 backdrop-blur-md p-4 rounded-2xl z-20 shadow-2xl max-w-[250px]">
+        <div className="absolute top-4 right-4 bg-slate-950/90 border border-indigo-500/50 backdrop-blur-md p-3.5 rounded-2xl z-20 shadow-2xl max-w-[220px]">
           {(() => {
              const room = houseSpec.rooms.find(r => r.id === activeRoomId);
              if (!room) return null;
              return (
                <>
-                 <h4 className="text-sm font-black uppercase text-indigo-400 mb-1">{room.name}</h4>
-                 <div className="text-[10px] font-bold text-slate-400 space-y-1">
+                 <h4 className="text-xs font-black uppercase text-indigo-400 mb-1">{room.name}</h4>
+                 <div className="text-[10px] font-bold text-slate-400 space-y-0.5">
                    <p>Type: {room.type}</p>
                    <p>Floor: {room.level + 1}</p>
                    <p>Area: {Math.round(room.w * room.l)} sq.ft</p>
@@ -641,6 +636,32 @@ export default function AdvancedViewer({
                </>
              );
           })()}
+        </div>
+      )}
+
+      {/* Attached Interior Quick Room Navigator Bar (Bottom Center overlay) */}
+      {viewMode === 'INTERIOR' && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-slate-950/95 border border-indigo-500/50 backdrop-blur-xl px-4 py-2 rounded-full shadow-2xl overflow-x-auto max-w-[94%] custom-scrollbar">
+          <span className="text-[10px] font-black uppercase text-indigo-400 tracking-wider flex items-center gap-1 shrink-0 mr-1">
+            <i className="bx bx-door-open text-sm"></i> Rooms:
+          </span>
+          {houseSpec.rooms.filter(r => !['Balcony', 'Terrace'].includes(r.type)).map((room) => {
+            const isSelected = activeRoomId === room.id;
+            return (
+              <button
+                key={room.id}
+                onClick={() => onRoomClick(room.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase transition-all shrink-0 ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/40 scale-105 ring-2 ring-indigo-400/50'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10 bg-slate-900/60 border border-white/5'
+                }`}
+              >
+                <i className={`bx ${room.type === 'Kitchen' ? 'bx-fridge' : room.type === 'Bathroom' ? 'bx-bath' : room.type.includes('Bedroom') ? 'bx-bed' : 'bx-sofa'} text-xs`}></i>
+                {room.name}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
