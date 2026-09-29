@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { ContactShadows, Box, Cone, Cylinder, Ring, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
-import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase } from './DetailedFurniture';
+import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, RealTree, DrivewayCar } from './DetailedFurniture';
 
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
@@ -367,6 +367,8 @@ const ArchitecturalModel = React.memo(({
     );
   };
 
+  const pw = spec.plotW * UNIT;
+  const pl = spec.plotL * UNIT;
   const drawW = (spec.plotW - 4) * UNIT;
   const drawL = (spec.plotL - (spec.hasParking ? 14 : 8) - 4) * UNIT;
   const roofY = spec.floors * FLOOR_HEIGHT + 0.1;
@@ -405,12 +407,19 @@ const ArchitecturalModel = React.memo(({
         </FloorGroup>
       )}
 
-      {/* Parking Pad & Entry Canopy */}
+      {/* Outdoor Landscape Trees */}
+      <group>
+        <RealTree position={[-pw / 2 - 0.8, 0, -pl / 2 + 1]} />
+        <RealTree position={[pw / 2 + 0.8, 0, -pl / 2 + 1]} />
+        <RealTree position={[-pw / 2 - 0.8, 0, pl / 2 - 1]} />
+        <RealTree position={[pw / 2 + 0.8, 0, pl / 2 - 1]} />
+      </group>
+
+      {/* Parking Pad & Driveway SUV */}
       {spec.hasParking && (
         <group position={[0, 0.02, (spec.plotL * UNIT) / 2 - 1]}>
            <Box args={[2.5, 0.04, 3]} receiveShadow={enableShadows}><meshStandardMaterial color="#1e293b" /></Box>
-           <Box args={[1.2, 0.4, 2.0]} position={[0, 0.24, 0]} castShadow={enableShadows}><meshStandardMaterial color="#ef4444" /></Box>
-           <Box args={[0.8, 0.3, 1.0]} position={[0, 0.6, -0.2]} castShadow={enableShadows}><meshStandardMaterial color="#000000" /></Box>
+           <DrivewayCar position={[0, 0, 0]} />
         </group>
       )}
     </group>

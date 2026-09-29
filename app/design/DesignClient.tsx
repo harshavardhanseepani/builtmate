@@ -299,6 +299,7 @@ export default function DesignStudioContent() {
                        <button
                          key={room.id}
                          onClick={() => {
+                            setActiveFloor(room.level);
                             setActiveRoomId(room.id);
                             setViewMode('INTERIOR');
                             setExplodedView(false);

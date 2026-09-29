@@ -157,3 +157,59 @@ export const Staircase = React.memo(({ height, color }: { height: number; color:
 });
 Staircase.displayName = 'Staircase';
 
+// Realistic 3D Tree with multi-tier foliage
+export const RealTree = React.memo(({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    {/* Bark Trunk */}
+    <Cylinder args={[0.08, 0.15, 1.8, 8]} position={[0, 0.9, 0]} castShadow>
+      <meshStandardMaterial color="#451a03" roughness={0.9} />
+    </Cylinder>
+    {/* Tier 1 Canopy */}
+    <Cone args={[1.1, 1.4, 8]} position={[0, 2.1, 0]} castShadow>
+      <meshStandardMaterial color="#15803d" roughness={0.6} />
+    </Cone>
+    {/* Tier 2 Canopy */}
+    <Cone args={[0.9, 1.2, 8]} position={[0, 2.7, 0]} castShadow>
+      <meshStandardMaterial color="#16a34a" roughness={0.5} />
+    </Cone>
+    {/* Tier 3 Top Canopy */}
+    <Cone args={[0.6, 0.9, 8]} position={[0, 3.2, 0]} castShadow>
+      <meshStandardMaterial color="#22c55e" roughness={0.4} />
+    </Cone>
+  </group>
+));
+RealTree.displayName = 'RealTree';
+
+// Detailed 3D SUV / Sedan for Parking
+export const DrivewayCar = React.memo(({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    {/* Main Body */}
+    <Box args={[1.4, 0.5, 2.4]} position={[0, 0.35, 0]} castShadow>
+      <meshStandardMaterial color="#1e293b" metalness={0.9} roughness={0.2} />
+    </Box>
+    {/* Cabin & Roof */}
+    <Box args={[1.2, 0.45, 1.4]} position={[0, 0.8, -0.1]} castShadow>
+      <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.1} />
+    </Box>
+    {/* Windshield & Windows */}
+    <Box args={[1.15, 0.4, 1.35]} position={[0, 0.81, -0.1]}>
+      <meshStandardMaterial color="#38bdf8" transparent opacity={0.6} metalness={0.8} />
+    </Box>
+    {/* Headlights */}
+    <Box args={[0.3, 0.1, 0.05]} position={[-0.45, 0.4, 1.2]}>
+      <meshStandardMaterial color="#fef08a" emissive="#fef08a" emissiveIntensity={1} />
+    </Box>
+    <Box args={[0.3, 0.1, 0.05]} position={[0.45, 0.4, 1.2]}>
+      <meshStandardMaterial color="#fef08a" emissive="#fef08a" emissiveIntensity={1} />
+    </Box>
+    {/* Wheels */}
+    {[[-0.7, 0.2, 0.7], [0.7, 0.2, 0.7], [-0.7, 0.2, -0.7], [0.7, 0.2, -0.7]].map((pos, i) => (
+      <Cylinder key={i} args={[0.2, 0.2, 0.1, 16]} position={pos as [number, number, number]} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <meshStandardMaterial color="#000000" roughness={0.9} />
+      </Cylinder>
+    ))}
+  </group>
+));
+DrivewayCar.displayName = 'DrivewayCar';
+
+
