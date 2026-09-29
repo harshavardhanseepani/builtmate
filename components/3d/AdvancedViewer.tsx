@@ -1,10 +1,10 @@
 'use client';
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Box, Cone, CameraControls, Html, Environment } from '@react-three/drei';
+import { ContactShadows, Box, Cone, Cylinder, Ring, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
-import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet } from './DetailedFurniture';
+import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase } from './DetailedFurniture';
 
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
@@ -61,10 +61,11 @@ const MemoizedRoomInterior = React.memo(({
 
 MemoizedRoomInterior.displayName = 'MemoizedRoomInterior';
 
-// Fixed: Solid house walls must NOT be transparent to prevent extreme GPU alpha-sorting overdraw
+// Pin-to-pin Wall with architectural window frame and door cutouts
 const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShadows }: { w: number; h: number; thickness: number; color: any; isFront: boolean; enableShadows: boolean }) => {
-  const ww = Math.min(w * 0.4, 1.5);
+  const ww = Math.min(w * 0.4, 1.4);
   const wh = h * 0.5;
+  
   if (w < 1.0) {
     return (
       <Box args={[w, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
@@ -72,8 +73,10 @@ const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShad
       </Box>
     );
   }
+  
   return (
     <group>
+      {/* Wall Segments */}
       <Box position={[-w / 2 + (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
       </Box>
@@ -85,6 +88,11 @@ const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShad
       </Box>
       <Box position={[0, h / 2 - (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
         <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
+      </Box>
+
+      {/* Skirting Trim / Baseboard */}
+      <Box position={[0, -h / 2 + 0.03, 0]} args={[w, 0.06, thickness * 1.1]}>
+        <meshStandardMaterial color={color.wood} roughness={0.4} />
       </Box>
 
       {/* Glass Window */}
@@ -100,6 +108,42 @@ const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShad
 });
 
 WallWithWindow.displayName = 'WallWithWindow';
+
+// Pin-Point 3D Room Marker Pointer
+const RoomPinMarker = React.memo(({ position, name, isSelected, onClick }: { position: [number, number, number]; name: string; isSelected: boolean; onClick: () => void }) => {
+  return (
+    <group position={position} onClick={(e) => { e.stopPropagation(); onClick(); }}>
+      {/* Glowing Floor Ring */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[0.2, 0.28, 32]} />
+        <meshStandardMaterial color={isSelected ? '#6366f1' : '#38bdf8'} emissive={isSelected ? '#6366f1' : '#38bdf8'} emissiveIntensity={0.8} />
+      </mesh>
+
+      {/* Vertical Pin Line */}
+      <mesh position={[0, 0.6, 0]}>
+        <cylinderGeometry args={[0.015, 0.015, 1.2, 8]} />
+        <meshStandardMaterial color={isSelected ? '#818cf8' : '#38bdf8'} />
+      </mesh>
+
+      {/* Pin Head Cone */}
+      <Cone args={[0.12, 0.3, 4]} position={[0, 1.25, 0]} rotation={[Math.PI, 0, 0]}>
+        <meshStandardMaterial color={isSelected ? '#4f46e5' : '#0284c7'} roughness={0.2} metalness={0.8} />
+      </Cone>
+
+      {/* Floating Pin Badge */}
+      <Html position={[0, 1.55, 0]} center zIndexRange={[100, 0]}>
+        <div 
+          className={`bg-[#0f1525]/95 border ${isSelected ? 'border-indigo-400 text-white shadow-[0_0_20px_rgba(99,102,241,0.5)] scale-110 font-black' : 'border-white/20 text-slate-200 font-bold'} px-3.5 py-1.5 rounded-full text-[10px] whitespace-nowrap backdrop-blur-md flex items-center gap-2 cursor-pointer hover:scale-105 transition-all`}
+        >
+          <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-indigo-400 shadow-[0_0_8px_#818cf8]' : 'bg-blue-400'} animate-pulse`}></div>
+          {name}
+        </div>
+      </Html>
+    </group>
+  );
+});
+
+RoomPinMarker.displayName = 'RoomPinMarker';
 
 const FloorGroup = ({ spec, level, children, isExploded }: { spec: HouseSpec; level: number; children: React.ReactNode; isExploded: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -174,15 +218,24 @@ const ArchitecturalModel = React.memo(({
           // Performance optimization: Furniture pruning
           const showFurniture = isCutaway && (activeFloor === 'ALL' || activeFloor === level);
 
-          // Performance optimization: Limit Html labels on mobile/low quality modes
-          let showLabel = false;
+          // Floor material variations for pin-to-pin interior detailing
+          const floorColor = isBalcony || isTerrace
+            ? '#64748b'
+            : (room.type === 'Living Room' || room.type === 'Dining'
+                ? (isSelectedRoom ? '#6366f1' : '#1e293b')
+                : (room.type.includes('Bedroom')
+                    ? '#451a03'
+                    : '#334155'));
+
+          // Pin-Point label decision
+          let showPin = false;
           if (isCutaway) {
             if (effectiveQuality === 'LOW') {
-              showLabel = isSelectedRoom;
+              showPin = isSelectedRoom;
             } else if (effectiveQuality === 'MEDIUM') {
-              showLabel = isSelectedRoom || activeFloor === level || activeFloor === 'ALL';
+              showPin = isSelectedRoom || activeFloor === level || activeFloor === 'ALL';
             } else {
-              showLabel = true;
+              showPin = true;
             }
           }
 
@@ -198,9 +251,23 @@ const ArchitecturalModel = React.memo(({
               }}
             >
               
-              {/* Floor Slab */}
+              {/* Floor Slab with Pin-to-pin Tile Edging */}
               <Box position={[rw/2, 0.05, rl/2]} args={[rw, 0.1, rl]} receiveShadow={enableShadows}>
-                <meshStandardMaterial color={isBalcony || isTerrace ? '#94a3b8' : (isSelectedRoom ? '#6366f1' : extColors.floor)} />
+                <meshStandardMaterial color={floorColor} roughness={0.4} />
+              </Box>
+
+              {/* Corner Structural Pillars (Pin-to-pin Framing) */}
+              <Box position={[0.04, FLOOR_HEIGHT / 2, 0.04]} args={[0.08, FLOOR_HEIGHT, 0.08]}>
+                <meshStandardMaterial color={extColors.frame} metalness={0.7} roughness={0.2} />
+              </Box>
+              <Box position={[rw - 0.04, FLOOR_HEIGHT / 2, 0.04]} args={[0.08, FLOOR_HEIGHT, 0.08]}>
+                <meshStandardMaterial color={extColors.frame} metalness={0.7} roughness={0.2} />
+              </Box>
+              <Box position={[0.04, FLOOR_HEIGHT / 2, rl - 0.04]} args={[0.08, FLOOR_HEIGHT, 0.08]}>
+                <meshStandardMaterial color={extColors.frame} metalness={0.7} roughness={0.2} />
+              </Box>
+              <Box position={[rw - 0.04, FLOOR_HEIGHT / 2, rl - 0.04]} args={[0.08, FLOOR_HEIGHT, 0.08]}>
+                <meshStandardMaterial color={extColors.frame} metalness={0.7} roughness={0.2} />
               </Box>
 
               {/* Walls or Railings */}
@@ -229,6 +296,13 @@ const ArchitecturalModel = React.memo(({
                     isLightActive={isSelectedRoom || (viewMode === 'INTERIOR' && isSelectedRoom)}
                     showFurniture={showFurniture}
                   />
+
+                  {/* 3D Internal Staircase for Living Room on Ground/First Floor */}
+                  {room.type === 'Living Room' && level < spec.floors - 1 && (
+                    <group position={[0.6, 0.1, rl - 1.2]} rotation={[0, -Math.PI / 2, 0]}>
+                      <Staircase height={FLOOR_HEIGHT} color={intColors} />
+                    </group>
+                  )}
                 </>
               ) : (
                 <>
@@ -260,27 +334,20 @@ const ArchitecturalModel = React.memo(({
                 </>
               )}
 
-              {/* Room Label (Pruned on low quality) */}
-              {showLabel && (
-                <Html 
-                  position={[rw/2, 0.5, rl/2]} 
-                  center 
-                  zIndexRange={[100, 0]}
-                >
-                  <div 
-                    className={`bg-[#0f1525]/90 border ${isSelectedRoom ? 'border-indigo-400 text-white font-black scale-105' : 'border-white/20 text-slate-200 font-bold'} px-3 py-1.5 rounded-full text-[10px] whitespace-nowrap backdrop-blur-md shadow-2xl flex items-center gap-2 cursor-pointer hover:bg-white hover:text-black transition-all`}
-                    onClick={(e) => { e.stopPropagation(); onRoomClick(room.id); }}
-                  >
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_5px_#3b82f6] animate-pulse"></div>
-                    {room.name}
-                  </div>
-                </Html>
+              {/* Pin-Point Room Pointer Beacon */}
+              {showPin && (
+                <RoomPinMarker 
+                  position={[rw / 2, 0.1, rl / 2]} 
+                  name={room.name} 
+                  isSelected={isSelectedRoom} 
+                  onClick={() => onRoomClick(room.id)}
+                />
               )}
             </group>
           );
         })}
 
-        {/* Floor Label for Exploded View */}
+        {/* Floor Level Pin Label for Exploded View */}
         {(explodedView || isCutaway) && activeFloor === 'ALL' && effectiveQuality === 'HIGH' && (
            <Html 
              position={[- (spec.plotW * UNIT)/2 - 0.2, level * FLOOR_HEIGHT + FLOOR_HEIGHT/2, 0]} 
@@ -308,7 +375,7 @@ const ArchitecturalModel = React.memo(({
     <group>
       {Array.from({ length: spec.floors }).map((_, i) => renderFloor(i))}
 
-      {/* Roof - Solid roof material without transparent overdraw */}
+      {/* Roof & Terrace Architectural Accessories */}
       {(!isCutaway || (activeFloor !== 'ALL' && activeFloor < spec.floors - 1) || explodedView) && activeFloor === 'ALL' && (
         <FloorGroup spec={spec} level={spec.floors} isExploded={explodedView}>
            <group position={[0, roofY - (spec.floors * FLOOR_HEIGHT), (spec.hasParking ? -3 : 2) * UNIT]}>
@@ -317,15 +384,28 @@ const ArchitecturalModel = React.memo(({
                  <meshStandardMaterial color={extColors.roof} roughness={0.3} />
                </Cone>
              ) : (
-               <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow={enableShadows}>
-                 <meshStandardMaterial color={extColors.roof} roughness={0.3} />
-               </Box>
+               <group>
+                 {/* Main Slab */}
+                 <Box args={[drawW + 0.4, 0.2, drawL + 0.4]} castShadow={enableShadows}>
+                   <meshStandardMaterial color={extColors.roof} roughness={0.3} />
+                 </Box>
+                 {/* Parapet Wall Perimeter */}
+                 <Box args={[drawW + 0.4, 0.3, 0.08]} position={[0, 0.25, (drawL + 0.4) / 2]}><meshStandardMaterial color={extColors.wall} /></Box>
+                 <Box args={[drawW + 0.4, 0.3, 0.08]} position={[0, 0.25, -(drawL + 0.4) / 2]}><meshStandardMaterial color={extColors.wall} /></Box>
+                 <Box args={[0.08, 0.3, drawL + 0.4]} position={[(drawW + 0.4) / 2, 0.25, 0]}><meshStandardMaterial color={extColors.wall} /></Box>
+                 <Box args={[0.08, 0.3, drawL + 0.4]} position={[-(drawW + 0.4) / 2, 0.25, 0]}><meshStandardMaterial color={extColors.wall} /></Box>
+                 {/* Rooftop Water Storage Tank */}
+                 <group position={[drawW / 3, 0.5, -drawL / 3]}>
+                   <Cylinder args={[0.4, 0.4, 0.9, 16]} position={[0, 0.45, 0]} castShadow><meshStandardMaterial color="#0284c7" metalness={0.6} roughness={0.2} /></Cylinder>
+                   <Box args={[0.9, 0.2, 0.9]} position={[0, 0.1, 0]}><meshStandardMaterial color="#334155" /></Box>
+                 </group>
+               </group>
              )}
            </group>
         </FloorGroup>
       )}
 
-      {/* Parking */}
+      {/* Parking Pad & Entry Canopy */}
       {spec.hasParking && (
         <group position={[0, 0.02, (spec.plotL * UNIT) / 2 - 1]}>
            <Box args={[2.5, 0.04, 3]} receiveShadow={enableShadows}><meshStandardMaterial color="#1e293b" /></Box>
