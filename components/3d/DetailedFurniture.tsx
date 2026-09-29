@@ -273,4 +273,66 @@ export const PorchSteps = React.memo(({ width, position }: { width: number; posi
 ));
 PorchSteps.displayName = 'PorchSteps';
 
+// Outdoor Wooden Deck Patio Armchairs & Coffee Table (matching reference image media_1790703281229.jpg)
+export const PatioSet = React.memo(({ color }: { color: any }) => (
+  <group>
+    {/* Outdoor Patio Coffee Table */}
+    <Cylinder args={[0.25, 0.25, 0.25, 12]} position={[0, 0.125, 0]} castShadow>
+      <meshStandardMaterial color="#0f172a" roughness={0.2} />
+    </Cylinder>
+    {/* Patio Chair 1 */}
+    <group position={[-0.55, 0, 0]}>
+      <Box args={[0.45, 0.2, 0.45]} position={[0, 0.1, 0]} castShadow><meshStandardMaterial color="#cbd5e1" /></Box>
+      <Box args={[0.45, 0.35, 0.06]} position={[0, 0.3, -0.2]} castShadow><meshStandardMaterial color={color.wood} /></Box>
+      <Box args={[0.06, 0.35, 0.45]} position={[-0.2, 0.3, 0]} castShadow><meshStandardMaterial color={color.wood} /></Box>
+    </group>
+    {/* Patio Chair 2 */}
+    <group position={[0.55, 0, 0]}>
+      <Box args={[0.45, 0.2, 0.45]} position={[0, 0.1, 0]} castShadow><meshStandardMaterial color="#cbd5e1" /></Box>
+      <Box args={[0.45, 0.35, 0.06]} position={[0, 0.3, -0.2]} castShadow><meshStandardMaterial color={color.wood} /></Box>
+      <Box args={[0.06, 0.35, 0.45]} position={[0.2, 0.3, 0]} castShadow><meshStandardMaterial color={color.wood} /></Box>
+    </group>
+  </group>
+));
+PatioSet.displayName = 'PatioSet';
+
+// Glass Sliding Patio Doors
+export const SlidingGlassDoors = React.memo(({ width, height }: { width: number; height: number }) => (
+  <group>
+    {/* Door Frame Surround */}
+    <Box args={[width, height, 0.06]} position={[0, height / 2, 0]}>
+      <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
+    </Box>
+    {/* Left Sliding Glass Pane */}
+    <Box args={[width * 0.48, height * 0.92, 0.02]} position={[-width * 0.24, height / 2, -0.01]}>
+      <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.1} />
+    </Box>
+    {/* Right Sliding Glass Pane */}
+    <Box args={[width * 0.48, height * 0.92, 0.02]} position={[width * 0.24, height / 2, 0.01]}>
+      <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.1} />
+    </Box>
+    {/* Handles */}
+    <Box args={[0.02, 0.3, 0.04]} position={[-0.04, height / 2, 0.02]}><meshStandardMaterial color="#cbd5e1" metalness={0.9} /></Box>
+    <Box args={[0.02, 0.3, 0.04]} position={[0.04, height / 2, -0.02]}><meshStandardMaterial color="#cbd5e1" metalness={0.9} /></Box>
+  </group>
+));
+SlidingGlassDoors.displayName = 'SlidingGlassDoors';
+
+// Garden Perimeter Shrubs & Lavender/Purple Flower Clusters
+export const GardenFlowers = React.memo(({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    {/* Green Shrub Base */}
+    <Box args={[0.8, 0.25, 0.4]} position={[0, 0.125, 0]} castShadow>
+      <meshStandardMaterial color="#15803d" roughness={0.7} />
+    </Box>
+    {/* Purple/Lavender Flower Cones */}
+    {[-0.25, 0, 0.25].map((x, i) => (
+      <Cone key={i} args={[0.1, 0.25, 6]} position={[x, 0.35, (i % 2 === 0 ? 0.05 : -0.05)]} castShadow>
+        <meshStandardMaterial color={i % 2 === 0 ? '#8b5cf6' : '#c084fc'} roughness={0.5} />
+      </Cone>
+    ))}
+  </group>
+));
+GardenFlowers.displayName = 'GardenFlowers';
+
 

@@ -46,6 +46,7 @@ export default function DesignStudioContent() {
     staircase: 'Internal',
     exteriorStyle: 'Modern',
     interiorStyle: 'Luxury',
+    wallColor: '#f8fafc',
     seed: 0,
   });
 
@@ -143,10 +144,40 @@ export default function DesignStudioContent() {
               </div>
 
               <div className="pt-2">
-                <span className={labelClass}>Exterior Architecture</span>
+                <span className={labelClass}>Exterior Architectural Style</span>
                 <select className={selectClass} value={specs.exteriorStyle} onChange={e => updateSpec('exteriorStyle', e.target.value)}>
-                  {['Modern', 'Traditional', 'Contemporary', 'Industrial'].map(o => <option key={o}>{o}</option>)}
+                  <option value="Modern">Modern Villa (Cantilever & Wood)</option>
+                  <option value="Traditional">Traditional Indian (Sloped Roof)</option>
+                  <option value="Luxury">Luxury Mansion (Marble & Gold)</option>
+                  <option value="Industrial">Industrial Loft (Concrete & Steel)</option>
+                  <option value="Minimalist">Minimalist Box (Monochrome)</option>
                 </select>
+              </div>
+
+              <div>
+                <span className={labelClass}>House Exterior Paint Color</span>
+                <div className="flex items-center gap-2 mt-1.5 overflow-x-auto pb-1">
+                  {[
+                    { name: 'Stucco White', color: '#f8fafc' },
+                    { name: 'Warm Cream', color: '#fdfbf7' },
+                    { name: 'Terracotta', color: '#991b1b' },
+                    { name: 'Slate Grey', color: '#475569' },
+                    { name: 'Soft Peach', color: '#ffedd5' },
+                    { name: 'Sage Green', color: '#dcfce7' },
+                    { name: 'Charcoal', color: '#1e293b' },
+                  ].map((c) => (
+                    <button
+                      key={c.color}
+                      type="button"
+                      title={c.name}
+                      onClick={() => updateSpec('wallColor', c.color)}
+                      className={`w-7 h-7 rounded-full border-2 transition-all shrink-0 ${
+                        specs.wallColor === c.color ? 'border-blue-500 scale-110 shadow-md ring-2 ring-blue-500/40' : 'border-white/20 hover:scale-105'
+                      }`}
+                      style={{ backgroundColor: c.color }}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div>
@@ -197,8 +228,8 @@ export default function DesignStudioContent() {
                   <button onClick={() => { setViewMode('INTERIOR'); setExplodedView(false); }} className={`flex items-center gap-2 py-2.5 px-6 rounded-full text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'INTERIOR' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-400 hover:bg-white/5'}`}>
                     <i className="bx bx-sun"></i> VIEW INTERIOR
                   </button>
-                  <button onClick={() => { setViewMode('CUTAWAY'); setExplodedView(false); }} className={`flex items-center gap-2 py-2.5 px-6 rounded-full text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'CUTAWAY' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-400 hover:bg-white/5'}`}>
-                    <i className="bx bx-layer"></i> CUTAWAY VIEW
+                  <button onClick={() => { setViewMode('CUTAWAY'); setExplodedView(false); setActiveRoomId(null); }} className={`flex items-center gap-2 py-2.5 px-6 rounded-full text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'CUTAWAY' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-400 hover:bg-white/5'}`}>
+                    <i className="bx bx-layer"></i> 3D CUTAWAY PLAN
                   </button>
                   <button onClick={() => { setViewMode('FLOOR_PLAN'); setExplodedView(false); }} className={`flex items-center gap-2 py-2.5 px-6 rounded-full text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'FLOOR_PLAN' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-400 hover:bg-white/5'}`}>
                     <i className="bx bx-map-alt"></i> FLOOR PLAN

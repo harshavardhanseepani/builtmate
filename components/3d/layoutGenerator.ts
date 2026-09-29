@@ -22,6 +22,7 @@ export type HouseSpec = {
   hasTerrace: boolean;
   bedrooms: number;
   bathrooms: number;
+  wallColor?: string;
 };
 
 export function generateHouseLayout(specs: any): HouseSpec {
@@ -141,6 +142,7 @@ export function generateHouseLayout(specs: any): HouseSpec {
     hasBalcony: specs.balcony === 'Yes',
     hasTerrace: specs.terrace === 'Yes',
     bedrooms: numBeds,
-    bathrooms: numBaths
+    bathrooms: numBaths,
+    wallColor: specs.wallColor
   };
 }

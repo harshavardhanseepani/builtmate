@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { ContactShadows, Box, Cone, Cylinder, Ring, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
-import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, DrivewayCar, ExteriorSconceLight, PottedPlant, PorchSteps } from './DetailedFurniture';
+import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, DrivewayCar, ExteriorSconceLight, PottedPlant, PorchSteps, PatioSet, SlidingGlassDoors, GardenFlowers } from './DetailedFurniture';
 
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
@@ -214,18 +214,35 @@ const ArchitecturalModel = React.memo(({
   onRoomClick: (id: string) => void;
   effectiveQuality: string;
 }) => {
-  const getStyleColors = (style: string) => {
+  const getStyleColors = (style: string, isExterior = false) => {
+    let base = { wall: '#f8fafc', roof: '#1e293b', window: '#e0f2fe', frame: '#334155', floor: '#cbd5e1', wood: '#4a2c17', fabric: '#94a3b8', metal: '#1e293b', text: '#ffffff' };
     switch (style) {
-      case 'Luxury': return { wall: '#fdfbf7', roof: '#0f172a', window: '#e0f2fe', frame: '#d4af37', floor: '#1e293b', wood: '#451a03', fabric: '#fef3c7', metal: '#d4af37', text: '#ffffff' };
-      case 'Modern': return { wall: '#e2e8f0', roof: '#334155', window: '#bae6fd', frame: '#1e293b', floor: '#cbd5e1', wood: '#334155', fabric: '#94a3b8', metal: '#1e293b', text: '#000000' };
-      case 'Traditional': return { wall: '#d6d3d1', roof: '#78350f', window: '#fef3c7', frame: '#451a03', floor: '#d4d4d8', wood: '#5d2906', fabric: '#d6d3d1', metal: '#451a03', text: '#ffffff' };
-      case 'Industrial': return { wall: '#a1a1aa', roof: '#18181b', window: '#7dd3fc', frame: '#000000', floor: '#52525b', wood: '#27272a', fabric: '#52525b', metal: '#000000', text: '#ffffff' };
-      default: return { wall: '#f1f5f9', roof: '#475569', window: '#bfdbfe', frame: '#334155', floor: '#e2e8f0', wood: '#475569', fabric: '#cbd5e1', metal: '#334155', text: '#000000' };
+      case 'Luxury': 
+        base = { wall: '#fafaf9', roof: '#0f172a', window: '#e0f2fe', frame: '#d4af37', floor: '#1e293b', wood: '#451a03', fabric: '#fef3c7', metal: '#d4af37', text: '#ffffff' };
+        break;
+      case 'Modern': 
+        base = { wall: '#f8fafc', roof: '#1e293b', window: '#e0f2fe', frame: '#334155', floor: '#cbd5e1', wood: '#4a2c17', fabric: '#94a3b8', metal: '#1e293b', text: '#000000' };
+        break;
+      case 'Traditional': 
+        base = { wall: '#fdfbf7', roof: '#991b1b', window: '#fef3c7', frame: '#78350f', floor: '#d4d4d8', wood: '#78350f', fabric: '#d6d3d1', metal: '#451a03', text: '#ffffff' };
+        break;
+      case 'Industrial': 
+        base = { wall: '#475569', roof: '#09090b', window: '#7dd3fc', frame: '#1e293b', floor: '#52525b', wood: '#27272a', fabric: '#52525b', metal: '#000000', text: '#ffffff' };
+        break;
+      case 'Minimalist': 
+        base = { wall: '#ffffff', roof: '#0f172a', window: '#e0f2fe', frame: '#09090b', floor: '#e2e8f0', wood: '#18181b', fabric: '#e2e8f0', metal: '#09090b', text: '#000000' };
+        break;
+      default: 
+        base = { wall: '#f8fafc', roof: '#1e293b', window: '#bfdbfe', frame: '#334155', floor: '#e2e8f0', wood: '#475569', fabric: '#cbd5e1', metal: '#334155', text: '#000000' };
     }
+    if (isExterior && spec.wallColor) {
+      base.wall = spec.wallColor;
+    }
+    return base;
   };
 
-  const extColors = getStyleColors(spec.style);
-  const intColors = getStyleColors(spec.interiorStyle);
+  const extColors = getStyleColors(spec.style, true);
+  const intColors = getStyleColors(spec.interiorStyle, false);
   const isCutaway = viewMode === 'CUTAWAY' || viewMode === 'INTERIOR' || explodedView;
   const enableShadows = effectiveQuality === 'HIGH';
 
@@ -248,6 +265,7 @@ const ArchitecturalModel = React.memo(({
           const isTerrace = room.type === 'Terrace';
           const showFrontWall = !isCutaway;
           const isSelectedRoom = activeRoomId === room.id;
+          const wallH = viewMode === 'CUTAWAY' ? FLOOR_HEIGHT * 0.4 : FLOOR_HEIGHT;
 
           // Performance optimization: Furniture pruning
           const showFurniture = isCutaway && (activeFloor === 'ALL' || activeFloor === level);
@@ -307,18 +325,18 @@ const ArchitecturalModel = React.memo(({
               {/* Walls or Railings */}
               {(!isBalcony && !isTerrace) ? (
                 <>
-                  <group position={[rw/2, FLOOR_HEIGHT/2, 0.05]}>
-                    <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
+                  <group position={[rw/2, wallH/2, 0.05]}>
+                    <WallWithWindow w={rw} h={wallH} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
-                  <group position={[0.05, FLOOR_HEIGHT/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
+                  <group position={[0.05, wallH/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
+                    <WallWithWindow w={rl} h={wallH} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
-                  <group position={[rw - 0.05, FLOOR_HEIGHT/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
-                    <WallWithWindow w={rl} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
+                  <group position={[rw - 0.05, wallH/2, rl/2]} rotation={[0, Math.PI/2, 0]}>
+                    <WallWithWindow w={rl} h={wallH} thickness={0.1} color={extColors} isFront={false} enableShadows={enableShadows} />
                   </group>
                   {showFrontWall && (
-                    <group position={[rw/2, FLOOR_HEIGHT/2, rl - 0.05]}>
-                      <WallWithWindow w={rw} h={FLOOR_HEIGHT} thickness={0.1} color={extColors} isFront={true} enableShadows={enableShadows} />
+                    <group position={[rw/2, wallH/2, rl - 0.05]}>
+                      <WallWithWindow w={rw} h={wallH} thickness={0.1} color={extColors} isFront={true} enableShadows={enableShadows} />
                     </group>
                   )}
                   
@@ -340,6 +358,16 @@ const ArchitecturalModel = React.memo(({
                 </>
               ) : (
                 <>
+                  {/* Sliding Glass Doors connecting room to outdoor terrace */}
+                  <group position={[rw / 2, 0, 0.05]}>
+                    <SlidingGlassDoors width={Math.min(rw * 0.8, 2.0)} height={FLOOR_HEIGHT * 0.85} />
+                  </group>
+
+                  {/* Outdoor Patio Armchairs & Coffee Table (matching reference image) */}
+                  <group position={[rw / 2, 0.1, rl / 2]}>
+                    <PatioSet color={extColors} />
+                  </group>
+
                   {/* Glass Railings for Balcony/Terrace */}
                   <group position={[rw/2, 0.5, rl - 0.05]}>
                     <Box args={[rw, 1.0, 0.05]} castShadow={enableShadows}>
@@ -360,11 +388,9 @@ const ArchitecturalModel = React.memo(({
                     <Box position={[0, 0.5, 0]} args={[rl, 0.05, 0.1]}><meshStandardMaterial color={extColors.metal} metalness={0.8} roughness={0.2} /></Box>
                   </group>
                   
-                  {/* Plants on Balcony/Terrace */}
-                  <group position={[0.4, 0, 0.4]}>
-                    <Box args={[0.3, 0.4, 0.3]} position={[0, 0.2, 0]} castShadow={enableShadows}><meshStandardMaterial color="#1e293b"/></Box>
-                    <Cone args={[0.3, 0.8, 8]} position={[0, 0.8, 0]} castShadow={enableShadows}><meshStandardMaterial color="#15803d"/></Cone>
-                  </group>
+                  {/* Lavender/Purple Flowers & Shrubs along Terrace Border */}
+                  <GardenFlowers position={[0.4, 0.1, rl - 0.3]} />
+                  <GardenFlowers position={[rw - 0.4, 0.1, rl - 0.3]} />
                 </>
               )}
 
@@ -519,7 +545,7 @@ export default function AdvancedViewer({
     if (viewMode === 'EXTERIOR') {
        ctrl.setLookAt(pw * 1.5, 4, pl * 1.5, 0, 1, 0, true);
     } else if (viewMode === 'CUTAWAY' && !activeRoomId) {
-       ctrl.setLookAt(0, 5, pl * 1.5, 0, 1, 0, true);
+       ctrl.setLookAt(pw * 1.2, 6, pl * 1.2, 0, 0.5, 0, true);
     } else if (viewMode === 'INTERIOR' && activeRoomId) {
        const room = houseSpec.rooms.find(r => r.id === activeRoomId);
        if (room) {
