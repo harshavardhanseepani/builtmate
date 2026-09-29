@@ -210,6 +210,67 @@ export const DrivewayCar = React.memo(({ position }: { position: [number, number
     ))}
   </group>
 ));
-DrivewayCar.displayName = 'DrivewayCar';
+// Modern Exterior Up/Down LED Sconce Wall Spotlight
+export const ExteriorSconceLight = React.memo(({ position, rotation = [0, 0, 0] }: { position: [number, number, number]; rotation?: [number, number, number] }) => (
+  <group position={position} rotation={rotation}>
+    {/* Black Metal Cylinder Fixture */}
+    <Cylinder args={[0.04, 0.04, 0.16, 8]} position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
+      <meshStandardMaterial color="#18181b" metalness={0.9} roughness={0.1} />
+    </Cylinder>
+    {/* Wall Mount Plate */}
+    <Box args={[0.08, 0.14, 0.02]} position={[0, 0, 0.01]}>
+      <meshStandardMaterial color="#09090b" metalness={0.8} />
+    </Box>
+    {/* Up Beam Emissive Lens */}
+    <Cylinder args={[0.035, 0.035, 0.01, 8]} position={[0, 0.085, 0.03]}>
+      <meshStandardMaterial color="#ffb703" emissive="#ffb703" emissiveIntensity={2.5} />
+    </Cylinder>
+    {/* Down Beam Emissive Lens */}
+    <Cylinder args={[0.035, 0.035, 0.01, 8]} position={[0, -0.085, 0.03]}>
+      <meshStandardMaterial color="#ffb703" emissive="#ffb703" emissiveIntensity={2.5} />
+    </Cylinder>
+    {/* Warm Glow Point Light */}
+    <pointLight position={[0, 0, 0.1]} intensity={0.8} distance={2.5} color="#ffb703" />
+  </group>
+));
+ExteriorSconceLight.displayName = 'ExteriorSconceLight';
+
+// Entrance Ceramic Planter with Shrubs
+export const PottedPlant = React.memo(({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    {/* Dark Ceramic Pot */}
+    <Cylinder args={[0.2, 0.14, 0.35, 12]} position={[0, 0.175, 0]} castShadow>
+      <meshStandardMaterial color="#1e293b" roughness={0.3} />
+    </Cylinder>
+    {/* Soil */}
+    <Cylinder args={[0.18, 0.18, 0.02, 12]} position={[0, 0.34, 0]}>
+      <meshStandardMaterial color="#271c19" roughness={0.9} />
+    </Cylinder>
+    {/* Foliage Spheres */}
+    <Cone args={[0.28, 0.5, 8]} position={[0, 0.55, 0]} castShadow>
+      <meshStandardMaterial color="#15803d" roughness={0.6} />
+    </Cone>
+    <Cone args={[0.22, 0.4, 8]} position={[0, 0.8, 0]} castShadow>
+      <meshStandardMaterial color="#22c55e" roughness={0.5} />
+    </Cone>
+  </group>
+));
+PottedPlant.displayName = 'PottedPlant';
+
+// Entrance Porch Steps
+export const PorchSteps = React.memo(({ width, position }: { width: number; position: [number, number, number] }) => (
+  <group position={position}>
+    <Box args={[width, 0.08, 0.4]} position={[0, 0.04, 0.4]} receiveShadow>
+      <meshStandardMaterial color="#f1f5f9" roughness={0.3} />
+    </Box>
+    <Box args={[width, 0.08, 0.8]} position={[0, -0.04, 0.2]} receiveShadow>
+      <meshStandardMaterial color="#e2e8f0" roughness={0.3} />
+    </Box>
+    <Box args={[width, 0.08, 1.2]} position={[0, -0.12, 0]} receiveShadow>
+      <meshStandardMaterial color="#cbd5e1" roughness={0.3} />
+    </Box>
+  </group>
+));
+PorchSteps.displayName = 'PorchSteps';
 
 

@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { ContactShadows, Box, Cone, Cylinder, Ring, CameraControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { generateHouseLayout, Room, HouseSpec } from './layoutGenerator';
-import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, RealTree, DrivewayCar } from './DetailedFurniture';
+import { Sofa, TVUnit, Bed, DiningSet, KitchenSet, BathroomSet, Wardrobe, StudySet, PoojaSet, Staircase, RealTree, DrivewayCar, ExteriorSconceLight, PottedPlant, PorchSteps } from './DetailedFurniture';
 
 const FLOOR_HEIGHT = 1.8;
 const UNIT = 0.1;
@@ -62,9 +62,10 @@ const MemoizedRoomInterior = React.memo(({
 MemoizedRoomInterior.displayName = 'MemoizedRoomInterior';
 
 // Pin-to-pin Wall with architectural window frame and door cutouts
+// Pin-to-pin Wall with architectural cantilever frame, wood slat cladding, glowing windows and LED sconces
 const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShadows }: { w: number; h: number; thickness: number; color: any; isFront: boolean; enableShadows: boolean }) => {
-  const ww = Math.min(w * 0.4, 1.4);
-  const wh = h * 0.5;
+  const ww = Math.min(w * 0.45, 1.5);
+  const wh = h * 0.55;
   
   if (w < 1.0) {
     return (
@@ -76,33 +77,66 @@ const WallWithWindow = React.memo(({ w, h, thickness, color, isFront, enableShad
   
   return (
     <group>
-      {/* Wall Segments */}
+      {/* Wall Segments with Stucco Texture Finish */}
       <Box position={[-w / 2 + (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.4} metalness={0.05} />
       </Box>
       <Box position={[w / 2 - (w - ww) / 4, 0, 0]} args={[(w - ww) / 2, h, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.4} metalness={0.05} />
       </Box>
       <Box position={[0, -h / 2 + (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.4} metalness={0.05} />
       </Box>
       <Box position={[0, h / 2 - (h - wh) / 4, 0]} args={[ww, (h - wh) / 2, thickness]} castShadow={enableShadows} receiveShadow={enableShadows}>
-        <meshStandardMaterial color={color.wall} roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial color={color.wall} roughness={0.4} metalness={0.05} />
       </Box>
+
+      {/* Modern Architectural Wood Slat Accent Cladding on Front Facades */}
+      {isFront && (
+        <group position={[-w / 2 + (w - ww) / 4, 0, thickness / 2 + 0.005]}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Box key={i} position={[0, -h / 2 + (i + 0.5) * (h / 8), 0.005]} args={[(w - ww) / 2 - 0.04, h / 12, 0.01]}>
+              <meshStandardMaterial color="#4a2c17" roughness={0.4} />
+            </Box>
+          ))}
+        </group>
+      )}
 
       {/* Skirting Trim / Baseboard */}
       <Box position={[0, -h / 2 + 0.03, 0]} args={[w, 0.06, thickness * 1.1]}>
         <meshStandardMaterial color={color.wood} roughness={0.4} />
       </Box>
 
+      {/* Warm Interior Glow Light Panel behind glass */}
+      <Box position={[0, 0, -thickness * 0.05]} args={[ww - 0.02, wh - 0.02, 0.01]}>
+        <meshStandardMaterial color="#fef08a" emissive="#fbbf24" emissiveIntensity={0.6} />
+      </Box>
+
       {/* Glass Window */}
       <Box position={[0, 0, 0]} args={[ww, wh, thickness * 0.2]}>
-        <meshStandardMaterial color="#a3e6ff" transparent opacity={0.6} metalness={0.1} roughness={0.1} />
+        <meshStandardMaterial color="#e0f2fe" transparent opacity={0.65} metalness={0.2} roughness={0.1} />
       </Box>
-      {/* Window Frame */}
-      <Box position={[0, 0, 0]} args={[ww, wh, thickness * 0.4]}>
-        <meshStandardMaterial color={color.frame} roughness={0.2} metalness={0.8} />
+
+      {/* Black Architectural Window Mullions / Grid Bars */}
+      <Box position={[0, 0, thickness * 0.12]} args={[0.03, wh, 0.02]}>
+        <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
       </Box>
+      <Box position={[0, 0, thickness * 0.12]} args={[ww, 0.03, 0.02]}>
+        <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
+      </Box>
+
+      {/* Modern Window Frame Box (Cantilever Surround) */}
+      <Box position={[0, 0, thickness * 0.15]} args={[ww + 0.08, wh + 0.08, 0.06]}>
+        <meshStandardMaterial color={color.frame} roughness={0.2} metalness={0.7} />
+      </Box>
+
+      {/* Up/Down LED Exterior Sconce Spotlights on Front Elevation */}
+      {isFront && enableShadows && (
+        <>
+          <ExteriorSconceLight position={[-w / 2 + 0.2, 0.2, thickness / 2]} />
+          <ExteriorSconceLight position={[w / 2 - 0.2, 0.2, thickness / 2]} />
+        </>
+      )}
     </group>
   );
 });
@@ -407,17 +441,29 @@ const ArchitecturalModel = React.memo(({
         </FloorGroup>
       )}
 
-      {/* Outdoor Landscape Trees */}
+      {/* Outdoor Landscape Trees & Entrance Plants */}
       <group>
         <RealTree position={[-pw / 2 - 0.8, 0, -pl / 2 + 1]} />
         <RealTree position={[pw / 2 + 0.8, 0, -pl / 2 + 1]} />
         <RealTree position={[-pw / 2 - 0.8, 0, pl / 2 - 1]} />
         <RealTree position={[pw / 2 + 0.8, 0, pl / 2 - 1]} />
+        
+        {/* Potted Ceramic Planters at Main Entrance */}
+        <PottedPlant position={[-0.9, 0.05, pl / 2 + 0.2]} />
+        <PottedPlant position={[0.9, 0.05, pl / 2 + 0.2]} />
       </group>
+
+      {/* Main Entrance Porch Steps */}
+      <PorchSteps width={2.2} position={[0, 0.05, pl / 2 - 0.2]} />
+
+      {/* Stone Paved Walkway */}
+      <Box args={[1.8, 0.02, 2.5]} position={[0, 0.01, pl / 2 + 1.2]} receiveShadow={enableShadows}>
+        <meshStandardMaterial color="#64748b" roughness={0.7} />
+      </Box>
 
       {/* Parking Pad & Driveway SUV */}
       {spec.hasParking && (
-        <group position={[0, 0.02, (spec.plotL * UNIT) / 2 - 1]}>
+        <group position={[pw / 2 - 1.5, 0.02, (spec.plotL * UNIT) / 2 - 1]}>
            <Box args={[2.5, 0.04, 3]} receiveShadow={enableShadows}><meshStandardMaterial color="#1e293b" /></Box>
            <DrivewayCar position={[0, 0, 0]} />
         </group>
