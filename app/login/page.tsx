@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,25 +26,27 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#020617] flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
+    <main className="min-h-screen bg-[#faf9f6] bg-texture-luxury flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-amber-100 selection:text-amber-900">
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-400/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-500/10 blur-[130px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-6">
-            <i className="bx bx-cube-alt text-blue-500 text-4xl"></i>
-            <span className="text-3xl font-extrabold text-white">Build<span className="text-blue-500">Mate</span></span>
+          <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
+            <i className="bx bx-cube-alt text-amber-600 text-4xl drop-shadow-[0_2px_8px_rgba(217,119,6,0.3)] group-hover:scale-105 transition-transform"></i>
+            <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              Build<span className="text-gradient-gold">Mate</span>
+            </span>
           </Link>
-          <h1 className="text-3xl font-black text-white mb-2">Welcome Back</h1>
-          <p className="text-slate-400">Sign in to continue building your dream home.</p>
+          <h1 className="text-3xl font-black text-slate-900 mb-2">Welcome Back</h1>
+          <p className="text-slate-600">Sign in to continue building your dream home.</p>
         </div>
 
         {/* Card */}
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-white/90 backdrop-blur-2xl border border-amber-200/80 rounded-3xl p-8 shadow-[0_20px_50px_rgba(212,175,55,0.08)]">
           {error && (
-            <div className="mb-6 flex items-start gap-3 bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-sm">
+            <div className="mb-6 flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-2xl text-sm">
               <i className="bx bx-error-circle text-lg mt-0.5"></i>
               <span>{error}</span>
             </div>
@@ -52,12 +54,12 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-bold mb-2 text-slate-300">Email Address</label>
+              <label className="block text-sm font-bold mb-2 text-slate-700">Email Address</label>
               <input
                 type="email"
                 required
                 autoComplete="email"
-                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-amber-50/40 border border-amber-200/80 rounded-xl py-3.5 px-4 text-slate-900 placeholder-slate-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-medium"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -66,14 +68,14 @@ export default function LoginPage() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-bold text-slate-300">Password</label>
-                <Link href="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</Link>
+                <label className="text-sm font-bold text-slate-700">Password</label>
+                <Link href="/forgot-password" className="text-xs text-amber-700 hover:text-amber-800 font-semibold transition-colors">Forgot password?</Link>
               </div>
               <input
                 type="password"
                 required
                 autoComplete="current-password"
-                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-amber-50/40 border border-amber-200/80 rounded-xl py-3.5 px-4 text-slate-900 placeholder-slate-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-medium"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -83,7 +85,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-base shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:transform-none flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:via-yellow-400 hover:to-amber-500 text-slate-950 font-bold text-base shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:transform-none flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <><i className="bx bx-loader-alt animate-spin text-xl"></i> Signing in...</>
@@ -94,9 +96,9 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-slate-500 text-sm">
-              Do not have an account?{" "}
-              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+            <p className="text-slate-600 text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="text-amber-700 hover:text-amber-800 font-bold transition-colors">
                 Create one
               </Link>
             </p>

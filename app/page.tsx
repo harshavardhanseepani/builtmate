@@ -64,45 +64,45 @@ export default function Home() {
             {/* Grid of 4 small features */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-1">
               {/* Feature 1 */}
-              <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm">
+              <Link href="/design" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
                 <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
                   <i className="bx bx-home-alt-2 text-2xl text-amber-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide">AI Design</h4>
+                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">AI Design</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">2D Plans & 3D Models</p>
                 </div>
-              </div>
+              </Link>
               {/* Feature 2 */}
-              <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm">
+              <Link href="/builders" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
                 <div className="w-12 h-12 rounded-xl bg-amber-100/60 border border-amber-300 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100 transition-all">
                   <i className="bx bx-user-check text-2xl text-amber-700"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide">Verified Builders</h4>
+                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">Verified Builders</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">Trusted Professionals</p>
                 </div>
-              </div>
+              </Link>
               {/* Feature 3 */}
-              <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm">
+              <Link href="/materials" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
                 <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
                   <i className="bx bx-box text-2xl text-amber-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide">Quality Materials</h4>
+                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">Quality Materials</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">Best Brands, Best Deals</p>
                 </div>
-              </div>
+              </Link>
               {/* Feature 4 */}
-              <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-emerald-300 hover:shadow-md transition-all group backdrop-blur-sm">
+              <Link href="/projects" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-emerald-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-emerald-100/70 transition-all">
-                  <i className="bx bx-clipboard text-2xl text-emerald-600"></i>
+                  <i className="bx bx-buildings text-2xl text-emerald-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide">Project Management</h4>
-                  <p className="text-emerald-700/80 text-xs font-medium mt-0.5">Track. Plan. Build.</p>
+                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-emerald-800 transition-colors">Project Tracking</h4>
+                  <p className="text-emerald-700/80 text-xs font-bold mt-0.5">Day-by-Day Live &rarr;</p>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* Action Buttons */}
@@ -157,15 +157,15 @@ export default function Home() {
             </div>
 
             {/* Floating Card 3 */}
-            <div className="absolute bottom-[16%] -right-4 glass-card-luxury p-4 rounded-2xl flex items-center gap-3.5 animate-float shadow-lg" style={{ animationDelay: '2s' }}>
+            <Link href="/projects" className="absolute bottom-[16%] -right-4 glass-card-luxury p-4 rounded-2xl flex items-center gap-3.5 animate-float shadow-lg hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: '2s' }}>
                <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs">
-                 <i className="bx bx-hard-hat text-2xl text-emerald-600"></i>
+                 <i className="bx bx-buildings text-2xl text-emerald-600"></i>
                </div>
                <div>
-                 <h4 className="text-slate-900 font-bold text-sm tracking-wide">Build</h4>
-                 <p className="text-emerald-700 text-xs font-semibold mt-0.5">With Experts &rarr;</p>
+                 <h4 className="text-slate-900 font-bold text-sm tracking-wide">Live Tracking</h4>
+                 <p className="text-emerald-700 text-xs font-semibold mt-0.5">Day-by-Day &rarr;</p>
                </div>
-            </div>
+            </Link>
             
             {/* Elegant Script Typography Callouts */}
             <div className="absolute top-[5%] right-6 text-2xl font-serif italic text-amber-800 -rotate-6 drop-shadow-[0_1px_4px_rgba(217,119,6,0.15)] tracking-wide">
