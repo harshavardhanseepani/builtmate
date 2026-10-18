@@ -31,6 +31,8 @@ export default function DesignStudioContent() {
   const [specs, setSpecs] = useState({
     plotSize: '30x40',
     floors: '2',
+    budgetTier: 'Premium',
+    targetBudget: '₹40L - ₹65L',
     bedrooms: '3',
     bathrooms: '3',
     livingRoom: '1',
@@ -60,6 +62,33 @@ export default function DesignStudioContent() {
   const [generationError, setGenerationError] = useState<any>(false);
 
   const houseSpec = useMemo(() => hasGenerated ? generateHouseLayout(specs) : null, [specs, hasGenerated]);
+
+  const estimatedCost = useMemo(() => {
+    let w = 30, l = 40;
+    if (specs.plotSize) {
+      const parts = specs.plotSize.split('x');
+      w = parseInt(parts[0]) || 30;
+      l = parseInt(parts[1]) || 40;
+    }
+    const numFloors = parseInt(specs.floors) || 1;
+    const builtUpSqft = Math.round(w * l * 0.75 * numFloors);
+    
+    let rate = 2200; // default premium
+    if (specs.budgetTier === 'Economy') rate = 1750;
+    if (specs.budgetTier === 'Luxury') rate = 2850;
+    if (specs.budgetTier === 'Ultra') rate = 3600;
+
+    const totalCost = builtUpSqft * rate;
+    const lakhs = (totalCost / 100000).toFixed(1);
+    return {
+      builtUpSqft,
+      rate,
+      lakhs,
+      civilCost: (totalCost * 0.48 / 100000).toFixed(1),
+      finishCost: (totalCost * 0.32 / 100000).toFixed(1),
+      mepCost: (totalCost * 0.20 / 100000).toFixed(1),
+    };
+  }, [specs.plotSize, specs.floors, specs.budgetTier]);
 
   const updateSpec = (key: string, value: any) => {
     setSpecs(s => ({ ...s, [key]: value }));
@@ -116,6 +145,49 @@ export default function DesignStudioContent() {
                   <select className={selectClass} value={specs.floors} onChange={e => updateSpec('floors', e.target.value)}>
                     {['1','2','3','4'].map(o => <option key={o}>{o}</option>)}
                   </select>
+                </div>
+              </div>
+
+              {/* Construction Budget Option */}
+              <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/90 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className={labelClass}>Construction Budget</span>
+                  <span className="text-xs font-black text-amber-900 bg-white px-2 py-0.5 rounded-md border border-amber-200 shadow-xs">
+                    Est. ~₹{estimatedCost.lakhs} Lakhs
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {[
+                    { id: 'Economy', name: 'Economy', range: '₹25L - ₹40L', rate: '₹1,750/sqft' },
+                    { id: 'Premium', name: 'Premium', range: '₹40L - ₹65L', rate: '₹2,200/sqft' },
+                    { id: 'Luxury', name: 'Luxury', range: '₹65L - ₹95L', rate: '₹2,850/sqft' },
+                    { id: 'Ultra', name: 'Ultra Luxury', range: '₹1 Cr+', rate: '₹3,600/sqft' },
+                  ].map((tier) => (
+                    <button
+                      key={tier.id}
+                      type="button"
+                      onClick={() => updateSpec('budgetTier', tier.id)}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        specs.budgetTier === tier.id
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold border-amber-600 shadow-sm'
+                          : 'bg-white border-amber-200/70 text-slate-700 hover:border-amber-300'
+                      }`}
+                    >
+                      <div className="text-xs font-bold">{tier.name}</div>
+                      <div className={`text-[10px] ${specs.budgetTier === tier.id ? 'text-slate-950 font-semibold' : 'text-amber-800'}`}>
+                        {tier.range}
+                      </div>
+                      <div className={`text-[9px] ${specs.budgetTier === tier.id ? 'text-slate-900' : 'text-slate-400'}`}>
+                        {tier.rate}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-[11px] text-slate-600">
+                  <span>Built-up: <strong className="text-slate-800">{estimatedCost.builtUpSqft} sqft</strong></span>
+                  <span>Civil: <strong>₹{estimatedCost.civilCost}L</strong> • Finish: <strong>₹{estimatedCost.finishCost}L</strong></span>
                 </div>
               </div>
 
@@ -210,7 +282,7 @@ export default function DesignStudioContent() {
               <div className="glass-card-luxury bg-white/85 border border-amber-200/80 rounded-3xl shadow-xl h-[700px] flex flex-col items-center justify-center text-center p-20 animate-pulse">
                 <i className="bx bx-buildings text-6xl text-amber-600 animate-spin-slow mb-6"></i>
                 <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter text-slate-900">Building 3D Structure...</h3>
-                <p className="text-slate-600">Generating {specs.exteriorStyle} exterior and {specs.interiorStyle} interior...</p>
+                <p className="text-slate-600">Generating {specs.exteriorStyle} exterior and {specs.interiorStyle} interior tailored for {specs.budgetTier} budget (~₹{estimatedCost.lakhs}L)...</p>
               </div>
             ) : generationError ? (
               <div className="glass-card-luxury bg-white/85 border border-rose-300 rounded-3xl shadow-xl h-[700px] flex flex-col items-center justify-center text-center p-20">
@@ -283,6 +355,16 @@ export default function DesignStudioContent() {
 
                        {/* Right Top Tools */}
                        <div className="absolute top-6 right-6 z-10 flex flex-col gap-2 items-end">
+                         {/* Live Estimated Budget Pill */}
+                         <div className="flex bg-white/95 px-4 py-2 rounded-full border border-amber-200/80 shadow-2xl backdrop-blur-md items-center gap-2 mb-1">
+                           <i className="bx bx-rupee text-amber-600 font-bold text-base"></i>
+                           <span className="text-[11px] font-bold text-slate-800">
+                             Est. Budget: <span className="text-amber-800 font-black">₹{estimatedCost.lakhs}L</span>
+                           </span>
+                           <span className="text-[9px] uppercase px-2 py-0.5 rounded-full bg-amber-100/80 text-amber-900 font-bold">
+                             {specs.budgetTier} Tier
+                           </span>
+                         </div>
                          {viewMode === 'CUTAWAY' && (
                            <div className="flex bg-white/95 p-1.5 rounded-full border border-amber-200/80 shadow-2xl backdrop-blur-md mb-2">
                               <button onClick={() => setActiveFloor('ALL')} className={`px-5 py-2 rounded-full text-[10px] font-black uppercase mx-0.5 transition-all ${activeFloor === 'ALL' ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-amber-50'}`}>All Floors</button>
