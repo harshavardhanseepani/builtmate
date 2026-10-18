@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #07090e; /* Deep Obsidian Charcoal */
-  --foreground: #f8fafc;
-  --primary: #d4af37; /* Champagne Gold */
-  --secondary: #e5c07b; /* Warm Amber */
-  --accent: #c59b27; /* Antique Architectural Bronze */
-  --glass: rgba(10, 14, 23, 0.7);
-  --glass-border: rgba(212, 175, 55, 0.15);
+  --background: #faf9f6; /* Warm Alabaster / Porcelain White */
+  --foreground: #0f172a; /* Deep Architectural Slate */
+  --primary: #b45309; /* Rich Amber Gold */
+  --secondary: #d4af37; /* Champagne Gold */
+  --accent: #92400e; /* Antique Architectural Bronze */
+  --glass: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(212, 175, 55, 0.25);
 }
 
 body {
@@ -21,39 +21,52 @@ body {
   font-family: 'Cinzel', serif;
 }
 
+.bg-texture-luxury {
+  background-color: #faf9f6;
+  background-image: 
+    linear-gradient(to right, rgba(212, 175, 55, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(212, 175, 55, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.bg-texture-dots {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.16) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+
 @layer components {
   .glass-card {
-    @apply bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition-all duration-300;
+    @apply bg-white/80 backdrop-blur-2xl border border-amber-200/60 rounded-3xl shadow-[0_12px_35px_rgba(212,175,55,0.08),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300;
   }
   
   .glass-card:hover {
-    @apply border-amber-500/30 shadow-[0_0_35px_rgba(212,175,55,0.15)];
+    @apply border-amber-400/80 shadow-[0_15px_40px_rgba(212,175,55,0.18)];
   }
 
   .glass-card-luxury {
-    background: rgba(10, 14, 24, 0.75);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(212, 175, 55, 0.18);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    box-shadow: 0 16px 40px rgba(212, 175, 55, 0.1), 0 2px 10px rgba(0, 0, 0, 0.03);
     transition: all 0.35s ease;
   }
 
   .glass-card-luxury:hover {
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2), 0 4px 15px rgba(0, 0, 0, 0.05);
     transform: translateY(-2px);
   }
   
   .btn-primary {
-    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-bold px-8 py-4 rounded-2xl tracking-tight shadow-[0_0_30px_rgba(212,175,55,0.35)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(212,175,55,0.6)] active:scale-95;
+    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-bold px-8 py-4 rounded-2xl tracking-tight shadow-[0_4px_25px_rgba(212,175,55,0.35)] transition-all transform hover:-translate-y-1 hover:shadow-[0_8px_35px_rgba(212,175,55,0.5)] active:scale-95;
   }
   
   .btn-secondary {
-    @apply bg-white/5 backdrop-blur-md border border-amber-500/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-amber-500/10 hover:border-amber-400/50 transition-all active:scale-95;
+    @apply bg-white/90 backdrop-blur-md border border-amber-300 text-slate-800 px-8 py-4 rounded-2xl font-bold hover:bg-amber-50 hover:border-amber-400 transition-all active:scale-95 shadow-sm;
   }
 
   .btn-accent {
-    @apply bg-gradient-to-r from-amber-600 to-yellow-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-[0_0_25px_rgba(217,119,6,0.4)] transition-all transform hover:-translate-y-1 active:scale-95;
+    @apply bg-gradient-to-r from-amber-600 to-yellow-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-[0_4px_25px_rgba(217,119,6,0.35)] transition-all transform hover:-translate-y-1 active:scale-95;
   }
 
   .btn-gold {
@@ -71,39 +84,43 @@ body {
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-amber-800 via-amber-600 to-yellow-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-gold {
-    @apply bg-gradient-to-r from-[#fef08a] via-[#eab308] to-[#ca8a04] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-amber-700 via-yellow-600 to-amber-600 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-gold-rich {
+    @apply bg-gradient-to-r from-amber-900 via-amber-700 to-yellow-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-platinum {
-    @apply bg-gradient-to-r from-white via-slate-100 to-amber-100 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-slate-900 via-slate-800 to-amber-900 bg-clip-text text-transparent;
   }
 
   .text-gradient-rose {
-    @apply bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent;
   }
 
   .card-glow {
-    @apply relative before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-amber-500 before:to-yellow-500 before:rounded-3xl before:opacity-0 before:blur-xl before:transition-opacity before:duration-500 hover:before:opacity-30;
+    @apply relative before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-amber-400 before:to-yellow-400 before:rounded-3xl before:opacity-0 before:blur-xl before:transition-opacity before:duration-500 hover:before:opacity-20;
   }
 }
 
 .glow-sphere {
-  @apply absolute rounded-full blur-[140px] opacity-25 -z-10 animate-pulse;
+  @apply absolute rounded-full blur-[140px] opacity-35 -z-10 animate-pulse;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar for Light Theme */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-slate-950;
+  @apply bg-amber-50/40;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-800 rounded-full hover:bg-slate-700 transition-colors;
+  @apply bg-amber-300/80 rounded-full hover:bg-amber-400 transition-colors;
 }
 
 @keyframes float {
