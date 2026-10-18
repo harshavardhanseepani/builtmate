@@ -112,11 +112,21 @@ export default function FloorPlan2D({ specs }: { specs: any }) {
   }, [houseSpec, activeFloor]);
 
   return (
-    <div className="w-full h-full bg-slate-950 rounded-3xl overflow-hidden border border-white/5 relative flex flex-col">
+    <div className="w-full h-full bg-[#0b0e14] rounded-3xl overflow-hidden border border-amber-200/80 shadow-2xl relative flex flex-col">
       <div className="absolute top-4 left-4 z-10 flex gap-2">
-         <div className="flex bg-slate-900 rounded-xl p-1 border border-white/10 shadow-xl">
+         <div className="flex bg-white/95 rounded-xl p-1 border border-amber-200/80 shadow-xl backdrop-blur-md">
            {Array.from({ length: houseSpec.floors }).map((_, i) => (
-              <button key={i} onClick={() => setActiveFloor(i)} className={`px-4 py-2 rounded-lg text-xs font-black uppercase ${activeFloor === i ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Floor {i+1}</button>
+              <button 
+                key={i} 
+                onClick={() => setActiveFloor(i)} 
+                className={`px-4 py-2 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                  activeFloor === i 
+                    ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-bold shadow-sm' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-amber-50/60'
+                }`}
+              >
+                Floor {i+1}
+              </button>
            ))}
          </div>
       </div>
@@ -128,7 +138,8 @@ export default function FloorPlan2D({ specs }: { specs: any }) {
           className="max-w-full max-h-full"
         />
       </div>
-      <div className="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur px-4 py-2 rounded-xl text-xs font-bold text-white uppercase tracking-widest border border-white/10">
+      <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl text-xs font-bold text-amber-900 uppercase tracking-widest border border-amber-200/80 shadow-lg flex items-center gap-2">
+        <i className="bx bx-check-shield text-amber-600 text-sm"></i>
         Engineered 2D Draft
       </div>
     </div>

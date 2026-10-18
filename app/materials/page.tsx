@@ -41,34 +41,33 @@ export default function MaterialsMarketplace() {
   });
 
   return (
-    <main className="min-h-screen pt-24 pb-20 px-6 bg-slate-950">
+    <main className="min-h-screen pt-24 pb-20 px-6 bg-[#faf9f6] bg-texture-luxury font-sans selection:bg-amber-100 selection:text-amber-900">
       <Navbar />
 
       {/* Background Glows */}
-      <div className="glow-sphere top-20 right-1/4 w-[400px] h-[400px] bg-rose-600/10" />
+      <div className="glow-sphere top-20 right-1/4 w-[400px] h-[400px] bg-amber-400/10" />
 
       {/* Contact Modal */}
       {selectedMat && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6"
-          style={{ backgroundColor: 'rgba(2,6,23,0.85)', backdropFilter: 'blur(12px)' }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200"
           onClick={() => setSelectedMat(null)}
         >
           <div
-            className="glass-card w-full max-w-md p-8 border-rose-500/30 relative"
+            className="bg-white rounded-3xl w-full max-w-md p-8 border-2 border-amber-300 shadow-[0_25px_60px_rgba(0,0,0,0.25),0_0_35px_rgba(212,175,55,0.15)] relative"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close */}
             <button
               onClick={() => setSelectedMat(null)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-rose-500/30 transition-all z-10"
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center hover:bg-amber-200 text-slate-800 transition-all z-10 cursor-pointer"
             >
-              <i className="bx bx-x text-lg text-white"></i>
+              <i className="bx bx-x text-lg"></i>
             </button>
 
             {/* Header with Product & Dealer Image */}
-            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden border border-rose-500/30 flex-shrink-0 bg-slate-900 shadow-lg">
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-amber-100">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-amber-300 flex-shrink-0 bg-slate-100 shadow-md">
                 <img
                   src={selectedMat.image}
                   alt={selectedMat.name}
@@ -79,49 +78,49 @@ export default function MaterialsMarketplace() {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <span className="text-[9px] font-black uppercase tracking-widest text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded-md inline-block mb-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-md inline-block mb-1">
                   {selectedMat.category}
                 </span>
-                <h3 className="font-black text-lg text-white leading-tight truncate">{selectedMat.name}</h3>
+                <h3 className="font-bold text-lg text-slate-900 leading-tight truncate">{selectedMat.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <img
                     src={selectedMat.dealerImage || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=100'}
                     alt={selectedMat.supplier}
-                    className="w-5 h-5 rounded-full object-cover border border-rose-500/30"
+                    className="w-5 h-5 rounded-full object-cover border border-amber-300"
                   />
-                  <p className="text-xs text-rose-300 font-bold tracking-wide truncate">{selectedMat.supplier}</p>
+                  <p className="text-xs text-amber-700 font-bold tracking-wide truncate">{selectedMat.supplier}</p>
                 </div>
               </div>
             </div>
 
             {/* Contact Details */}
             <div className="space-y-4 mb-8">
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <i className="bx bx-phone text-rose-500 text-xl mt-0.5"></i>
+              <div className="flex items-start gap-4 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70">
+                <i className="bx bx-phone text-amber-600 text-xl mt-0.5"></i>
                 <div>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Phone</p>
-                  <p className="text-white font-bold">{selectedMat.contact?.phone}</p>
+                  <p className="text-slate-900 font-bold">{selectedMat.contact?.phone}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <i className="bx bx-envelope text-rose-500 text-xl mt-0.5"></i>
+              <div className="flex items-start gap-4 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70">
+                <i className="bx bx-envelope text-amber-600 text-xl mt-0.5"></i>
                 <div>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Email</p>
-                  <p className="text-white font-bold">{selectedMat.contact?.email}</p>
+                  <p className="text-slate-900 font-bold">{selectedMat.contact?.email}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <i className="bx bx-map text-rose-500 text-xl mt-0.5"></i>
+              <div className="flex items-start gap-4 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70">
+                <i className="bx bx-map text-amber-600 text-xl mt-0.5"></i>
                 <div>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Address</p>
-                  <p className="text-white font-bold text-sm">{selectedMat.contact?.address}</p>
+                  <p className="text-slate-900 font-bold text-sm">{selectedMat.contact?.address}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <i className="bx bx-time text-rose-500 text-xl mt-0.5"></i>
+              <div className="flex items-start gap-4 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70">
+                <i className="bx bx-time text-amber-600 text-xl mt-0.5"></i>
                 <div>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Working Hours</p>
-                  <p className="text-white font-bold">{selectedMat.contact?.hours}</p>
+                  <p className="text-slate-900 font-bold">{selectedMat.contact?.hours}</p>
                 </div>
               </div>
             </div>
@@ -130,15 +129,15 @@ export default function MaterialsMarketplace() {
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={`tel:${selectedMat.contact?.phone}`}
-                className="btn-primary text-center text-xs py-3.5 flex items-center justify-center gap-2"
+                className="btn-primary text-center text-xs py-3.5 flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
-                <i className="bx bx-phone"></i> Call Now
+                <i className="bx bx-phone text-base"></i> Call Now
               </a>
               <a
                 href={`mailto:${selectedMat.contact?.email}`}
-                className="btn-secondary text-center text-xs py-3.5 flex items-center justify-center gap-2"
+                className="btn-secondary text-center text-xs py-3.5 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <i className="bx bx-envelope"></i> Email
+                <i className="bx bx-envelope text-base"></i> Email
               </a>
             </div>
           </div>
@@ -146,19 +145,19 @@ export default function MaterialsMarketplace() {
       )}
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-10">
-          <div className="space-y-4">
-            <h1 className="text-6xl font-black uppercase tracking-tighter leading-none italic">
-              Supply <span className="text-gradient-rose">Chain</span>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-8">
+          <div className="space-y-3">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none text-slate-900">
+              Supply <span className="text-gradient-gold-rich">Chain</span>
             </h1>
-            <p className="text-slate-500 max-w-lg font-medium">Source industrial-grade raw materials directly from verified local distributors at wholesale rates.</p>
+            <p className="text-slate-600 max-w-lg font-normal text-sm md:text-base">Source industrial-grade raw materials directly from verified local distributors at wholesale rates.</p>
           </div>
-          <div className="glass-card flex items-center px-8 py-2 w-full md:w-[450px] border-white/5 shadow-2xl">
-            <i className="hidden md:inline-block bx bx-search text-rose-500 mr-4 text-2xl"></i>
+          <div className="glass-card-luxury flex items-center px-6 py-2 w-full md:w-[450px] rounded-2xl shadow-md border-amber-200/80 bg-white/90">
+            <i className="hidden md:inline-block bx bx-search text-amber-600 mr-4 text-2xl"></i>
             <input
               type="text"
               placeholder="Filter materials (Cement, Steel...)"
-              className="bg-transparent border-none outline-none text-white w-full py-5 text-sm font-bold uppercase tracking-widest placeholder:text-slate-700"
+              className="bg-transparent border-none outline-none text-slate-900 w-full py-3.5 text-sm font-bold uppercase tracking-wider placeholder:text-slate-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -171,10 +170,10 @@ export default function MaterialsMarketplace() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30 ring-2 ring-rose-400/40 scale-105'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-white/5 hover:border-white/20'
+                  ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/25 ring-2 ring-amber-400/50 scale-105'
+                  : 'bg-white/90 text-slate-600 hover:text-amber-800 border border-amber-200/80 hover:border-amber-400/80 shadow-xs'
               }`}
             >
               {cat}
@@ -187,10 +186,10 @@ export default function MaterialsMarketplace() {
              [1,2,3,4].map(n => <div key={n} className="glass-card h-96 animate-pulse"></div>)
            ) : (
              filteredMaterials.map((mat) => (
-               <div key={mat.id} className="glass-card flex flex-col group hover:-translate-y-2 hover:border-rose-500/30 transition-all duration-500 border-white/5 overflow-hidden">
+               <div key={mat.id} className="glass-card-luxury flex flex-col group hover:-translate-y-2 hover:border-amber-400 transition-all duration-500 border border-amber-200/80 rounded-3xl overflow-hidden bg-white/90 shadow-sm hover:shadow-xl">
 
                   {/* Image Banner */}
-                  <div className="h-48 relative overflow-hidden flex-shrink-0 bg-slate-900">
+                  <div className="h-48 relative overflow-hidden flex-shrink-0 bg-slate-100">
                     <img
                       src={mat.image}
                       alt={mat.name}
@@ -199,23 +198,19 @@ export default function MaterialsMarketplace() {
                         e.currentTarget.src = 'https://5.imimg.com/data5/SELLER/Default/2026/1/573829326/JC/JH/YU/99417085/ultratech-cement-opc-53-500x500.jpeg';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
-                    <span className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[9px] font-black uppercase tracking-widest text-rose-400">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-amber-200 text-[9px] font-black uppercase tracking-widest text-amber-800 shadow-xs">
                       {mat.category}
                     </span>
-                    <span className={`absolute top-3 right-3 text-[9px] px-2 py-1 rounded-md font-black border uppercase tracking-tighter ${mat.stock === 'In Stock' ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' : 'text-rose-400 border-rose-500/30 bg-rose-500/10'}`}>
+                    <span className={`absolute top-3 right-3 text-[9px] px-2 py-1 rounded-md font-black border uppercase tracking-tighter ${mat.stock === 'In Stock' ? 'text-emerald-700 border-emerald-300 bg-emerald-50' : 'text-amber-800 border-amber-300 bg-amber-50'}`}>
                       {mat.stock}
                     </span>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-6 flex flex-col flex-1 relative">
-                    <div className="absolute -right-5 -top-5 opacity-5 group-hover:opacity-10 transition-opacity hidden md:block">
-                      <i className={`bx ${mat.category === 'Steel' ? 'bx-cube-alt' : 'bx-layer'} text-8xl`}></i>
-                    </div>
-
+                  <div className="p-6 flex flex-col flex-1 relative bg-white/60">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="hidden sm:flex w-10 h-10 rounded-xl bg-white/5 items-center justify-center text-xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all border border-white/5 flex-shrink-0">
+                      <div className="hidden sm:flex w-10 h-10 rounded-xl bg-amber-50 items-center justify-center text-xl text-amber-600 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all border border-amber-200 flex-shrink-0">
                         <i className={`bx ${
                           mat.category === 'Steel' ? 'bx-radar' :
                           mat.category === 'Cement' ? 'bx-square-rounded' :
@@ -223,29 +218,29 @@ export default function MaterialsMarketplace() {
                         }`}></i>
                       </div>
                       <div>
-                        <h3 className="font-bold text-sm leading-tight group-hover:text-white transition-colors">{mat.name}</h3>
+                        <h3 className="font-bold text-sm text-slate-900 leading-tight group-hover:text-amber-800 transition-colors">{mat.name}</h3>
                       </div>
                     </div>
 
                     <div className="mt-auto space-y-4">
                       <div className="flex justify-between items-end">
-                        <p className="text-xl font-black text-white tracking-tighter">{mat.price}</p>
+                        <p className="font-display text-xl font-extrabold text-slate-900 tracking-tight">{mat.price}</p>
                       </div>
-                      <div className="space-y-3 pt-4 border-t border-white/5">
+                      <div className="space-y-3 pt-4 border-t border-amber-100">
                         <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
                           <span className="flex items-center gap-1.5 truncate max-w-[140px]">
                             <img
                               src={mat.dealerImage || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=100'}
                               alt={mat.supplier}
-                              className="w-4 h-4 rounded-full object-cover border border-rose-500/30 flex-shrink-0"
+                              className="w-4 h-4 rounded-full object-cover border border-amber-300 flex-shrink-0"
                             />
                             <span className="truncate">{mat.supplier}</span>
                           </span>
-                          <span className="flex items-center gap-1.5"><i className="bx bx-map-pin text-xs"></i> {mat.location}</span>
+                          <span className="flex items-center gap-1.5 text-amber-700"><i className="bx bx-map-pin text-xs"></i> {mat.location}</span>
                         </div>
                         <button
                           onClick={() => setSelectedMat(mat)}
-                          className="w-full btn-secondary !py-2.5 !text-[10px] !uppercase !tracking-widest !rounded-xl group-hover:!bg-rose-600 group-hover:!border-rose-600 transition-all"
+                          className="w-full py-2.5 text-[10px] uppercase tracking-widest rounded-xl bg-amber-50 border border-amber-300 text-slate-800 font-bold hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-slate-950 hover:border-amber-400 transition-all shadow-xs cursor-pointer"
                         >
                           Contact Supplier
                         </button>
