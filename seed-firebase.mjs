@@ -157,7 +157,7 @@ const materials = {
     stock: "In Stock",
     supplier: "UltraTech Cement",
     location: "Rajasthan",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
+    image: "/api/materials/cement-image"
   },
   m3: {
     id: "m3",
