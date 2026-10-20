@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Box, Cylinder, CameraControls, Html } from '@react-three/drei';
+import { ContactShadows, Box, Cylinder, Cone, CameraControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Room, HouseSpec, generateHouseLayout } from './layoutGenerator';
 import { 
@@ -14,7 +14,7 @@ import {
   Wardrobe, 
   StudySet, 
   Staircase, 
-  EntrywayFoyer, 
+  GrandFrontDoor, 
   WallArtwork,
   PatioSet, 
   SpiralTopiary, 
@@ -31,6 +31,9 @@ import {
   getWoodParquetTexture, 
   getTerrazzoTexture, 
   getStuccoTexture, 
+  getMarbleTexture,
+  getBrickTexture,
+  getTerracottaRoofTexture,
   getGrassTexture 
 } from './RealisticMaterials';
 
@@ -40,7 +43,8 @@ const UNIT = 0.1;
 export type QualityMode = 'AUTO' | 'HIGH' | 'MEDIUM' | 'LOW';
 
 /**
- * Furniture and interior decoration placement matching Reference Image 1
+ * Furnishings and interior room decoration matching Reference Image 1
+ * Safely placed with zero colliding pillars or clipping into beds.
  */
 const RoomInteriorDecor = React.memo(({ 
   room, 
@@ -56,7 +60,7 @@ const RoomInteriorDecor = React.memo(({
   return (
     <group>
       {/* 1. Living Room: Peacock Teal L-Sofa, Coffee Table, Woven Rug, Floor Lamp, TV Unit */}
-      {room.id === 'floor0_living' && (
+      {room.type === 'Living Room' && (
         <group position={[w / 2, 0, l / 2]}>
           <group position={[0, 0, 0.2]}>
             <Sofa />
@@ -68,77 +72,69 @@ const RoomInteriorDecor = React.memo(({
       )}
 
       {/* 2. Dining Area: Solid Oak Table, Bohemian Runner, Fruit Bowl, 6 Ochre Chairs */}
-      {room.id === 'floor0_dining' && (
+      {room.type === 'Dining' && (
         <group position={[w / 2, 0, l / 2]}>
           <DiningSet />
         </group>
       )}
 
       {/* 3. Gourmet Kitchen: Matte Grey Cabinets, Carrara Counter, Sink, Cooktop, Fridge */}
-      {room.id === 'floor0_kitchen' && (
+      {room.type === 'Kitchen' && (
         <group position={[w / 2, 0, l / 2]}>
           <KitchenSet />
         </group>
       )}
 
-      {/* 4. Foyer & Staircase: Entrance Porch, Door, Shoe Bench, and Open-Tread Staircase */}
-      {room.id === 'floor0_foyer_stairs' && (
+      {/* 4. Foyer & Staircase: Entrance Door and Open-Tread Staircase */}
+      {room.type === 'Foyer' && (
         <group position={[w / 2, 0, l / 2]}>
-          {/* Foyer Door and Shoe Bench at Front */}
-          <group position={[0, 0, l / 2 - 0.35]}>
-            <EntrywayFoyer />
-          </group>
-          {/* Open-Riser Floating Wooden Staircase leading upstairs */}
-          <group position={[w / 2 - 0.55, 0, -0.1]} rotation={[0, -Math.PI / 2, 0]}>
+          <group position={[w / 2 - 0.55, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
             <Staircase height={FLOOR_HEIGHT} />
           </group>
         </group>
       )}
 
       {/* 5. Bathroom: Terrazzo Floor, Wall-Hung Toilet, Floating Vanity, Shower */}
-      {room.id === 'floor0_bath1' && (
+      {room.type === 'Bathroom' && (
         <group position={[w / 2, 0, l / 2]}>
           <BathroomSet />
         </group>
       )}
 
-      {/* 6. Ground Floor Bedroom 1: Bed, Terracotta Duvet, Open Wardrobe, Study Desk */}
-      {room.id === 'floor0_bed1' && (
+      {/* 6. Bedroom (Cleanly anchored with safe clearances, NO overlapping pillars) */}
+      {(room.type === 'Bedroom' || room.type === 'Master Bedroom') && (
         <group position={[w / 2, 0, l / 2]}>
-          <group position={[0, 0, -l / 2 + 1.25]}>
+          {/* Bed anchored safely with headboard against back wall */}
+          <group position={[0, 0, -l / 2 + 1.15]}>
             <Bed />
           </group>
-          <group position={[-w / 2 + 0.45, 0, 0.2]} rotation={[0, Math.PI / 2, 0]}>
+          {/* Wardrobe flush along side wall */}
+          <group position={[-w / 2 + 0.35, 0, 0.2]} rotation={[0, Math.PI / 2, 0]}>
             <Wardrobe />
           </group>
-          <group position={[w / 2 - 0.65, 0, l / 2 - 0.4]}>
-            <StudySet />
-          </group>
+          {/* Study desk on opposite side */}
+          {w > 1.8 && (
+            <group position={[w / 2 - 0.55, 0, l / 2 - 0.35]}>
+              <StudySet />
+            </group>
+          )}
         </group>
       )}
 
-      {/* 7. Level 1 Rooftop Terrace: Outdoor Dining Table, Armchairs, Planter Boxes */}
-      {room.id === 'floor1_terrace' && (
+      {/* 7. Rooftop Terrace / Balcony */}
+      {room.type === 'Terrace' && (
         <group position={[w / 2, 0, l / 2]}>
           <PatioSet />
-          <group position={[0, 0, -l / 2 + 0.1]}>
+          <group position={[0, 0, -l / 2 + 0.08]}>
             <SlidingGlassDoors width={Math.min(w * 0.8, 2.2)} height={FLOOR_HEIGHT * 0.9} />
           </group>
         </group>
       )}
 
-      {/* 8. Level 1 Master Suite: King Bed, Wardrobe, Study Desk */}
-      {room.id === 'floor1_master' && (
+      {/* 8. Study Room */}
+      {room.type === 'Study Room' && (
         <group position={[w / 2, 0, l / 2]}>
-          <group position={[0, 0, -l / 2 + 1.25]}>
-            <Bed />
-          </group>
-          <group position={[-w / 2 + 0.45, 0, 0.2]} rotation={[0, Math.PI / 2, 0]}>
-            <Wardrobe />
-          </group>
-          <group position={[w / 2 - 0.65, 0, l / 2 - 0.4]}>
-            <StudySet />
-          </group>
+          <StudySet />
         </group>
       )}
 
@@ -154,74 +150,107 @@ const RoomInteriorDecor = React.memo(({
 RoomInteriorDecor.displayName = 'RoomInteriorDecor';
 
 /**
- * Architectural Exterior Facade Wall with Large Floor-To-Ceiling Glass Windows (Reference Image 2)
+ * Architectural Exterior Facade Wall Segment with Style Variations & Dynamic Color
  */
 const ExteriorWallSegment = React.memo(({ 
   w, 
   h, 
   thickness, 
   wallTexture, 
-  isLargeGlass = false 
+  wallColor, 
+  style, 
+  isLargeGlass = false, 
+  isFrontEntrance = false 
 }: { 
   w: number; 
   h: number; 
   thickness: number; 
   wallTexture: THREE.CanvasTexture; 
-  isLargeGlass?: boolean;
+  wallColor: string; 
+  style: string; 
+  isLargeGlass?: boolean; 
+  isFrontEntrance?: boolean;
 }) => {
+  // If this is the Ground Floor Front Entrance, render the Grand Main Entrance Door!
+  if (isFrontEntrance) {
+    const doorW = Math.min(w * 0.7, 1.4);
+    const wallSideW = (w - doorW) / 2;
+    return (
+      <group>
+        {/* Left Pier */}
+        <Box position={[-w / 2 + wallSideW / 2, 0, 0]} args={[wallSideW, h, thickness]} castShadow receiveShadow>
+          <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
+        </Box>
+        {/* Right Pier */}
+        <Box position={[w / 2 - wallSideW / 2, 0, 0]} args={[wallSideW, h, thickness]} castShadow receiveShadow>
+          <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
+        </Box>
+        {/* Top Header */}
+        <Box position={[0, h / 2 - 0.15, 0]} args={[doorW, 0.3, thickness]} castShadow receiveShadow>
+          <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
+        </Box>
+        {/* Grand Modern Front Pivot Entrance Door */}
+        <group position={[0, -h / 2, 0]}>
+          <GrandFrontDoor width={doorW} height={h - 0.3} />
+        </group>
+      </group>
+    );
+  }
+
   if (!isLargeGlass) {
     return (
       <Box args={[w, h, thickness]} castShadow receiveShadow>
-        <meshStandardMaterial map={wallTexture} roughness={0.5} />
+        <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
     );
   }
 
-  // Large Panoramic Floor-to-Ceiling Glass Window with Dark Mullions (Reference Image 2)
+  // Large Panoramic Floor-to-Ceiling Glass Window with Style-specific Frames
   const windowW = w * 0.82;
   const windowH = h * 0.78;
   const wallPillarW = (w - windowW) / 2;
+  const frameColor = style === 'Luxury' ? '#d4af37' : (style === 'Minimalist' ? '#090d16' : '#1f242d');
 
   return (
     <group>
-      {/* Left Wall Stucco Pier */}
+      {/* Left Wall Pier */}
       <Box position={[-w / 2 + wallPillarW / 2, 0, 0]} args={[wallPillarW, h, thickness]} castShadow receiveShadow>
-        <meshStandardMaterial map={wallTexture} roughness={0.5} />
+        <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
-      {/* Right Wall Stucco Pier */}
+      {/* Right Wall Pier */}
       <Box position={[w / 2 - wallPillarW / 2, 0, 0]} args={[wallPillarW, h, thickness]} castShadow receiveShadow>
-        <meshStandardMaterial map={wallTexture} roughness={0.5} />
+        <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
       {/* Top Header Lintel */}
       <Box position={[0, h / 2 - (h - windowH) / 4, 0]} args={[windowW, (h - windowH) / 2, thickness]} castShadow receiveShadow>
-        <meshStandardMaterial map={wallTexture} roughness={0.5} />
+        <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
       {/* Low Bottom Sill */}
       <Box position={[0, -h / 2 + (h - windowH) / 4, 0]} args={[windowW, (h - windowH) / 2, thickness]} castShadow receiveShadow>
-        <meshStandardMaterial map={wallTexture} roughness={0.5} />
+        <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
 
-      {/* Dark Architectural Aluminum Window Frame Surround */}
+      {/* Modern Window Frame Box */}
       <Box position={[0, 0, thickness / 2 + 0.01]} args={[windowW + 0.04, windowH + 0.04, 0.04]}>
-        <meshStandardMaterial color="#1f242d" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color={frameColor} metalness={style === 'Luxury' ? 0.95 : 0.8} roughness={0.2} />
       </Box>
 
-      {/* Interior Warm Illumination Panel behind glass */}
+      {/* Interior Warm Light Glow */}
       <Box position={[0, 0, -0.02]} args={[windowW - 0.02, windowH - 0.02, 0.01]}>
         <meshStandardMaterial color="#fef08a" emissive="#fbbf24" emissiveIntensity={0.5} />
       </Box>
 
-      {/* Large Reflective / Tinted Architectural Glass Pane */}
+      {/* Reflective Glass Pane */}
       <Box position={[0, 0, 0]} args={[windowW, windowH, 0.02]}>
         <meshStandardMaterial color="#e0f2fe" transparent opacity={0.55} roughness={0.08} metalness={0.3} />
       </Box>
 
-      {/* Dark Vertical & Horizontal Mullion Bars */}
+      {/* Mullion Bars */}
       <Box position={[0, 0, 0.02]} args={[0.025, windowH, 0.02]}>
-        <meshStandardMaterial color="#1f242d" metalness={0.8} />
+        <meshStandardMaterial color={frameColor} metalness={0.8} />
       </Box>
       <Box position={[0, 0, 0.02]} args={[windowW, 0.025, 0.02]}>
-        <meshStandardMaterial color="#1f242d" metalness={0.8} />
+        <meshStandardMaterial color={frameColor} metalness={0.8} />
       </Box>
     </group>
   );
@@ -229,7 +258,7 @@ const ExteriorWallSegment = React.memo(({
 ExteriorWallSegment.displayName = 'ExteriorWallSegment';
 
 /**
- * Animated floor group for Exploded 3D view
+ * Animated Floor Group for Exploded 3D view
  */
 const FloorGroup = ({ level, children, isExploded }: { level: number; children: React.ReactNode; isExploded: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -250,7 +279,7 @@ const FloorGroup = ({ level, children, isExploded }: { level: number; children: 
 };
 
 /**
- * Primary Architectural 3D House Model
+ * Architectural 3D House Model with Multi-Style and Multi-Floor Architecture
  */
 const ArchitecturalModel = React.memo(({ 
   spec, 
@@ -270,16 +299,29 @@ const ArchitecturalModel = React.memo(({
   enableShadows: boolean;
 }) => {
   const isCutaway = viewMode === 'CUTAWAY' || viewMode === 'INTERIOR' || explodedView;
-  const wallH = isCutaway ? 1.05 : FLOOR_HEIGHT; // Sectioned at ~1.05m in Cutaway mode (Reference Image 1)
+  const wallH = isCutaway ? 1.05 : FLOOR_HEIGHT;
 
-  // Cached PBR procedural textures
+  // Select material based on Architectural Style
+  const wallTexture = useMemo(() => {
+    switch (spec.style) {
+      case 'Luxury': return getMarbleTexture(4, 4);
+      case 'Industrial': return getBrickTexture(6, 6);
+      default: return getStuccoTexture(6, 6);
+    }
+  }, [spec.style]);
+
+  const roofTexture = useMemo(() => {
+    if (spec.style === 'Traditional') return getTerracottaRoofTexture(6, 6);
+    return getStuccoTexture(6, 6);
+  }, [spec.style]);
+
   const woodTexture = useMemo(() => getWoodParquetTexture(5, 5), []);
   const terrazzoTexture = useMemo(() => getTerrazzoTexture(4, 4), []);
-  const stuccoTexture = useMemo(() => getStuccoTexture(6, 6), []);
   const grassTexture = useMemo(() => getGrassTexture(16, 16), []);
 
   const pw = spec.plotW * UNIT;
   const pl = spec.plotL * UNIT;
+  const activeColor = spec.wallColor || '#f8fafc';
 
   const renderFloor = (level: number) => {
     if (activeFloor !== 'ALL' && level !== activeFloor) return null;
@@ -299,6 +341,7 @@ const ArchitecturalModel = React.memo(({
           const isTerrace = room.type === 'Terrace';
           const isBath = room.type === 'Bathroom';
           const floorMat = isBath ? terrazzoTexture : woodTexture;
+          const isFoyerFront = level === 0 && room.id === 'floor0_foyer_stairs';
 
           return (
             <group 
@@ -311,7 +354,7 @@ const ArchitecturalModel = React.memo(({
                 }
               }}
             >
-              {/* Floor Slab with Wood Parquet / Terrazzo Tile (Reference Image 1) */}
+              {/* Floor Slab with Wood Parquet / Terrazzo Tile */}
               <Box position={[rw / 2, 0.04, rl / 2]} args={[rw, 0.08, rl]} receiveShadow={enableShadows}>
                 {isTerrace ? (
                   <meshStandardMaterial color="#64748b" roughness={0.6} />
@@ -329,8 +372,10 @@ const ArchitecturalModel = React.memo(({
                       w={rw} 
                       h={wallH} 
                       thickness={0.12} 
-                      wallTexture={stuccoTexture} 
-                      isLargeGlass={!isCutaway && level === 1}
+                      wallTexture={wallTexture} 
+                      wallColor={activeColor}
+                      style={spec.style}
+                      isLargeGlass={!isCutaway && level > 0}
                     />
                   </group>
                   {/* Left Wall */}
@@ -339,8 +384,10 @@ const ArchitecturalModel = React.memo(({
                       w={rl} 
                       h={wallH} 
                       thickness={0.12} 
-                      wallTexture={stuccoTexture} 
-                      isLargeGlass={!isCutaway && level === 1 && room.id === 'floor1_master'}
+                      wallTexture={wallTexture} 
+                      wallColor={activeColor}
+                      style={spec.style}
+                      isLargeGlass={!isCutaway && level > 0 && room.type.includes('Bedroom')}
                     />
                   </group>
                   {/* Right Wall */}
@@ -349,23 +396,30 @@ const ArchitecturalModel = React.memo(({
                       w={rl} 
                       h={wallH} 
                       thickness={0.12} 
-                      wallTexture={stuccoTexture} 
-                      isLargeGlass={!isCutaway && level === 1}
+                      wallTexture={wallTexture} 
+                      wallColor={activeColor}
+                      style={spec.style}
+                      isLargeGlass={!isCutaway && level > 0}
                     />
                   </group>
-                  {/* Front Facade Wall: Full in Exterior mode; Cleanly open/sectioned in Cutaway mode */}
+                  {/* Front Facade Wall:
+                      - If Ground Floor Foyer: Renders the Grand Front Main Entrance Door!
+                      - If other rooms: Large Panoramic Glass Window in Exterior mode
+                      - In Cutaway mode: Low clean sectioned wall */}
                   {!isCutaway ? (
                     <group position={[rw / 2, wallH / 2, rl - 0.06]}>
                       <ExteriorWallSegment 
                         w={rw} 
                         h={wallH} 
                         thickness={0.12} 
-                        wallTexture={stuccoTexture} 
-                        isLargeGlass={true} // Large glass window matching Reference Image 2
+                        wallTexture={wallTexture} 
+                        wallColor={activeColor}
+                        style={spec.style}
+                        isLargeGlass={!isFoyerFront}
+                        isFrontEntrance={isFoyerFront}
                       />
                     </group>
                   ) : (
-                    /* Low sectioned front threshold wall in cutaway */
                     <group position={[rw / 2, 0.15, rl - 0.05]}>
                       <Box args={[rw, 0.2, 0.1]} receiveShadow>
                         <meshStandardMaterial color="#ffffff" roughness={0.3} />
@@ -373,7 +427,7 @@ const ArchitecturalModel = React.memo(({
                     </group>
                   )}
 
-                  {/* Furnishings & Realistic Interior Decor */}
+                  {/* Furnishings & Interior Decor */}
                   {(isCutaway || viewMode === 'INTERIOR') && (
                     <RoomInteriorDecor 
                       room={room} 
@@ -385,7 +439,7 @@ const ArchitecturalModel = React.memo(({
                 </>
               ) : (
                 <>
-                  {/* Rooftop Terrace (Reference Image 2) with Glass Balustrades and Patio Set */}
+                  {/* Rooftop Terrace / Balcony with Glass Railings */}
                   <RoomInteriorDecor 
                     room={room} 
                     w={rw} 
@@ -393,18 +447,22 @@ const ArchitecturalModel = React.memo(({
                     isCutaway={isCutaway} 
                   />
 
-                  {/* Modern Glass Railings along the Terrace Perimeter */}
+                  {/* Glass Balustrade */}
                   <group position={[rw / 2, 0.45, rl - 0.04]}>
                     <Box args={[rw, 0.85, 0.03]} castShadow>
                       <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.05} />
                     </Box>
-                    <Box position={[0, 0.43, 0]} args={[rw, 0.03, 0.06]}><meshStandardMaterial color="#1e293b" metalness={0.8} /></Box>
+                    <Box position={[0, 0.43, 0]} args={[rw, 0.03, 0.06]}>
+                      <meshStandardMaterial color={spec.style === 'Luxury' ? '#d4af37' : '#1e293b'} metalness={0.9} />
+                    </Box>
                   </group>
                   <group position={[0.04, 0.45, rl / 2]} rotation={[0, Math.PI / 2, 0]}>
                     <Box args={[rl, 0.85, 0.03]} castShadow>
                       <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.05} />
                     </Box>
-                    <Box position={[0, 0.43, 0]} args={[rl, 0.03, 0.06]}><meshStandardMaterial color="#1e293b" metalness={0.8} /></Box>
+                    <Box position={[0, 0.43, 0]} args={[rl, 0.03, 0.06]}>
+                      <meshStandardMaterial color={spec.style === 'Luxury' ? '#d4af37' : '#1e293b'} metalness={0.9} />
+                    </Box>
                   </group>
                 </>
               )}
@@ -419,57 +477,72 @@ const ArchitecturalModel = React.memo(({
 
   return (
     <group>
-      {/* 1. Lush Emerald Lawn Ground Plane (Reference Image 2) */}
+      {/* 1. Lush Emerald Lawn Ground Plane */}
       <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={enableShadows}>
         <planeGeometry args={[pw * 2.8, pl * 2.8]} />
         <meshStandardMaterial map={grassTexture} roughness={0.85} />
       </mesh>
 
-      {/* 2. Floors & Interior / Exterior Geometry */}
+      {/* 2. Floors & Enclosed Geometry for 1, 2, 3, or 4 Floors */}
       {Array.from({ length: spec.floors }).map((_, i) => renderFloor(i))}
 
-      {/* 3. Modern Flat Roof with Parapets (Visible in Exterior Mode) */}
+      {/* 3. Roof Architecture (Pitched for Traditional, Flat Parapet for Modern/Luxury/Minimalist) */}
       {!isCutaway && activeFloor === 'ALL' && (
         <FloorGroup level={spec.floors} isExploded={explodedView}>
           <group position={[0, roofY, 0]}>
-            {/* Right-Side Upper Bedroom Flat Roof Slab */}
-            <Box args={[pw * 0.52, 0.16, pl * 0.7]} position={[pw * 0.24, 0.08, -pl * 0.05]} castShadow receiveShadow>
-              <meshStandardMaterial map={stuccoTexture} roughness={0.5} />
-            </Box>
-            {/* Parapet Wall Lip */}
-            <Box args={[pw * 0.52, 0.22, 0.08]} position={[pw * 0.24, 0.24, pl * 0.3]}><meshStandardMaterial color="#ffffff" /></Box>
-            <Box args={[pw * 0.52, 0.22, 0.08]} position={[pw * 0.24, 0.24, -pl * 0.4]}><meshStandardMaterial color="#ffffff" /></Box>
-            <Box args={[0.08, 0.22, pl * 0.7]} position={[pw * 0.5, 0.24, -pl * 0.05]}><meshStandardMaterial color="#ffffff" /></Box>
+            {spec.style === 'Traditional' ? (
+              // Traditional Pitched Terracotta Roof
+              <Cone args={[Math.max(pw, pl) * 0.72, 1.8, 4]} rotation={[0, Math.PI / 4, 0]} position={[0, 0.9, 0]} castShadow>
+                <meshStandardMaterial map={roofTexture} color="#b91c1c" roughness={0.4} />
+              </Cone>
+            ) : (
+              // Contemporary Flat Parapet Roof Slab
+              <group>
+                <Box args={[pw * 0.55, 0.16, pl * 0.75]} position={[pw * 0.23, 0.08, -pl * 0.05]} castShadow receiveShadow>
+                  <meshStandardMaterial map={roofTexture} color={activeColor} roughness={0.5} />
+                </Box>
+                {/* Parapet Caps */}
+                <Box args={[pw * 0.55, 0.22, 0.08]} position={[pw * 0.23, 0.24, pl * 0.325]}>
+                  <meshStandardMaterial color={activeColor} />
+                </Box>
+                <Box args={[pw * 0.55, 0.22, 0.08]} position={[pw * 0.23, 0.24, -pl * 0.425]}>
+                  <meshStandardMaterial color={activeColor} />
+                </Box>
+                <Box args={[0.08, 0.22, pl * 0.75]} position={[pw * 0.5, 0.24, -pl * 0.05]}>
+                  <meshStandardMaterial color={activeColor} />
+                </Box>
+              </group>
+            )}
           </group>
         </FloorGroup>
       )}
 
-      {/* 4. Surrounding Landscaping (Reference Image 2) */}
-      {/* Entrance Porch Concrete Steps */}
-      <PorchSteps width={1.8} position={[0.4, 0.02, pl / 2 - 0.25]} />
+      {/* 4. Landscaping & Surroundings (Reference Image 2) */}
+      {/* Front Entrance Concrete Porch Steps leading directly up to the Grand Front Door */}
+      <PorchSteps width={1.8} position={[pw * 0.24, 0.02, pl / 2 - 0.25]} />
 
-      {/* S-Curved Flagstone Walkway winding to Entrance */}
+      {/* S-Curved Flagstone Walkway */}
       <CurvedStoneWalkway />
 
-      {/* Sculpted Spiral Topiaries flanking Entrance and Pathway */}
-      <SpiralTopiary position={[1.4, 0, pl / 2 - 0.1]} />
-      <SpiralTopiary position={[-0.7, 0, pl / 2 - 0.1]} />
-      <SpiralTopiary position={[-1.2, 0, pl / 2 + 1.6]} />
+      {/* Sculpted Spiral Topiaries */}
+      <SpiralTopiary position={[pw * 0.24 + 1.2, 0, pl / 2 - 0.1]} />
+      <SpiralTopiary position={[pw * 0.24 - 1.2, 0, pl / 2 - 0.1]} />
+      <SpiralTopiary position={[-0.8, 0, pl / 2 + 1.6]} />
 
-      {/* Boxwood Spherical Shrubs lining the pathway */}
+      {/* Boxwood Spherical Shrubs */}
       <BoxwoodShrub position={[0.8, 0, pl / 2 + 0.8]} scale={1.1} />
       <BoxwoodShrub position={[1.0, 0, pl / 2 + 1.8]} scale={0.9} />
       <BoxwoodShrub position={[-0.9, 0, pl / 2 + 2.5]} scale={1.0} />
       <BoxwoodShrub position={[-0.2, 0, pl / 2 + 3.2]} scale={1.2} />
 
-      {/* Ornamental Flowering Garden Trees in Yard Corners */}
+      {/* Garden Trees */}
       <GardenTree position={[pw / 2 + 1.8, 0, pl / 2 + 1.5]} />
       <GardenTree position={[-pw / 2 - 1.6, 0, -pl / 2 + 1.0]} />
 
-      {/* Perimeter Dense Green Privacy Hedges */}
+      {/* Perimeter Dense Green Hedges */}
       <PerimeterHedges width={pw * 1.8} length={pl * 1.8} />
 
-      {/* Driveway Car Pad & Luxury SUV */}
+      {/* Paved Parking Pad with Realistic Luxury SUV */}
       {spec.hasParking && (
         <group position={[-pw / 2 - 0.8, 0.02, pl / 2 + 1.0]}>
           <Box args={[2.0, 0.03, 3.2]} receiveShadow={enableShadows}>
@@ -483,9 +556,6 @@ const ArchitecturalModel = React.memo(({
 });
 ArchitecturalModel.displayName = 'ArchitecturalModel';
 
-/**
- * AdvancedViewer Component with Three.js Canvas, Lighting & Responsive Controls
- */
 export default function AdvancedViewer({ 
   specs, 
   viewMode, 
@@ -506,7 +576,6 @@ export default function AdvancedViewer({
   const houseSpec = useMemo(() => generateHouseLayout(specs), [specs]);
   const cameraControlsRef = useRef<CameraControls>(null);
 
-  // Quality & Device Adaptation
   const [qualityMode, setQualityMode] = useState<QualityMode>('AUTO');
   const [isMobile, setIsMobile] = useState(false);
 
@@ -534,13 +603,10 @@ export default function AdvancedViewer({
     const ctrl = cameraControlsRef.current;
     
     if (viewMode === 'EXTERIOR') {
-      // Elevated 3/4 architectural perspective showing the villa facade, rooftop terrace, and garden (Reference Image 2)
-      ctrl.setLookAt(pw * 1.35, 5.2, pl * 1.5, 0, 1.2, 0, true);
+      ctrl.setLookAt(pw * 1.35, Math.max(5.2, houseSpec.floors * 1.8), pl * 1.5, 0, (houseSpec.floors * FLOOR_HEIGHT) / 3, 0, true);
     } else if (viewMode === 'CUTAWAY' && !activeRoomId) {
-      // Top-down angled isometric cutaway view (~50° pitch) showing all rooms clearly (Reference Image 1)
-      ctrl.setLookAt(0.2, 7.5, pl * 0.95, 0, 0.4, 0, true);
+      ctrl.setLookAt(0.2, Math.max(7.5, houseSpec.floors * 2.5), pl * 0.95, 0, 0.4, 0, true);
     } else if (viewMode === 'INTERIOR' && activeRoomId) {
-      // Room-by-room close-up focus
       const room = houseSpec.rooms.find(r => r.id === activeRoomId);
       if (room) {
         const cx = room.x * UNIT - pw / 2 + (room.w * UNIT) / 2;
@@ -549,7 +615,7 @@ export default function AdvancedViewer({
         ctrl.setLookAt(cx, cy + 1.2, cz + (room.l * UNIT) * 0.6, cx, cy, cz, true);
       }
     }
-  }, [viewMode, activeRoomId, pw, pl, houseSpec.rooms, resetCameraSignal, explodedView]);
+  }, [viewMode, activeRoomId, pw, pl, houseSpec.rooms, houseSpec.floors, resetCameraSignal, explodedView]);
 
   const enableShadows = effectiveQuality === 'HIGH';
   const dprRange: [number, number] = effectiveQuality === 'HIGH' ? [1, 1.5] : [1, 1];
@@ -557,10 +623,10 @@ export default function AdvancedViewer({
   return (
     <div className="w-full h-full relative bg-[#090d16] rounded-3xl overflow-hidden flex flex-col touch-none select-none">
       
-      {/* Performance Preset Selector (Top Left) */}
+      {/* 3D Performance Selector (Top Left) */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-slate-950/80 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 shadow-xl">
         <span className="text-amber-400 flex items-center gap-1 mr-1">
-          <i className="bx bx-bulb text-xs"></i> 3D Quality:
+          <i className="bx bx-bulb text-xs"></i> 3D Mode:
         </span>
         {(['AUTO', 'HIGH', 'MEDIUM', 'LOW'] as QualityMode[]).map((mode) => (
           <button
@@ -584,7 +650,6 @@ export default function AdvancedViewer({
       >
         <color attach="background" args={['#090d16']} />
         
-        {/* Soft Golden Daylight Sun Lighting */}
         <ambientLight intensity={enableShadows ? 0.65 : 0.9} color="#ffffff" />
         
         {enableShadows ? (
@@ -605,11 +670,9 @@ export default function AdvancedViewer({
           <directionalLight position={[12, 20, 12]} intensity={1.8} color="#ffffff" />
         )}
 
-        {/* Gentle Sky & Ground Bounce Fill Lights */}
         <directionalLight position={[-12, 10, -12]} intensity={0.65} color="#93c5fd" />
         <directionalLight position={[0, -5, 0]} intensity={0.2} color="#15803d" />
 
-        {/* 3D Architectural Model */}
         <ArchitecturalModel 
           spec={houseSpec} 
           viewMode={viewMode} 
@@ -627,7 +690,7 @@ export default function AdvancedViewer({
         <CameraControls 
           ref={cameraControlsRef} 
           minDistance={1.2} 
-          maxDistance={22} 
+          maxDistance={25} 
           maxPolarAngle={Math.PI / 2 - 0.02} 
           makeDefault 
           dollySpeed={0.5}

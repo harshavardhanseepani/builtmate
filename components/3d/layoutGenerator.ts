@@ -22,7 +22,7 @@ export type HouseSpec = {
   hasTerrace: boolean;
   bedrooms: number;
   bathrooms: number;
-  wallColor?: string;
+  wallColor: string;
 };
 
 export function generateHouseLayout(specs: any): HouseSpec {
@@ -37,15 +37,14 @@ export function generateHouseLayout(specs: any): HouseSpec {
     plotL = parseInt(specs.plotLength) || 40;
   }
   
-  const floors = parseInt(specs.floors) || 2;
-  const numBeds = parseInt(specs.bedrooms) || 2;
-  const numBaths = parseInt(specs.bathrooms) || 2;
-  const hasPooja = specs.pooja === 'Yes';
+  const floors = Math.max(1, Math.min(4, parseInt(specs.floors) || 2));
+  const numBeds = Math.max(1, parseInt(specs.bedrooms) || 2);
+  const numBaths = Math.max(1, parseInt(specs.bathrooms) || 2);
   const hasStudy = specs.study === 'Yes';
 
   const marginX = 2.5;
   const houseW = plotW - (marginX * 2);
-  const frontSetback = specs.parking === 'Yes' ? 12 : (specs.garden === 'Yes' ? 8 : 4);
+  const frontSetback = specs.parking === 'Yes' ? 12 : (specs.garden === 'Yes' ? 8 : 5);
   const backSetback = 3.5;
   const houseL = plotL - frontSetback - backSetback;
   
@@ -54,17 +53,17 @@ export function generateHouseLayout(specs: any): HouseSpec {
 
   const rooms: Room[] = [];
 
-  // LEVEL 0 (Ground Floor - Architecturally matching Reference Image 1)
-  // Left half: Living -> Dining -> Open Kitchen
-  // Right half: Entrance Foyer & Staircase -> Bathroom -> Bedroom 1
+  // Division ratios
   const leftW = houseW * 0.54;
   const rightW = houseW - leftW;
-
   const frontL = houseL * 0.38;
   const midL = houseL * 0.28;
   const backL = houseL - frontL - midL;
 
-  // Left side:
+  // -------------------------------------------------------------
+  // LEVEL 0 (Ground Floor - Inspired by Reference Image 1)
+  // -------------------------------------------------------------
+  // Left wing: Open Living -> Dining -> Kitchen
   rooms.push({ 
     id: 'floor0_living', 
     name: 'Living Room', 
@@ -98,11 +97,11 @@ export function generateHouseLayout(specs: any): HouseSpec {
     level: 0 
   });
 
-  // Right side:
+  // Right wing: Main Foyer Entrance & Staircase -> Bathroom -> Bedroom 1
   rooms.push({ 
     id: 'floor0_foyer_stairs', 
-    name: 'Foyer & Staircase', 
-    type: 'Living Room', // rendered with staircase & entryway 
+    name: 'Foyer & Entrance', 
+    type: 'Foyer', 
     x: startX + leftW, 
     y: startY, 
     w: rightW, 
@@ -132,50 +131,51 @@ export function generateHouseLayout(specs: any): HouseSpec {
     level: 0 
   });
 
-  // LEVEL 1 (First Floor / Upper Villa - Architecturally matching Reference Image 2)
-  if (floors > 1) {
-    // Left side: Rooftop Terrace with outdoor seating (matching Reference Image 2)
-    rooms.push({ 
-      id: 'floor1_terrace', 
-      name: 'Rooftop Terrace', 
-      type: 'Terrace', 
-      x: startX, 
-      y: startY, 
-      w: leftW, 
-      l: frontL + midL, 
-      level: 1 
-    });
-
-    if (hasStudy) {
+  // -------------------------------------------------------------
+  // LEVEL 1 (First Floor)
+  // -------------------------------------------------------------
+  if (floors >= 2) {
+    if (floors === 2) {
+      // 2-Floor Villa (Matching Reference Image 2: terrace on left, master suite on right)
       rooms.push({ 
-        id: 'floor1_study', 
-        name: 'Study Room', 
-        type: 'Study Room', 
+        id: 'floor1_terrace', 
+        name: 'Rooftop Terrace', 
+        type: 'Terrace', 
         x: startX, 
-        y: startY + frontL + midL, 
+        y: startY, 
         w: leftW, 
-        l: backL, 
+        l: frontL + midL, 
         level: 1 
       });
-    }
 
-    // Right side: Master Bedroom & Lounge with floor-to-ceiling glass (matching Reference Image 2)
-    rooms.push({ 
-      id: 'floor1_master', 
-      name: 'Master Suite', 
-      type: 'Master Bedroom', 
-      x: startX + leftW, 
-      y: startY, 
-      w: rightW, 
-      l: frontL + midL, 
-      level: 1 
-    });
+      if (hasStudy) {
+        rooms.push({ 
+          id: 'floor1_study', 
+          name: 'Study Room', 
+          type: 'Study Room', 
+          x: startX, 
+          y: startY + frontL + midL, 
+          w: leftW, 
+          l: backL, 
+          level: 1 
+        });
+      }
 
-    if (numBeds >= 3) {
       rooms.push({ 
-        id: 'floor1_bed3', 
-        name: 'Bedroom 3', 
-        type: 'Bedroom', 
+        id: 'floor1_master', 
+        name: 'Master Suite', 
+        type: 'Master Bedroom', 
+        x: startX + leftW, 
+        y: startY, 
+        w: rightW, 
+        l: frontL + midL, 
+        level: 1 
+      });
+
+      rooms.push({ 
+        id: 'floor1_bath2', 
+        name: 'Ensuite Bath', 
+        type: 'Bathroom', 
         x: startX + leftW, 
         y: startY + frontL + midL, 
         w: rightW, 
@@ -183,6 +183,51 @@ export function generateHouseLayout(specs: any): HouseSpec {
         level: 1 
       });
     } else {
+      // 3 or 4 Floors: Full enclosed first floor with bedrooms and balcony
+      rooms.push({ 
+        id: 'floor1_balcony', 
+        name: 'Front Balcony', 
+        type: 'Terrace', 
+        x: startX, 
+        y: startY, 
+        w: leftW, 
+        l: frontL * 0.45, 
+        level: 1 
+      });
+
+      rooms.push({ 
+        id: 'floor1_bed2', 
+        name: 'Bedroom 2', 
+        type: 'Bedroom', 
+        x: startX, 
+        y: startY + frontL * 0.45, 
+        w: leftW, 
+        l: frontL * 0.55 + midL, 
+        level: 1 
+      });
+
+      rooms.push({ 
+        id: 'floor1_study', 
+        name: hasStudy ? 'Private Study' : 'Family Lounge', 
+        type: hasStudy ? 'Study Room' : 'Living Room', 
+        x: startX, 
+        y: startY + frontL + midL, 
+        w: leftW, 
+        l: backL, 
+        level: 1 
+      });
+
+      rooms.push({ 
+        id: 'floor1_master', 
+        name: 'Master Bedroom', 
+        type: 'Master Bedroom', 
+        x: startX + leftW, 
+        y: startY, 
+        w: rightW, 
+        l: frontL + midL, 
+        level: 1 
+      });
+
       rooms.push({ 
         id: 'floor1_bath2', 
         name: 'Master Bath', 
@@ -196,14 +241,117 @@ export function generateHouseLayout(specs: any): HouseSpec {
     }
   }
 
-  // LEVEL 2
-  if (floors > 2) {
-    if (numBeds >= 4) {
-      rooms.push({ id: 'floor2_bed4', name: 'Bedroom 4', type: 'Bedroom', x: startX + leftW, y: startY, w: rightW, l: frontL + midL, level: 2 });
-      rooms.push({ id: 'floor2_terrace', name: 'Open Sky Terrace', type: 'Terrace', x: startX, y: startY, w: leftW, l: houseL, level: 2 });
+  // -------------------------------------------------------------
+  // LEVEL 2 (Second Floor - for 3 or 4 Floors)
+  // -------------------------------------------------------------
+  if (floors >= 3) {
+    if (floors === 3) {
+      // 3-Floor Villa Top: Sky Terrace on left, Penthouse Bedroom on right
+      rooms.push({ 
+        id: 'floor2_terrace', 
+        name: 'Sky Terrace', 
+        type: 'Terrace', 
+        x: startX, 
+        y: startY, 
+        w: leftW, 
+        l: frontL + midL, 
+        level: 2 
+      });
+
+      rooms.push({ 
+        id: 'floor2_penthouse', 
+        name: 'Penthouse Suite', 
+        type: 'Master Bedroom', 
+        x: startX + leftW, 
+        y: startY, 
+        w: rightW, 
+        l: frontL + midL, 
+        level: 2 
+      });
+
+      rooms.push({ 
+        id: 'floor2_bath3', 
+        name: 'Sky Bath', 
+        type: 'Bathroom', 
+        x: startX + leftW, 
+        y: startY + frontL + midL, 
+        w: rightW, 
+        l: backL, 
+        level: 2 
+      });
     } else {
-      rooms.push({ id: 'floor2_terrace', name: 'Open Sky Terrace', type: 'Terrace', x: startX, y: startY, w: houseW, l: houseL, level: 2 });
+      // 4 Floors: Full floor Level 2
+      rooms.push({ 
+        id: 'floor2_bed3', 
+        name: 'Bedroom 3', 
+        type: 'Bedroom', 
+        x: startX, 
+        y: startY, 
+        w: leftW, 
+        l: frontL + midL, 
+        level: 2 
+      });
+
+      rooms.push({ 
+        id: 'floor2_lounge', 
+        name: 'Media Lounge', 
+        type: 'Living Room', 
+        x: startX + leftW, 
+        y: startY, 
+        w: rightW, 
+        l: frontL + midL, 
+        level: 2 
+      });
+
+      rooms.push({ 
+        id: 'floor2_bath3', 
+        name: 'Bathroom 3', 
+        type: 'Bathroom', 
+        x: startX + leftW, 
+        y: startY + frontL + midL, 
+        w: rightW, 
+        l: backL, 
+        level: 2 
+      });
     }
+  }
+
+  // -------------------------------------------------------------
+  // LEVEL 3 (Third Floor - for 4 Floors)
+  // -------------------------------------------------------------
+  if (floors >= 4) {
+    rooms.push({ 
+      id: 'floor3_terrace', 
+      name: 'Rooftop Observatory', 
+      type: 'Terrace', 
+      x: startX, 
+      y: startY, 
+      w: leftW, 
+      l: houseL, 
+      level: 3 
+    });
+
+    rooms.push({ 
+      id: 'floor3_penthouse', 
+      name: 'Sky Penthouse', 
+      type: 'Master Bedroom', 
+      x: startX + leftW, 
+      y: startY, 
+      w: rightW, 
+      l: frontL + midL, 
+      level: 3 
+    });
+
+    rooms.push({ 
+      id: 'floor3_bath4', 
+      name: 'Penthouse Bath', 
+      type: 'Bathroom', 
+      x: startX + leftW, 
+      y: startY + frontL + midL, 
+      w: rightW, 
+      l: backL, 
+      level: 3 
+    });
   }
 
   return {
