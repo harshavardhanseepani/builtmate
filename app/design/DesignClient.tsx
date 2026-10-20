@@ -53,7 +53,7 @@ export default function DesignStudioContent() {
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [hasGenerated, setHasGenerated] = useState(false);
+  const [hasGenerated, setHasGenerated] = useState(true);
   const [viewMode, setViewMode] = useState<string>('EXTERIOR'); // EXTERIOR | INTERIOR | CUTAWAY | FLOOR_PLAN | COST
   const [activeFloor, setActiveFloor] = useState<number | 'ALL'>('ALL');
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
