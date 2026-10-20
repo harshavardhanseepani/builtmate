@@ -1,20 +1,14 @@
 import * as THREE from 'three';
 
-// Cache generated textures to avoid re-generating on every render
 const textureCache = new Map<string, THREE.CanvasTexture>();
 
 /**
- * Creates a high-detail wood parquet plank texture with warm honey-teak tones,
- * plank seams, subtle wood grain and finish variation.
+ * Creates wood parquet plank texture.
  */
 export function getWoodParquetTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
   const cacheKey = `wood_parquet_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -28,11 +22,7 @@ export function getWoodParquetTexture(repeatX = 6, repeatY = 6): THREE.CanvasTex
     const rows = 16;
     const rowHeight = 512 / rows;
     const plankWidth = 512 / 4;
-
-    const woodTones = [
-      '#a8602b', '#b36b35', '#be773f', '#a15824',
-      '#c47e45', '#9a511f', '#ba723b', '#aa622c'
-    ];
+    const woodTones = ['#a8602b', '#b36b35', '#be773f', '#a15824', '#c47e45', '#9a511f', '#ba723b', '#aa622c'];
 
     for (let r = 0; r < rows; r++) {
       const y = r * rowHeight;
@@ -43,7 +33,6 @@ export function getWoodParquetTexture(repeatX = 6, repeatY = 6): THREE.CanvasTex
         ctx.fillStyle = woodTones[toneIndex];
         ctx.fillRect(x + offset, y, plankWidth, rowHeight);
 
-        // Wood grain
         ctx.strokeStyle = 'rgba(70, 35, 15, 0.18)';
         ctx.lineWidth = 1;
         for (let g = 2; g < rowHeight; g += 3 + Math.random() * 4) {
@@ -53,7 +42,6 @@ export function getWoodParquetTexture(repeatX = 6, repeatY = 6): THREE.CanvasTex
           ctx.stroke();
         }
 
-        // Plank bevel shadow
         ctx.strokeStyle = 'rgba(40, 20, 10, 0.45)';
         ctx.lineWidth = 1.2;
         ctx.strokeRect(x + offset, y, plankWidth, rowHeight);
@@ -71,16 +59,12 @@ export function getWoodParquetTexture(repeatX = 6, repeatY = 6): THREE.CanvasTex
 }
 
 /**
- * Creates speckled terrazzo tile texture for the bathroom floor.
+ * Creates speckled aggregate terrazzo tile texture for bathroom.
  */
 export function getTerrazzoTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture {
   const cacheKey = `terrazzo_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -91,10 +75,7 @@ export function getTerrazzoTexture(repeatX = 4, repeatY = 4): THREE.CanvasTextur
     ctx.fillStyle = '#e8ecef';
     ctx.fillRect(0, 0, 512, 512);
 
-    const chipColors = [
-      '#1e293b', '#334155', '#475569', '#c2410c',
-      '#9a3412', '#b45309', '#0f172a', '#64748b'
-    ];
+    const chipColors = ['#1e293b', '#334155', '#475569', '#c2410c', '#9a3412', '#b45309', '#0f172a', '#64748b'];
 
     for (let i = 0; i < 1200; i++) {
       const x = Math.random() * 512;
@@ -128,16 +109,12 @@ export function getTerrazzoTexture(repeatX = 4, repeatY = 4): THREE.CanvasTextur
 }
 
 /**
- * Creates flagstone paver texture for the garden walkway.
+ * Creates flagstone paver texture for garden walkway.
  */
 export function getFlagstonePathTexture(repeatX = 5, repeatY = 5): THREE.CanvasTexture {
   const cacheKey = `flagstone_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -148,11 +125,7 @@ export function getFlagstonePathTexture(repeatX = 5, repeatY = 5): THREE.CanvasT
     ctx.fillStyle = '#2d3748';
     ctx.fillRect(0, 0, 512, 512);
 
-    const stoneColors = [
-      '#85929E', '#9AA7B1', '#7B8893', '#AAB7C1',
-      '#6C7984', '#93A0AA', '#8E9AA4', '#788590'
-    ];
-
+    const stoneColors = ['#85929E', '#9AA7B1', '#7B8893', '#AAB7C1', '#6C7984', '#93A0AA', '#8E9AA4', '#788590'];
     const cols = 8;
     const rows = 8;
     const cw = 512 / cols;
@@ -194,16 +167,12 @@ export function getFlagstonePathTexture(repeatX = 5, repeatY = 5): THREE.CanvasT
 }
 
 /**
- * Creates subtle architectural stucco texture for the exterior walls.
+ * Creates subtle architectural stucco texture.
  */
 export function getStuccoTexture(repeatX = 8, repeatY = 8): THREE.CanvasTexture {
   const cacheKey = `stucco_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -233,16 +202,12 @@ export function getStuccoTexture(repeatX = 8, repeatY = 8): THREE.CanvasTexture 
 }
 
 /**
- * Creates Italian marble texture for the Luxury style facade.
+ * Creates Italian marble texture for Luxury style (Reference Image 5).
  */
 export function getMarbleTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture {
   const cacheKey = `marble_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -250,12 +215,11 @@ export function getMarbleTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture 
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    ctx.fillStyle = '#fafaf9';
+    ctx.fillStyle = '#fdfbf7';
     ctx.fillRect(0, 0, 512, 512);
 
-    // Subtle golden/grey veins
-    const veinColors = ['rgba(212, 175, 55, 0.25)', 'rgba(100, 116, 139, 0.2)'];
-    for (let v = 0; v < 8; v++) {
+    const veinColors = ['rgba(212, 175, 55, 0.3)', 'rgba(148, 163, 184, 0.25)'];
+    for (let v = 0; v < 10; v++) {
       ctx.strokeStyle = veinColors[v % veinColors.length];
       ctx.lineWidth = Math.random() * 2.5 + 1;
       ctx.beginPath();
@@ -263,8 +227,8 @@ export function getMarbleTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture 
       let cy = 0;
       ctx.moveTo(cx, cy);
       while (cy < 512) {
-        cx += (Math.random() - 0.5) * 35;
-        cy += Math.random() * 30 + 10;
+        cx += (Math.random() - 0.5) * 40;
+        cy += Math.random() * 35 + 10;
         ctx.lineTo(cx, cy);
       }
       ctx.stroke();
@@ -281,16 +245,12 @@ export function getMarbleTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture 
 }
 
 /**
- * Creates dark modern brick texture for the Industrial style.
+ * Creates exposed terracotta brick texture for Organic Brick Parametric style (Reference Image 3).
  */
-export function getBrickTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
-  const cacheKey = `brick_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+export function getParametricBrickTexture(repeatX = 8, repeatY = 8): THREE.CanvasTexture {
+  const cacheKey = `param_brick_${repeatX}_${repeatY}`;
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -298,19 +258,22 @@ export function getBrickTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    ctx.fillStyle = '#1e293b';
+    // Mortar grey base
+    ctx.fillStyle = '#64748b';
     ctx.fillRect(0, 0, 512, 512);
 
-    const rows = 24;
+    const rows = 28;
     const rh = 512 / rows;
-    const bw = 512 / 6;
+    const bw = 512 / 8;
+    const brickTones = ['#c2410c', '#b45309', '#9a3412', '#ea580c', '#a16207'];
 
     for (let r = 0; r < rows; r++) {
       const y = r * rh;
       const off = (r % 2) * (bw / 2);
       for (let x = -bw; x < 512 + bw; x += bw) {
-        ctx.fillStyle = (r + x) % 3 === 0 ? '#334155' : '#475569';
-        ctx.fillRect(x + off + 1, y + 1, bw - 2, rh - 2);
+        const tone = brickTones[Math.floor(Math.abs(Math.sin(r * 4.3 + x * 2.7)) * brickTones.length)];
+        ctx.fillStyle = tone;
+        ctx.fillRect(x + off + 1.2, y + 1.2, bw - 2.4, rh - 2.4);
       }
     }
   }
@@ -325,34 +288,43 @@ export function getBrickTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
 }
 
 /**
- * Creates Terracotta Spanish tile roof texture for Traditional style.
+ * Creates authentic grooved clay Mangalore roof tiles for Kerala Heritage (Reference Image 2).
  */
-export function getTerracottaRoofTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
-  const cacheKey = `terracotta_roof_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+export function getClayTileRoofTexture(repeatX = 10, repeatY = 10): THREE.CanvasTexture {
+  const cacheKey = `clay_tile_roof_${repeatX}_${repeatY}`;
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    ctx.fillStyle = '#991b1b';
-    ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = '#831843';
+    ctx.fillRect(0, 0, 512, 512);
 
-    const tileW = 256 / 8;
-    for (let x = 0; x < 256; x += tileW) {
-      const grad = ctx.createLinearGradient(x, 0, x + tileW, 0);
-      grad.addColorStop(0, '#7f1d1d');
-      grad.addColorStop(0.5, '#b91c1c');
+    const cols = 12;
+    const cw = 512 / cols;
+    for (let c = 0; c < cols; c++) {
+      const x = c * cw;
+      const grad = ctx.createLinearGradient(x, 0, x + cw, 0);
+      grad.addColorStop(0, '#450a0a');
+      grad.addColorStop(0.3, '#991b1b');
+      grad.addColorStop(0.7, '#b91c1c');
       grad.addColorStop(1, '#450a0a');
       ctx.fillStyle = grad;
-      ctx.fillRect(x, 0, tileW, 256);
+      ctx.fillRect(x, 0, cw, 512);
+
+      // Horizontal tile overlap lines
+      ctx.strokeStyle = 'rgba(30, 10, 10, 0.5)';
+      ctx.lineWidth = 2;
+      for (let y = 0; y < 512; y += 32) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + cw, y);
+        ctx.stroke();
+      }
     }
   }
 
@@ -366,16 +338,52 @@ export function getTerracottaRoofTexture(repeatX = 6, repeatY = 6): THREE.Canvas
 }
 
 /**
- * Creates woven fabric texture for living room area rug.
+ * Creates horizontal teak wood slat texture for Modern Bungalow & Minimalist (Reference Images 1 & 4).
  */
+export function getWoodSlatTexture(repeatX = 4, repeatY = 8): THREE.CanvasTexture {
+  const cacheKey = `wood_slat_${repeatX}_${repeatY}`;
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    ctx.fillStyle = '#0f172a'; // Dark gap
+    ctx.fillRect(0, 0, 256, 256);
+
+    const rows = 16;
+    const rh = 256 / rows;
+    for (let r = 0; r < rows; r++) {
+      const y = r * rh;
+      ctx.fillStyle = (r % 2 === 0) ? '#a16207' : '#854d0e';
+      ctx.fillRect(0, y + 1.5, 256, rh - 3);
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeatX, repeatY);
+  texture.needsUpdate = true;
+  textureCache.set(cacheKey, texture);
+  return texture;
+}
+
+export function getBrickTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
+  return getParametricBrickTexture(repeatX, repeatY);
+}
+
+export function getTerracottaRoofTexture(repeatX = 6, repeatY = 6): THREE.CanvasTexture {
+  return getClayTileRoofTexture(repeatX, repeatY);
+}
+
 export function getWovenRugTexture(repeatX = 3, repeatY = 3): THREE.CanvasTexture {
   const cacheKey = `woven_rug_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -410,17 +418,10 @@ export function getWovenRugTexture(repeatX = 3, repeatY = 3): THREE.CanvasTextur
   return texture;
 }
 
-/**
- * Creates colorful striped runner for dining table.
- */
 export function getStripedRunnerTexture(): THREE.CanvasTexture {
   const cacheKey = 'striped_runner';
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -428,10 +429,7 @@ export function getStripedRunnerTexture(): THREE.CanvasTexture {
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    const stripes = [
-      '#e11d48', '#f59e0b', '#10b981', '#3b82f6',
-      '#8b5cf6', '#ec4899', '#f97316', '#14b8a6'
-    ];
+    const stripes = ['#e11d48', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6'];
     const sw = 256 / stripes.length;
     stripes.forEach((color, i) => {
       ctx.fillStyle = color;
@@ -447,17 +445,10 @@ export function getStripedRunnerTexture(): THREE.CanvasTexture {
   return texture;
 }
 
-/**
- * Creates lush emerald lawn grass texture.
- */
 export function getGrassTexture(repeatX = 12, repeatY = 12): THREE.CanvasTexture {
   const cacheKey = `grass_${repeatX}_${repeatY}`;
-  if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as any);
-  }
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
 
   const canvas = document.createElement('canvas');
   canvas.width = 256;

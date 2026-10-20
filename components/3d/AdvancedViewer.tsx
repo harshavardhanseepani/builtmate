@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Box, Cylinder, Cone, CameraControls } from '@react-three/drei';
+import { ContactShadows, Box, Cylinder, Cone, Sphere, CameraControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Room, HouseSpec, generateHouseLayout } from './layoutGenerator';
 import { 
@@ -24,16 +24,16 @@ import {
   PerimeterHedges, 
   PorchSteps, 
   DrivewayCar, 
-  SlidingGlassDoors,
-  ExteriorSconceLight
+  SlidingGlassDoors
 } from './DetailedFurniture';
 import { 
   getWoodParquetTexture, 
   getTerrazzoTexture, 
   getStuccoTexture, 
   getMarbleTexture,
-  getBrickTexture,
-  getTerracottaRoofTexture,
+  getParametricBrickTexture,
+  getClayTileRoofTexture,
+  getWoodSlatTexture,
   getGrassTexture 
 } from './RealisticMaterials';
 
@@ -104,15 +104,12 @@ const RoomInteriorDecor = React.memo(({
       {/* 6. Bedroom (Cleanly anchored with safe clearances, NO overlapping pillars) */}
       {(room.type === 'Bedroom' || room.type === 'Master Bedroom') && (
         <group position={[w / 2, 0, l / 2]}>
-          {/* Bed anchored safely with headboard against back wall */}
           <group position={[0, 0, -l / 2 + 1.15]}>
             <Bed />
           </group>
-          {/* Wardrobe flush along side wall */}
           <group position={[-w / 2 + 0.35, 0, 0.2]} rotation={[0, Math.PI / 2, 0]}>
             <Wardrobe />
           </group>
-          {/* Study desk on opposite side */}
           {w > 1.8 && (
             <group position={[w / 2 - 0.55, 0, l / 2 - 0.35]}>
               <StudySet />
@@ -150,7 +147,7 @@ const RoomInteriorDecor = React.memo(({
 RoomInteriorDecor.displayName = 'RoomInteriorDecor';
 
 /**
- * Architectural Exterior Facade Wall Segment with Style Variations & Dynamic Color
+ * Exterior Wall Segment with style-specific architectural treatments
  */
 const ExteriorWallSegment = React.memo(({ 
   w, 
@@ -171,25 +168,20 @@ const ExteriorWallSegment = React.memo(({
   isLargeGlass?: boolean; 
   isFrontEntrance?: boolean;
 }) => {
-  // If this is the Ground Floor Front Entrance, render the Grand Main Entrance Door!
   if (isFrontEntrance) {
     const doorW = Math.min(w * 0.7, 1.4);
     const wallSideW = (w - doorW) / 2;
     return (
       <group>
-        {/* Left Pier */}
         <Box position={[-w / 2 + wallSideW / 2, 0, 0]} args={[wallSideW, h, thickness]} castShadow receiveShadow>
           <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
         </Box>
-        {/* Right Pier */}
         <Box position={[w / 2 - wallSideW / 2, 0, 0]} args={[wallSideW, h, thickness]} castShadow receiveShadow>
           <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
         </Box>
-        {/* Top Header */}
         <Box position={[0, h / 2 - 0.15, 0]} args={[doorW, 0.3, thickness]} castShadow receiveShadow>
           <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
         </Box>
-        {/* Grand Modern Front Pivot Entrance Door */}
         <group position={[0, -h / 2, 0]}>
           <GrandFrontDoor width={doorW} height={h - 0.3} />
         </group>
@@ -205,7 +197,6 @@ const ExteriorWallSegment = React.memo(({
     );
   }
 
-  // Large Panoramic Floor-to-Ceiling Glass Window with Style-specific Frames
   const windowW = w * 0.82;
   const windowH = h * 0.78;
   const wallPillarW = (w - windowW) / 2;
@@ -213,39 +204,35 @@ const ExteriorWallSegment = React.memo(({
 
   return (
     <group>
-      {/* Left Wall Pier */}
       <Box position={[-w / 2 + wallPillarW / 2, 0, 0]} args={[wallPillarW, h, thickness]} castShadow receiveShadow>
         <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
-      {/* Right Wall Pier */}
       <Box position={[w / 2 - wallPillarW / 2, 0, 0]} args={[wallPillarW, h, thickness]} castShadow receiveShadow>
         <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
-      {/* Top Header Lintel */}
       <Box position={[0, h / 2 - (h - windowH) / 4, 0]} args={[windowW, (h - windowH) / 2, thickness]} castShadow receiveShadow>
         <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
-      {/* Low Bottom Sill */}
       <Box position={[0, -h / 2 + (h - windowH) / 4, 0]} args={[windowW, (h - windowH) / 2, thickness]} castShadow receiveShadow>
         <meshStandardMaterial map={wallTexture} color={wallColor} roughness={0.4} />
       </Box>
 
-      {/* Modern Window Frame Box */}
+      {/* Frame */}
       <Box position={[0, 0, thickness / 2 + 0.01]} args={[windowW + 0.04, windowH + 0.04, 0.04]}>
         <meshStandardMaterial color={frameColor} metalness={style === 'Luxury' ? 0.95 : 0.8} roughness={0.2} />
       </Box>
 
-      {/* Interior Warm Light Glow */}
+      {/* Warm Illumination */}
       <Box position={[0, 0, -0.02]} args={[windowW - 0.02, windowH - 0.02, 0.01]}>
         <meshStandardMaterial color="#fef08a" emissive="#fbbf24" emissiveIntensity={0.5} />
       </Box>
 
-      {/* Reflective Glass Pane */}
+      {/* Glass Pane */}
       <Box position={[0, 0, 0]} args={[windowW, windowH, 0.02]}>
         <meshStandardMaterial color="#e0f2fe" transparent opacity={0.55} roughness={0.08} metalness={0.3} />
       </Box>
 
-      {/* Mullion Bars */}
+      {/* Mullions */}
       <Box position={[0, 0, 0.02]} args={[0.025, windowH, 0.02]}>
         <meshStandardMaterial color={frameColor} metalness={0.8} />
       </Box>
@@ -257,9 +244,6 @@ const ExteriorWallSegment = React.memo(({
 });
 ExteriorWallSegment.displayName = 'ExteriorWallSegment';
 
-/**
- * Animated Floor Group for Exploded 3D view
- */
 const FloorGroup = ({ level, children, isExploded }: { level: number; children: React.ReactNode; isExploded: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -279,7 +263,13 @@ const FloorGroup = ({ level, children, isExploded }: { level: number; children: 
 };
 
 /**
- * Architectural 3D House Model with Multi-Style and Multi-Floor Architecture
+ * Architectural 3D House Model with support for all 6 reference design styles:
+ * 1. Modern Villa (Cantilever Glass & Rooftop Terrace)
+ * 2. Royal Classical (Neoclassical White & Gold Arches - Image 5)
+ * 3. Minimalist Skillion (Slanted Roof & Double Carport - Image 4)
+ * 4. Organic Brick (Parametric Brick Curves & Concrete - Image 3)
+ * 5. Kerala Heritage (Clay Mangalore Tile Roof & Wood Veranda - Image 2)
+ * 6. Modern Bungalow (Pitched Gable Roof & Veranda - Image 1)
  */
 const ArchitecturalModel = React.memo(({ 
   spec, 
@@ -301,27 +291,26 @@ const ArchitecturalModel = React.memo(({
   const isCutaway = viewMode === 'CUTAWAY' || viewMode === 'INTERIOR' || explodedView;
   const wallH = isCutaway ? 1.05 : FLOOR_HEIGHT;
 
-  // Select material based on Architectural Style
+  // Style-Specific Textures
   const wallTexture = useMemo(() => {
     switch (spec.style) {
       case 'Luxury': return getMarbleTexture(4, 4);
-      case 'Industrial': return getBrickTexture(6, 6);
+      case 'Industrial': return getParametricBrickTexture(8, 8);
+      case 'Bungalow': return getStuccoTexture(6, 6);
       default: return getStuccoTexture(6, 6);
     }
   }, [spec.style]);
 
-  const roofTexture = useMemo(() => {
-    if (spec.style === 'Traditional') return getTerracottaRoofTexture(6, 6);
-    return getStuccoTexture(6, 6);
-  }, [spec.style]);
-
+  const clayRoofTexture = useMemo(() => getClayTileRoofTexture(8, 8), []);
+  const woodSlatTexture = useMemo(() => getWoodSlatTexture(4, 8), []);
   const woodTexture = useMemo(() => getWoodParquetTexture(5, 5), []);
   const terrazzoTexture = useMemo(() => getTerrazzoTexture(4, 4), []);
   const grassTexture = useMemo(() => getGrassTexture(16, 16), []);
 
   const pw = spec.plotW * UNIT;
   const pl = spec.plotL * UNIT;
-  const activeColor = spec.wallColor || '#f8fafc';
+  const activeColor = spec.wallColor || (spec.style === 'Luxury' ? '#fafaf9' : (spec.style === 'Bungalow' ? '#64748b' : '#f8fafc'));
+  const roofY = spec.floors * FLOOR_HEIGHT;
 
   const renderFloor = (level: number) => {
     if (activeFloor !== 'ALL' && level !== activeFloor) return null;
@@ -354,10 +343,10 @@ const ArchitecturalModel = React.memo(({
                 }
               }}
             >
-              {/* Floor Slab with Wood Parquet / Terrazzo Tile */}
+              {/* Floor Slab */}
               <Box position={[rw / 2, 0.04, rl / 2]} args={[rw, 0.08, rl]} receiveShadow={enableShadows}>
                 {isTerrace ? (
-                  <meshStandardMaterial color="#64748b" roughness={0.6} />
+                  <meshStandardMaterial color={spec.style === 'Traditional' ? '#854d0e' : '#64748b'} roughness={0.6} />
                 ) : (
                   <meshStandardMaterial map={floorMat} roughness={0.35} />
                 )}
@@ -366,7 +355,6 @@ const ArchitecturalModel = React.memo(({
               {/* Room Walls or Glass Railings */}
               {!isTerrace ? (
                 <>
-                  {/* Back Wall */}
                   <group position={[rw / 2, wallH / 2, 0.06]}>
                     <ExteriorWallSegment 
                       w={rw} 
@@ -378,7 +366,6 @@ const ArchitecturalModel = React.memo(({
                       isLargeGlass={!isCutaway && level > 0}
                     />
                   </group>
-                  {/* Left Wall */}
                   <group position={[0.06, wallH / 2, rl / 2]} rotation={[0, Math.PI / 2, 0]}>
                     <ExteriorWallSegment 
                       w={rl} 
@@ -390,7 +377,6 @@ const ArchitecturalModel = React.memo(({
                       isLargeGlass={!isCutaway && level > 0 && room.type.includes('Bedroom')}
                     />
                   </group>
-                  {/* Right Wall */}
                   <group position={[rw - 0.06, wallH / 2, rl / 2]} rotation={[0, Math.PI / 2, 0]}>
                     <ExteriorWallSegment 
                       w={rl} 
@@ -402,10 +388,6 @@ const ArchitecturalModel = React.memo(({
                       isLargeGlass={!isCutaway && level > 0}
                     />
                   </group>
-                  {/* Front Facade Wall:
-                      - If Ground Floor Foyer: Renders the Grand Front Main Entrance Door!
-                      - If other rooms: Large Panoramic Glass Window in Exterior mode
-                      - In Cutaway mode: Low clean sectioned wall */}
                   {!isCutaway ? (
                     <group position={[rw / 2, wallH / 2, rl - 0.06]}>
                       <ExteriorWallSegment 
@@ -427,7 +409,6 @@ const ArchitecturalModel = React.memo(({
                     </group>
                   )}
 
-                  {/* Furnishings & Interior Decor */}
                   {(isCutaway || viewMode === 'INTERIOR') && (
                     <RoomInteriorDecor 
                       room={room} 
@@ -439,7 +420,6 @@ const ArchitecturalModel = React.memo(({
                 </>
               ) : (
                 <>
-                  {/* Rooftop Terrace / Balcony with Glass Railings */}
                   <RoomInteriorDecor 
                     room={room} 
                     w={rw} 
@@ -447,23 +427,68 @@ const ArchitecturalModel = React.memo(({
                     isCutaway={isCutaway} 
                   />
 
-                  {/* Glass Balustrade */}
+                  {/* Railing based on Style */}
                   <group position={[rw / 2, 0.45, rl - 0.04]}>
                     <Box args={[rw, 0.85, 0.03]} castShadow>
-                      <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.05} />
+                      <meshStandardMaterial 
+                        color={spec.style === 'Luxury' ? '#d4af37' : (spec.style === 'Minimalist' ? '#0f172a' : '#e0f2fe')} 
+                        transparent={spec.style !== 'Minimalist'}
+                        opacity={spec.style === 'Luxury' ? 0.7 : (spec.style === 'Minimalist' ? 1.0 : 0.4)} 
+                        roughness={0.05} 
+                      />
                     </Box>
                     <Box position={[0, 0.43, 0]} args={[rw, 0.03, 0.06]}>
                       <meshStandardMaterial color={spec.style === 'Luxury' ? '#d4af37' : '#1e293b'} metalness={0.9} />
                     </Box>
                   </group>
-                  <group position={[0.04, 0.45, rl / 2]} rotation={[0, Math.PI / 2, 0]}>
-                    <Box args={[rl, 0.85, 0.03]} castShadow>
-                      <meshStandardMaterial color="#e0f2fe" transparent opacity={0.4} roughness={0.05} />
-                    </Box>
-                    <Box position={[0, 0.43, 0]} args={[rl, 0.03, 0.06]}>
-                      <meshStandardMaterial color={spec.style === 'Luxury' ? '#d4af37' : '#1e293b'} metalness={0.9} />
-                    </Box>
-                  </group>
+                </>
+              )}
+
+              {/* SPECIAL FACADE ARCHITECTURE FOR DISTINCT STYLES (EXTERIOR MODE) */}
+              {!isCutaway && (
+                <>
+                  {/* STYLE 1: ROYAL CLASSICAL (Reference Image 5) — Classical Arches & Golden Relief */}
+                  {spec.style === 'Luxury' && level === 1 && (
+                    <group position={[rw / 2, wallH / 2, rl + 0.08]}>
+                      {/* Classical Semi-Circular Arch Portico */}
+                      <Box args={[rw * 0.75, 0.18, 0.1]} position={[0, wallH / 2 - 0.09, 0]}>
+                        <meshStandardMaterial color="#ffffff" roughness={0.3} />
+                      </Box>
+                      {/* Gold Baroque Emblem Crest */}
+                      <Sphere args={[0.16, 12, 12]} position={[0, wallH / 2 + 0.12, 0.06]}>
+                        <meshStandardMaterial color="#d4af37" metalness={0.95} roughness={0.15} />
+                      </Sphere>
+                      {/* Fluted Neoclassical Columns */}
+                      <Cylinder args={[0.08, 0.09, wallH, 16]} position={[-rw * 0.35, 0, 0.04]} castShadow>
+                        <meshStandardMaterial color="#ffffff" roughness={0.3} />
+                      </Cylinder>
+                      <Cylinder args={[0.08, 0.09, wallH, 16]} position={[rw * 0.35, 0, 0.04]} castShadow>
+                        <meshStandardMaterial color="#ffffff" roughness={0.3} />
+                      </Cylinder>
+                    </group>
+                  )}
+
+                  {/* STYLE 2: ORGANIC BRICK PARAMETRIC (Reference Image 3) — Sweeping Terracotta Brick Wave */}
+                  {spec.style === 'Industrial' && level === 1 && (
+                    <group position={[rw * 0.3, wallH / 2, rl + 0.08]}>
+                      <Box args={[rw * 0.65, wallH * 1.15, 0.14]} rotation={[0, 0, -0.1]} castShadow>
+                        <meshStandardMaterial map={wallTexture} roughness={0.7} />
+                      </Box>
+                      {/* Arched Window Cutout */}
+                      <Box args={[0.45, 0.65, 0.16]} position={[0, 0.1, 0.01]}>
+                        <meshStandardMaterial color="#1e293b" metalness={0.8} />
+                      </Box>
+                    </group>
+                  )}
+
+                  {/* STYLE 3: MODERN BUNGALOW (Reference Image 1) — Horizontal Wood Slat Accent */}
+                  {spec.style === 'Bungalow' && level === 0 && !isFoyerFront && (
+                    <group position={[rw / 2 - 0.35, wallH / 2, rl + 0.02]}>
+                      <Box args={[0.65, wallH * 0.85, 0.04]}>
+                        <meshStandardMaterial map={woodSlatTexture} roughness={0.4} />
+                      </Box>
+                    </group>
+                  )}
                 </>
               )}
             </group>
@@ -473,35 +498,84 @@ const ArchitecturalModel = React.memo(({
     );
   };
 
-  const roofY = spec.floors * FLOOR_HEIGHT;
-
   return (
     <group>
-      {/* 1. Lush Emerald Lawn Ground Plane */}
+      {/* 1. Lush Green Lawn Ground Plane */}
       <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={enableShadows}>
         <planeGeometry args={[pw * 2.8, pl * 2.8]} />
         <meshStandardMaterial map={grassTexture} roughness={0.85} />
       </mesh>
 
-      {/* 2. Floors & Enclosed Geometry for 1, 2, 3, or 4 Floors */}
+      {/* 2. Floors & Interior/Exterior Geometry for 1-4 Floors */}
       {Array.from({ length: spec.floors }).map((_, i) => renderFloor(i))}
 
-      {/* 3. Roof Architecture (Pitched for Traditional, Flat Parapet for Modern/Luxury/Minimalist) */}
+      {/* 3. ROOFLINE ARCHITECTURE ACCORDING TO USER'S SELECTED STYLE */}
       {!isCutaway && activeFloor === 'ALL' && (
         <FloorGroup level={spec.floors} isExploded={explodedView}>
           <group position={[0, roofY, 0]}>
+            {/* STYLE A: KERALA HERITAGE (Reference Image 2) — Mangalore Clay Tile Hip Roof with Wooden Eaves */}
             {spec.style === 'Traditional' ? (
-              // Traditional Pitched Terracotta Roof
-              <Cone args={[Math.max(pw, pl) * 0.72, 1.8, 4]} rotation={[0, Math.PI / 4, 0]} position={[0, 0.9, 0]} castShadow>
-                <meshStandardMaterial map={roofTexture} color="#b91c1c" roughness={0.4} />
-              </Cone>
+              <group position={[0, 0.85, 0]}>
+                <Cone args={[Math.max(pw, pl) * 0.72, 1.7, 4]} rotation={[0, Math.PI / 4, 0]} castShadow>
+                  <meshStandardMaterial map={clayRoofTexture} color="#b91c1c" roughness={0.45} />
+                </Cone>
+                {/* Teak Wood Overhanging Eaves Fascia */}
+                <Box args={[pw * 1.05, 0.08, pl * 1.05]} position={[0, -0.85, 0]} castShadow>
+                  <meshStandardMaterial color="#5c2e0b" roughness={0.4} />
+                </Box>
+              </group>
+            ) : spec.style === 'Minimalist' ? (
+              /* STYLE B: MINIMALIST SKILLION (Reference Image 4) — Slanted Monopitch Roof with Wood Soffit */
+              <group position={[0, 0.45, 0]}>
+                <Box 
+                  args={[pw * 0.78, 0.14, pl * 0.85]} 
+                  position={[pw * 0.12, 0.2, -pl * 0.05]} 
+                  rotation={[-0.14, 0, 0]} 
+                  castShadow 
+                  receiveShadow
+                >
+                  <meshStandardMaterial color="#1e293b" roughness={0.3} />
+                </Box>
+                {/* Warm Teak Wood Soffit Underneath */}
+                <Box 
+                  args={[pw * 0.76, 0.02, pl * 0.83]} 
+                  position={[pw * 0.12, 0.12, -pl * 0.05]} 
+                  rotation={[-0.14, 0, 0]}
+                >
+                  <meshStandardMaterial map={woodSlatTexture} roughness={0.4} />
+                </Box>
+              </group>
+            ) : spec.style === 'Bungalow' ? (
+              /* STYLE C: MODERN BUNGALOW (Reference Image 1) — Triangular Gable Roof with Attic Vent */
+              <group position={[0, 0.75, 0]}>
+                <Cone args={[Math.max(pw * 0.7, pl * 0.7), 1.5, 4]} rotation={[0, Math.PI / 4, 0]} castShadow>
+                  <meshStandardMaterial color="#334155" roughness={0.4} />
+                </Cone>
+                {/* White Fascia Trim & Attic Vent */}
+                <Box args={[0.45, 0.45, 0.04]} position={[0, -0.15, pl * 0.38]}>
+                  <meshStandardMaterial color="#ffffff" />
+                </Box>
+              </group>
+            ) : spec.style === 'Luxury' ? (
+              /* STYLE D: ROYAL CLASSICAL (Reference Image 5) — Crown Moulding & Classical Pediment */
+              <group>
+                <Box args={[pw * 0.55, 0.18, pl * 0.75]} position={[pw * 0.23, 0.09, -pl * 0.05]} castShadow receiveShadow>
+                  <meshStandardMaterial map={wallTexture} color="#ffffff" roughness={0.4} />
+                </Box>
+                {/* Classical Crown Parapet with Gold Finials */}
+                <Box args={[pw * 0.55, 0.35, 0.1]} position={[pw * 0.23, 0.35, pl * 0.325]}>
+                  <meshStandardMaterial color="#ffffff" />
+                </Box>
+                <Cone args={[0.18, 0.35, 4]} rotation={[0, Math.PI / 4, 0]} position={[pw * 0.23, 0.7, pl * 0.325]}>
+                  <meshStandardMaterial color="#d4af37" metalness={0.9} />
+                </Cone>
+              </group>
             ) : (
-              // Contemporary Flat Parapet Roof Slab
+              /* STYLE E: MODERN VILLA (Original Reference 2) — Contemporary Flat Parapet */
               <group>
                 <Box args={[pw * 0.55, 0.16, pl * 0.75]} position={[pw * 0.23, 0.08, -pl * 0.05]} castShadow receiveShadow>
-                  <meshStandardMaterial map={roofTexture} color={activeColor} roughness={0.5} />
+                  <meshStandardMaterial map={wallTexture} color={activeColor} roughness={0.5} />
                 </Box>
-                {/* Parapet Caps */}
                 <Box args={[pw * 0.55, 0.22, 0.08]} position={[pw * 0.23, 0.24, pl * 0.325]}>
                   <meshStandardMaterial color={activeColor} />
                 </Box>
@@ -517,8 +591,8 @@ const ArchitecturalModel = React.memo(({
         </FloorGroup>
       )}
 
-      {/* 4. Landscaping & Surroundings (Reference Image 2) */}
-      {/* Front Entrance Concrete Porch Steps leading directly up to the Grand Front Door */}
+      {/* 4. SPECIAL LANDSCAPING ELEMENTS FOR DIFFERENT STYLES */}
+      {/* Front Entrance Steps */}
       <PorchSteps width={1.8} position={[pw * 0.24, 0.02, pl / 2 - 0.25]} />
 
       {/* S-Curved Flagstone Walkway */}
@@ -527,28 +601,54 @@ const ArchitecturalModel = React.memo(({
       {/* Sculpted Spiral Topiaries */}
       <SpiralTopiary position={[pw * 0.24 + 1.2, 0, pl / 2 - 0.1]} />
       <SpiralTopiary position={[pw * 0.24 - 1.2, 0, pl / 2 - 0.1]} />
-      <SpiralTopiary position={[-0.8, 0, pl / 2 + 1.6]} />
 
       {/* Boxwood Spherical Shrubs */}
       <BoxwoodShrub position={[0.8, 0, pl / 2 + 0.8]} scale={1.1} />
       <BoxwoodShrub position={[1.0, 0, pl / 2 + 1.8]} scale={0.9} />
       <BoxwoodShrub position={[-0.9, 0, pl / 2 + 2.5]} scale={1.0} />
-      <BoxwoodShrub position={[-0.2, 0, pl / 2 + 3.2]} scale={1.2} />
 
       {/* Garden Trees */}
       <GardenTree position={[pw / 2 + 1.8, 0, pl / 2 + 1.5]} />
       <GardenTree position={[-pw / 2 - 1.6, 0, -pl / 2 + 1.0]} />
 
-      {/* Perimeter Dense Green Hedges */}
+      {/* Perimeter Hedges */}
       <PerimeterHedges width={pw * 1.8} length={pl * 1.8} />
 
-      {/* Paved Parking Pad with Realistic Luxury SUV */}
+      {/* Paved Parking Pad with Realistic Luxury SUV or Double Carport (Image 4) */}
       {spec.hasParking && (
         <group position={[-pw / 2 - 0.8, 0.02, pl / 2 + 1.0]}>
-          <Box args={[2.0, 0.03, 3.2]} receiveShadow={enableShadows}>
+          <Box args={[2.2, 0.03, 3.4]} receiveShadow={enableShadows}>
             <meshStandardMaterial color="#334155" roughness={0.7} />
           </Box>
           <DrivewayCar />
+          {/* Integrated Canopy for Minimalist style (Reference Image 4) */}
+          {spec.style === 'Minimalist' && (
+            <group position={[0, 0, 0]}>
+              <Box args={[2.4, 0.12, 3.6]} position={[0, 2.2, 0]} castShadow>
+                <meshStandardMaterial color="#ffffff" roughness={0.3} />
+              </Box>
+              <Cylinder args={[0.05, 0.05, 2.2, 8]} position={[-1.0, 1.1, 1.6]}><meshStandardMaterial color="#ffffff" /></Cylinder>
+              <Cylinder args={[0.05, 0.05, 2.2, 8]} position={[1.0, 1.1, 1.6]}><meshStandardMaterial color="#ffffff" /></Cylinder>
+            </group>
+          )}
+        </group>
+      )}
+
+      {/* Royal Classical Decorative Compound Wall & Gate (Reference Image 5) */}
+      {spec.style === 'Luxury' && (
+        <group position={[0, 0, pl / 2 + 2.2]}>
+          <Box args={[pw * 1.4, 0.9, 0.12]} position={[-pw * 0.45, 0.45, 0]} castShadow>
+            <meshStandardMaterial color="#ffffff" roughness={0.3} />
+          </Box>
+          <Box args={[pw * 1.4, 0.9, 0.12]} position={[pw * 0.45, 0.45, 0]} castShadow>
+            <meshStandardMaterial color="#ffffff" roughness={0.3} />
+          </Box>
+          {/* Black & Gold Wrought Iron Center Gate */}
+          <Box args={[1.6, 0.95, 0.04]} position={[0, 0.475, 0]}>
+            <meshStandardMaterial color="#0f172a" metalness={0.9} />
+          </Box>
+          <Sphere args={[0.08, 8, 8]} position={[-0.8, 0.98, 0]}><meshStandardMaterial color="#d4af37" metalness={0.95} /></Sphere>
+          <Sphere args={[0.08, 8, 8]} position={[0.8, 0.98, 0]}><meshStandardMaterial color="#d4af37" metalness={0.95} /></Sphere>
         </group>
       )}
     </group>
@@ -597,7 +697,6 @@ export default function AdvancedViewer({
   const pw = houseSpec.plotW * UNIT;
   const pl = houseSpec.plotL * UNIT;
 
-  // Camera presets tuned to match Reference Images 1 & 2
   useEffect(() => {
     if (!cameraControlsRef.current) return;
     const ctrl = cameraControlsRef.current;
@@ -623,7 +722,7 @@ export default function AdvancedViewer({
   return (
     <div className="w-full h-full relative bg-[#090d16] rounded-3xl overflow-hidden flex flex-col touch-none select-none">
       
-      {/* 3D Performance Selector (Top Left) */}
+      {/* 3D Performance Selector */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-slate-950/80 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 shadow-xl">
         <span className="text-amber-400 flex items-center gap-1 mr-1">
           <i className="bx bx-bulb text-xs"></i> 3D Mode:
@@ -697,7 +796,6 @@ export default function AdvancedViewer({
         />
       </Canvas>
       
-      {/* HTML Room Info Pill (Top Right) */}
       {activeRoomId && viewMode === 'INTERIOR' && (
         <div className="absolute top-4 right-4 bg-slate-950/90 border border-amber-500/50 backdrop-blur-md p-3.5 rounded-2xl z-20 shadow-2xl max-w-[220px]">
           {(() => {

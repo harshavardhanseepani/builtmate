@@ -218,11 +218,12 @@ export default function DesignStudioContent() {
               <div className="pt-2">
                 <span className={labelClass}>Exterior Architectural Style</span>
                 <select className={selectClass} value={specs.exteriorStyle} onChange={e => updateSpec('exteriorStyle', e.target.value)}>
-                  <option value="Modern">Modern Villa (Cantilever & Wood)</option>
-                  <option value="Traditional">Traditional Indian (Sloped Roof)</option>
-                  <option value="Luxury">Luxury Mansion (Marble & Gold)</option>
-                  <option value="Industrial">Industrial Loft (Concrete & Steel)</option>
-                  <option value="Minimalist">Minimalist Box (Monochrome)</option>
+                  <option value="Modern">Modern Villa (Cantilever Glass & Terrace)</option>
+                  <option value="Luxury">Royal Classical (Neoclassical White & Gold Arches)</option>
+                  <option value="Minimalist">Minimalist Skillion (Slanted Roof & Carport)</option>
+                  <option value="Industrial">Organic Brick (Parametric Curve & Concrete)</option>
+                  <option value="Traditional">Kerala Heritage (Clay Tiles & Wood Veranda)</option>
+                  <option value="Bungalow">Modern Bungalow (Gable Roof & Veranda)</option>
                 </select>
               </div>
 
