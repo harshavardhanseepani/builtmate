@@ -476,3 +476,75 @@ export function getGrassTexture(repeatX = 12, repeatY = 12): THREE.CanvasTexture
   textureCache.set(cacheKey, texture);
   return texture;
 }
+
+export function getStackedStoneTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture {
+  const cacheKey = `stacked_stone_${repeatX}_${repeatY}`;
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    ctx.fillStyle = '#292524';
+    ctx.fillRect(0, 0, 512, 512);
+
+    const stoneColors = ['#57534e', '#78716c', '#a8a29e', '#44403c', '#292524', '#713f12', '#4b5563'];
+    const rows = 24;
+    const rh = 512 / rows;
+    for (let r = 0; r < rows; r++) {
+      const y = r * rh;
+      let x = (r % 3) * 15;
+      while (x < 512 + 60) {
+        const sw = Math.floor(Math.abs(Math.sin(r * 3.7 + x * 1.9)) * 40 + 35);
+        const col = stoneColors[Math.floor(Math.abs(Math.sin(r * 11.2 + x * 5.3)) * stoneColors.length)];
+        ctx.fillStyle = col;
+        ctx.fillRect(x - 60 + 1, y + 1, sw - 2, rh - 2);
+        x += sw;
+      }
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeatX, repeatY);
+  texture.needsUpdate = true;
+  textureCache.set(cacheKey, texture);
+  return texture;
+}
+
+export function getConcreteTexture(repeatX = 4, repeatY = 4): THREE.CanvasTexture {
+  const cacheKey = `concrete_${repeatX}_${repeatY}`;
+  if (typeof document === 'undefined') return new THREE.CanvasTexture({} as any);
+  if (textureCache.has(cacheKey)) return textureCache.get(cacheKey)!;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(0, 0, 256, 256);
+
+    for (let i = 0; i < 2000; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const shade = Math.floor(Math.random() * 50 + 90);
+      ctx.fillStyle = `rgba(${shade}, ${shade}, ${shade}, 0.2)`;
+      ctx.fillRect(x, y, 2, 2);
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeatX, repeatY);
+  texture.needsUpdate = true;
+  textureCache.set(cacheKey, texture);
+  return texture;
+}
+

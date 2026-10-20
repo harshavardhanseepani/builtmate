@@ -7,6 +7,7 @@ import AdvancedViewer from '@/components/3d/AdvancedViewer';
 import FloorPlan2D from '@/components/3d/FloorPlan2D';
 import CostEstimate from '@/components/3d/CostEstimate';
 import { generateHouseLayout } from '@/components/3d/layoutGenerator';
+import { downloadArchitecturalPDF } from '@/components/3d/ExportServices';
 
 const Toggle = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => {
   const isYes = value === 'Yes';
@@ -59,6 +60,9 @@ export default function DesignStudioContent() {
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
   const [explodedView, setExplodedView] = useState(false);
   const [resetCameraSignal, setResetCameraSignal] = useState(0);
+  const [exportModelSignal, setExportModelSignal] = useState(0);
+  const [isExportingModel, setIsExportingModel] = useState(false);
+  const [downloadToast, setDownloadToast] = useState<string | null>(null);
   const [generationError, setGenerationError] = useState<any>(false);
 
   const houseSpec = useMemo(() => hasGenerated ? generateHouseLayout(specs) : null, [specs, hasGenerated]);
@@ -393,6 +397,7 @@ export default function DesignStudioContent() {
                          activeRoomId={activeRoomId} 
                          resetCameraSignal={resetCameraSignal}
                          explodedView={explodedView}
+                          exportModelSignal={exportModelSignal}
                          onRoomClick={(id) => {
                             setActiveRoomId(id);
                             setViewMode('INTERIOR');
@@ -439,6 +444,66 @@ export default function DesignStudioContent() {
                   </div>
                 </div>
 
+                {/* Bottom Architectural Blueprint & 3D Model Download Center */}
+                <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 rounded-3xl border border-amber-500/30 p-6 backdrop-blur-md mt-4 shadow-2xl text-white">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-3xl shadow-inner flex-shrink-0">
+                        <i className="bx bx-cloud-download animate-pulse"></i>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-base font-black uppercase tracking-tight text-white">Download Architectural Dossier & 3D Model</h3>
+                          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">
+                            Ready for Device
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-1 max-w-xl">
+                          Download your verified architectural PDF blueprint with detailed BOQ, material manifests, and room dimensions, or export the interactive 3D Model (.GLB) to your device for offline CAD, Blender, or 3D printing.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                      {/* Download Blueprint PDF */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!houseSpec) return;
+                          downloadArchitecturalPDF(specs, houseSpec, estimatedCost);
+                          setDownloadToast('Architectural Blueprint & BOQ Dossier downloaded to your device!');
+                          setTimeout(() => setDownloadToast(null), 4500);
+                        }}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:border-amber-400/50 cursor-pointer active:scale-95"
+                      >
+                        <i className="bx bxs-file-pdf text-amber-400 text-lg"></i>
+                        <span>Download Blueprint (PDF)</span>
+                      </button>
+
+                      {/* Download 3D House Model (.GLB) */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (viewMode !== 'EXTERIOR' && viewMode !== 'INTERIOR' && viewMode !== 'CUTAWAY') {
+                            setViewMode('EXTERIOR');
+                          }
+                          setExportModelSignal(Date.now());
+                          setIsExportingModel(true);
+                          setDownloadToast('Exporting 3D Model (.GLB)... File download started!');
+                          setTimeout(() => {
+                            setIsExportingModel(false);
+                            setTimeout(() => setDownloadToast(null), 4000);
+                          }, 2500);
+                        }}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 cursor-pointer active:scale-95"
+                      >
+                        <i className={`bx ${isExportingModel ? 'bx-loader-alt animate-spin' : 'bx-cube'} text-lg`}></i>
+                        <span>{isExportingModel ? 'Exporting 3D...' : 'Download 3D Model (.GLB)'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </>
             ) : (
               <div className="glass-card-luxury bg-white/85 border border-dashed border-amber-200/80 rounded-3xl h-[700px] flex flex-col items-center justify-center text-center p-20 shadow-xl">
@@ -449,6 +514,13 @@ export default function DesignStudioContent() {
           </div>
         </div>
       </div>
+          {/* Download Confirmation Toast */}
+      {downloadToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-950/95 text-white border border-amber-400/60 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in">
+          <i className="bx bx-check-circle text-amber-400 text-xl"></i>
+          <span className="text-xs font-bold">{downloadToast}</span>
+        </div>
+      )}
     </main>
   );
 }

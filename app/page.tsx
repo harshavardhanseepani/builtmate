@@ -61,45 +61,60 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Grid of 4 small features */}
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-1">
-              {/* Feature 1 */}
-              <Link href="/design" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
+            {/* Grid of features */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 pt-1">
+              {/* Feature 1: AI Design */}
+              <Link href="/design" className="flex items-start gap-3 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
+                <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
                   <i className="bx bx-home-alt-2 text-2xl text-amber-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">AI Design</h4>
+                  <h4 className="text-slate-900 font-bold text-sm sm:text-base tracking-wide group-hover:text-amber-800 transition-colors">AI Design</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">2D Plans & 3D Models</p>
                 </div>
               </Link>
-              {/* Feature 2 */}
-              <Link href="/builders" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-amber-100/60 border border-amber-300 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100 transition-all">
+
+              {/* Feature 2: AI Renovate (beside AI Design) */}
+              <Link href="/renovate" className="flex items-start gap-3 p-3 rounded-2xl bg-white/70 border border-amber-300 shadow-xs hover:border-amber-500 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer relative overflow-hidden">
+                <div className="absolute top-1 right-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full shadow-xs">New</div>
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-200/60 transition-all">
+                  <i className="bx bx-paint-roll text-2xl text-amber-700"></i>
+                </div>
+                <div>
+                  <h4 className="text-slate-900 font-bold text-sm sm:text-base tracking-wide group-hover:text-amber-800 transition-colors">AI Renovate</h4>
+                  <p className="text-slate-500 text-xs font-medium mt-0.5 leading-tight">Transform your existing house with AI.</p>
+                </div>
+              </Link>
+
+              {/* Feature 3: Verified Builders */}
+              <Link href="/builders" className="flex items-start gap-3 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
+                <div className="w-11 h-11 rounded-xl bg-amber-100/60 border border-amber-300 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100 transition-all">
                   <i className="bx bx-user-check text-2xl text-amber-700"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">Verified Builders</h4>
+                  <h4 className="text-slate-900 font-bold text-sm sm:text-base tracking-wide group-hover:text-amber-800 transition-colors">Verified Builders</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">Trusted Professionals</p>
                 </div>
               </Link>
-              {/* Feature 3 */}
-              <Link href="/materials" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
+
+              {/* Feature 4: Quality Materials */}
+              <Link href="/materials" className="flex items-start gap-3 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
+                <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-amber-100/70 transition-all">
                   <i className="bx bx-box text-2xl text-amber-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-amber-800 transition-colors">Quality Materials</h4>
+                  <h4 className="text-slate-900 font-bold text-sm sm:text-base tracking-wide group-hover:text-amber-800 transition-colors">Quality Materials</h4>
                   <p className="text-slate-500 text-xs font-medium mt-0.5">Best Brands, Best Deals</p>
                 </div>
               </Link>
-              {/* Feature 4 */}
-              <Link href="/projects" className="flex items-start gap-3.5 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-emerald-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-emerald-100/70 transition-all">
+
+              {/* Feature 5: Project Tracking */}
+              <Link href="/projects" className="flex items-start gap-3 p-3 rounded-2xl bg-white/70 border border-amber-200/80 shadow-xs hover:border-emerald-400 hover:shadow-md transition-all group backdrop-blur-sm cursor-pointer sm:col-span-2 lg:col-span-1">
+                <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0 shadow-xs group-hover:bg-emerald-100/70 transition-all">
                   <i className="bx bx-buildings text-2xl text-emerald-600"></i>
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-bold text-base tracking-wide group-hover:text-emerald-800 transition-colors">Project Tracking</h4>
+                  <h4 className="text-slate-900 font-bold text-sm sm:text-base tracking-wide group-hover:text-emerald-800 transition-colors">Project Tracking</h4>
                   <p className="text-emerald-700/80 text-xs font-bold mt-0.5">Day-by-Day Live &rarr;</p>
                 </div>
               </Link>
@@ -252,36 +267,18 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Video Player */}
+            {/* Video Player - Full Clear Playback without Overlay */}
             <div className="aspect-video w-full bg-black relative overflow-hidden">
               <iframe 
                 width="100%" 
                 height="100%" 
-                src="https://www.youtube.com/embed/RwZYExYnZHU?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=RwZYExYnZHU" 
-                title="BuildMate Architectural Demo" 
+                src="https://www.youtube.com/embed/RwZYExYnZHU?autoplay=1&controls=1&modestbranding=1&rel=0" 
+                title="Architectural Demo Video" 
                 frameBorder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                 allowFullScreen
-                className="absolute inset-0 w-full h-full opacity-60 scale-105 pointer-events-none"
+                className="w-full h-full"
               ></iframe>
-
-              {/* BuildMate Branding Overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none p-8 z-10 bg-gradient-to-t from-black/80 via-black/30 to-black/20">
-                <div className="flex items-center gap-4 mb-6">
-                  <i className="bx bx-cube-alt text-amber-400 text-6xl md:text-8xl drop-shadow-[0_0_25px_rgba(212,175,55,0.6)]"></i>
-                  <div className="flex flex-col text-left">
-                    <span className="font-display text-4xl md:text-7xl font-extrabold tracking-tight text-white leading-none drop-shadow-2xl">
-                      Build<span className="text-gradient-gold">Mate</span>
-                    </span>
-                    <span className="text-sm md:text-xl text-amber-200/90 font-bold tracking-[0.3em] uppercase mt-2 drop-shadow-lg">
-                      Design. Build. Manage.
-                    </span>
-                  </div>
-                </div>
-                <div className="px-6 py-3 rounded-full bg-white/90 backdrop-blur-md border border-amber-300 text-slate-900 text-sm md:text-base font-semibold shadow-lg">
-                  The Future of Home Construction is Here
-                </div>
-              </div>
             </div>
             
           </div>

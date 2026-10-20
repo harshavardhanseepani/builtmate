@@ -570,7 +570,7 @@ WallArtwork.displayName = 'WallArtwork';
 // 7. EXTERIOR & LANDSCAPING (Reference Image 2)
 // ==========================================
 
-export const SpiralTopiary = React.memo(({ position = [0, 0, 0] as [number, number, number] }) => (
+export const SpiralTopiary = React.memo(({ position = [0, 0, 0] as [number, number, number] }: { position?: [number, number, number] }) => (
   <group position={position}>
     <Cylinder args={[0.22, 0.15, 0.35, 16]} position={[0, 0.175, 0]} castShadow>
       <meshStandardMaterial color="#e2e8f0" roughness={0.3} />
@@ -588,7 +588,7 @@ export const SpiralTopiary = React.memo(({ position = [0, 0, 0] as [number, numb
 ));
 SpiralTopiary.displayName = 'SpiralTopiary';
 
-export const BoxwoodShrub = React.memo(({ position = [0, 0, 0] as [number, number, number], scale = 1 }) => (
+export const BoxwoodShrub = React.memo(({ position = [0, 0, 0] as [number, number, number], scale = 1 }: { position?: [number, number, number]; scale?: number }) => (
   <group position={position} scale={scale}>
     <Sphere args={[0.22, 12, 12]} position={[0, 0.22, 0]} castShadow>
       <meshStandardMaterial color="#166534" roughness={0.8} />
@@ -597,7 +597,7 @@ export const BoxwoodShrub = React.memo(({ position = [0, 0, 0] as [number, numbe
 ));
 BoxwoodShrub.displayName = 'BoxwoodShrub';
 
-export const GardenTree = React.memo(({ position = [0, 0, 0] as [number, number, number] }) => (
+export const GardenTree = React.memo(({ position = [0, 0, 0] as [number, number, number] }: { position?: [number, number, number] }) => (
   <group position={position}>
     <Cylinder args={[0.08, 0.12, 1.4, 8]} position={[0, 0.7, 0]} castShadow>
       <meshStandardMaterial color="#451a03" roughness={0.8} />
@@ -685,7 +685,7 @@ export const PatioSet = React.memo(({ color }: { color?: any }) => (
 ));
 PatioSet.displayName = 'PatioSet';
 
-export const PorchSteps = React.memo(({ width = 2.0, position = [0, 0, 0] as [number, number, number] }) => (
+export const PorchSteps = React.memo(({ width = 2.0, position = [0, 0, 0] as [number, number, number] }: { width?: number; position?: [number, number, number] }) => (
   <group position={position}>
     <Box args={[width, 0.08, 0.9]} position={[0, 0.04, 0]} receiveShadow>
       <meshStandardMaterial color="#94a3b8" roughness={0.5} />
@@ -713,7 +713,7 @@ SlidingGlassDoors.displayName = 'SlidingGlassDoors';
  * High-Detail Realistic Luxury SUV with Contoured Chassis, Clearcoat Paint,
  * Curved Windshield, Alloy Wheels, and Headlight Projectors
  */
-export const DrivewayCar = React.memo(({ position = [0, 0, 0] as [number, number, number] }) => {
+export const DrivewayCar = React.memo(({ position = [0, 0, 0] as [number, number, number] }: { position?: [number, number, number] }) => {
   const metallicCharcoal = '#262e3d';
 
   return (

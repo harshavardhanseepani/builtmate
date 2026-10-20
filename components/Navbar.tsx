@@ -44,6 +44,9 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-10">
           <Link href="/" className={navLinkClass("/")}>Home</Link>
           <Link href="/design" prefetch={false} className={navLinkClass("/design")}>AI Design</Link>
+          <Link href="/renovate" prefetch={false} className={navLinkClass("/renovate")}>
+            <span className="hidden md:inline-block mr-1"><i className="bx bx-paint-roll text-amber-600"></i></span> AI Renovate
+          </Link>
           <Link href="/builders" prefetch={false} className={navLinkClass("/builders")}>
             <span className="hidden md:inline-block mr-1"><i className="bx bx-hard-hat text-amber-600"></i></span> Builders
           </Link>
@@ -147,6 +150,15 @@ export default function Navbar() {
             className={`px-4 py-2.5 rounded-xl text-sm font-bold ${isActive("/design") ? "bg-amber-50 text-amber-700 border border-amber-300" : "text-slate-700 hover:bg-amber-50/50"}`}
           >
             AI Design
+          </Link>
+          <Link 
+            href="/renovate" 
+            prefetch={false}
+            onClick={() => setMobileMenuOpen(false)}
+            className={`px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 ${isActive("/renovate") ? "bg-amber-50 text-amber-700 border border-amber-300" : "text-slate-700 hover:bg-amber-50/50"}`}
+          >
+            <i className="bx bx-paint-roll text-amber-600"></i>
+            AI Renovate
           </Link>
           <Link 
             href="/builders" 

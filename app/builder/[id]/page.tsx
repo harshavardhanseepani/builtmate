@@ -5,23 +5,18 @@ import { useParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/AuthContext';
 
+import { BUILDERS_LIST, Builder } from '@/lib/buildersData';
+
 export default function BuilderProfile() {
   const { id } = useParams();
   const router = useRouter();
-  const [builder, setBuilder] = useState<any>(null);
+  const [builder, setBuilder] = useState<Builder | null>(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const MOCK_BUILDERS = [
-    { id: '1', name: 'Ramesh Singh', company: 'Apex Construction', location: 'Mumbai, MH', projects: 45, experience: '12 Yrs', rating: 4.8, verified: true, image: 'https://images.unsplash.com/photo-1541888086925-920eb1f1dc17?auto=format&fit=crop&q=80&w=800', description: 'Building the future of Mumbai with modern and sustainable construction.', portfolio: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=800'], specialization: 'Luxury Villas' },
-    { id: '2', name: 'Arjun Reddy', company: 'BuildPro Solutions', location: 'Hyderabad, TS', projects: 120, experience: '18 Yrs', rating: 4.9, verified: true, image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800', description: 'Excellence in commercial and residential execution.', portfolio: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800'], specialization: 'Modern Homes' },
-    { id: '3', name: 'Priya Sharma', company: 'Sharma Architects', location: 'Bangalore, KA', projects: 32, experience: '8 Yrs', rating: 4.7, verified: true, image: 'https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=800', description: 'Combining nature with contemporary architecture.', portfolio: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800'], specialization: 'Eco Houses' },
-    { id: '4', name: 'Vijay Kumar', company: 'VK Designs', location: 'Chennai, TN', projects: 85, experience: '15 Yrs', rating: 4.6, verified: true, image: 'https://images.unsplash.com/photo-1504307651254-35680f356f58?auto=format&fit=crop&q=80&w=800', description: 'Traditional South Indian aesthetics meet modern engineering.', portfolio: ['https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&q=80&w=800'], specialization: 'Traditional Homes' }
-  ];
-
   useEffect(() => {
     if (id) {
-      const found = MOCK_BUILDERS.find(b => b.id === id) || MOCK_BUILDERS[0];
+      const found = BUILDERS_LIST.find(b => b.id === id) || BUILDERS_LIST[0];
       setBuilder(found);
       setLoading(false);
     }
@@ -56,9 +51,21 @@ export default function BuilderProfile() {
                 <img src={builder.image} alt={builder.name} className="w-full h-full object-cover" />
               </div>
               <h1 className="font-display text-2xl font-black mb-1 text-slate-900">{builder.name}</h1>
-              <p className="text-amber-700 font-bold uppercase tracking-widest text-xs mb-6">{builder.company}</p>
+              <p className="text-amber-700 font-bold uppercase tracking-widest text-xs mb-2">{builder.company}</p>
               
-              <div className="flex justify-center gap-6 mb-8 text-sm border-y border-amber-100 py-6">
+              {/* Availability Badge */}
+              <div className="mb-5 flex justify-center">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border shadow-xs ${
+                  builder.available 
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                    : 'bg-amber-50 text-amber-800 border-amber-300'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${builder.available ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                  {builder.availabilityNote}
+                </span>
+              </div>
+              
+              <div className="flex justify-center gap-6 mb-6 text-sm border-y border-amber-100 py-6">
                 <div>
                   <p className="font-display text-2xl font-black text-slate-900">{builder.rating}</p>
                   <p className="text-[10px] text-slate-500 font-bold uppercase">Rating</p>
@@ -73,9 +80,30 @@ export default function BuilderProfile() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <button onClick={startProject} className="w-full btn-primary py-4 shadow-md cursor-pointer">Start Project</button>
-                <button className="w-full btn-secondary py-4 cursor-pointer">Send Message</button>
+              {/* Direct Contact Info */}
+              <div className="bg-amber-50/50 rounded-2xl border border-amber-200/60 p-4 mb-6 text-left space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium flex items-center gap-1.5"><i className="bx bx-phone text-amber-600"></i> Phone:</span>
+                  <a href={`tel:${builder.phone}`} className="font-bold text-slate-800 hover:text-amber-700 transition-colors">{builder.phone}</a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium flex items-center gap-1.5"><i className="bx bx-envelope text-amber-600"></i> Email:</span>
+                  <a href={`mailto:${builder.email}`} className="font-bold text-slate-800 hover:text-amber-700 transition-colors truncate max-w-[150px]" title={builder.email}>{builder.email}</a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium flex items-center gap-1.5"><i className="bx bx-map text-amber-600"></i> Location:</span>
+                  <span className="font-bold text-slate-800">{builder.location}</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <button onClick={startProject} className="w-full btn-primary py-3.5 shadow-md cursor-pointer font-bold">Start Project</button>
+                <a 
+                  href={`tel:${builder.phone}`} 
+                  className="w-full btn-secondary py-3 flex items-center justify-center gap-2 cursor-pointer font-bold"
+                >
+                  <i className="bx bx-phone-call text-amber-600 text-base"></i> Call Builder
+                </a>
               </div>
             </div>
           </div>
@@ -87,16 +115,25 @@ export default function BuilderProfile() {
               <p className="text-slate-600 leading-relaxed text-lg italic">
                 "{builder.description}"
               </p>
-              <div className="mt-8 grid grid-cols-2 gap-4">
-                <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase mb-1">Service Area</h4>
-                  <p className="text-sm font-bold text-slate-900">{builder.location}</p>
+              <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+                <div className="bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/60">
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase mb-1">Service Area</h4>
+                  <p className="text-xs font-bold text-slate-900">{builder.location}</p>
                 </div>
-                <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase mb-1">Status</h4>
-                  <p className="text-sm font-bold text-emerald-700 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Available for Projects
+                <div className="bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/60">
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase mb-1">Availability</h4>
+                  <p className={`text-xs font-bold flex items-center gap-1.5 ${builder.available ? 'text-emerald-700' : 'text-amber-700'}`}>
+                    <span className={`w-2 h-2 rounded-full ${builder.available ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                    {builder.availabilityNote}
                   </p>
+                </div>
+                <div className="bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/60">
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase mb-1">Contact Phone</h4>
+                  <a href={`tel:${builder.phone}`} className="text-xs font-bold text-slate-900 hover:text-amber-700 block truncate">{builder.phone}</a>
+                </div>
+                <div className="bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/60">
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase mb-1">Official Email</h4>
+                  <a href={`mailto:${builder.email}`} className="text-xs font-bold text-slate-900 hover:text-amber-700 block truncate" title={builder.email}>{builder.email}</a>
                 </div>
               </div>
             </div>
