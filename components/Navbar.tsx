@@ -85,10 +85,26 @@ export default function Navbar() {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white border border-amber-200/80 rounded-2xl shadow-2xl overflow-hidden z-50">
+                    <div className="absolute right-0 mt-2 w-64 bg-white border border-amber-200/80 rounded-2xl shadow-2xl overflow-hidden z-50">
                       <div className="p-4 border-b border-amber-100 bg-amber-50/50">
-                        <p className="text-slate-900 font-bold text-sm truncate">{user.name}</p>
-                        <p className="text-slate-500 text-xs truncate mt-0.5">{user.email}</p>
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <p className="text-slate-900 font-bold text-sm truncate">{user.name}</p>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                            user.role === 'admin' ? 'bg-purple-100 text-purple-700 border border-purple-200' :
+                            user.role === 'builder' ? 'bg-amber-100 text-amber-800 border border-amber-300' :
+                            user.role === 'supplier' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                            'bg-slate-100 text-slate-700 border border-slate-200'
+                          }`}>
+                            {user.role}
+                          </span>
+                        </div>
+                        <p className="text-slate-500 text-xs truncate">{user.email}</p>
+                        {user.companyName && (
+                          <p className="text-[11px] text-amber-700 font-medium truncate mt-1 flex items-center gap-1">
+                            <i className="bx bx-buildings"></i>
+                            <span className="truncate">{user.companyName}</span>
+                          </p>
+                        )}
                       </div>
                       <div className="p-2">
                         <Link href="/dashboard" prefetch={false} onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-sm transition-colors font-medium">
@@ -200,9 +216,17 @@ export default function Navbar() {
                   href="/dashboard" 
                   prefetch={false}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-amber-50 text-amber-700 text-sm font-bold border border-amber-300"
+                  className="px-4 py-2.5 rounded-xl bg-amber-50 text-amber-700 text-sm font-bold border border-amber-300 flex items-center justify-between"
                 >
-                  Dashboard ({user.name || user.email})
+                  <span className="truncate">Dashboard ({user.name || user.email})</span>
+                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                    user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                    user.role === 'builder' ? 'bg-amber-200 text-amber-900' :
+                    user.role === 'supplier' ? 'bg-blue-100 text-blue-700' :
+                    'bg-slate-200 text-slate-800'
+                  }`}>
+                    {user.role}
+                  </span>
                 </Link>
                 <button
                   onClick={() => { setMobileMenuOpen(false); logout(); }}

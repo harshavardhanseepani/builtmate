@@ -1,15 +1,23 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/session";
-import { getUserById } from "@/lib/authStore";
+import { getUserById, sanitizeUser, initializeDatabase } from "@/lib/db/usersDb";
 
 export async function GET(request: NextRequest) {
-  const session = getSessionFromRequest(request);
-  if (!session) {
-    return NextResponse.json({ user: null }, { status: 401 });
+  try {
+    await initializeDatabase();
+    const session = getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ user: null }, { status: 401 });
+    }
+
+    const user = getUserById(session.uid);
+    if (!user) {
+      return NextResponse.json({ user: null }, { status: 401 });
+    }
+
+    return NextResponse.json({ user: sanitizeUser(user) });
+  } catch (err) {
+    console.error("Me error:", err);
+    return NextResponse.json({ user: null }, { status: 500 });
   }
-  const user = getUserById(session.uid);
-  if (!user) {
-    return NextResponse.json({ user: null }, { status: 401 });
-  }
-  return NextResponse.json({ user: { uid: user.uid, email: user.email, name: user.name } });
 }

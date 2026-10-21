@@ -4,6 +4,7 @@
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { UserRole, AccountStatus } from './db/usersDb';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'builtmate-super-secret-jwt-key-2025-change-in-prod';
 const COOKIE_NAME = 'builtmate_session';
@@ -12,6 +13,10 @@ export interface SessionPayload {
   uid: string;
   email: string;
   name: string;
+  role: UserRole;
+  status: AccountStatus;
+  isEmailVerified: boolean;
+  companyName?: string;
 }
 
 export function createSessionToken(payload: SessionPayload): string {
